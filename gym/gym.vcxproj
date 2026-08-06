@@ -126,6 +126,7 @@
     <ClCompile Include="Admin.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="membership.cpp" />
+    <ClCompile Include="membershipPlan.txt" />
     <ClCompile Include="UserMenu.cpp" />
   </ItemGroup>
   <ItemGroup>
