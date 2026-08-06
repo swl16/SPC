@@ -144,7 +144,7 @@ void userMenu() {
 	cout << "0. Exit\n";
 
 	do {
-		cout << "-------------------------";
+		cout << "-------------------------\n";
 		cout << "Enter choice : ";
 		cin >> loginChoice;
 
