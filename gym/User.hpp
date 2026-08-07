@@ -3,11 +3,11 @@
 using namespace std;
 
 struct Member {
-	string id;
 	string name;
 	int age;
 	char gender;
 	string phNo;
+	string email;
 };
 
 struct User {
@@ -19,5 +19,5 @@ void registerUser(User* users);
 int loginUser(User* users);
 void loadUser(User* users);
 void saveUser(User* users);
-void userMenu();
+void userLogin();
 void adminMenu();
