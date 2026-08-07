@@ -40,7 +40,7 @@ void displayUserDetails(Member* members) {
 
 void userMenu(){
 
-	char choice;
+	string choice;
 
 	do {
 
@@ -67,5 +67,5 @@ void userMenu(){
 		cout << "Enter your choice : ";
 		cin >> choice;
 
-	}while(choice != '0');
+	}while(choice != "0");
 }
