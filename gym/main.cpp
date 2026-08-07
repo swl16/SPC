@@ -22,7 +22,7 @@ int main() {
 
 		switch (choice) {
 		case '1':
-			userMenu();
+			userLogin();
 			break;
 		case '2':
 			adminMenu();
