@@ -75,8 +75,8 @@ int loginUser(User* users) {    // user login
 
 	if (found) {
 		cout << "Login successful. Welcome, " << loggedInUser << "!\n";
-		cout << "\nPress enter to continue.\n";
 		cin.ignore();
+		cout << "\nPress enter to continue.\n";
 		cin.get();
 		return 1;
 	}
@@ -91,9 +91,10 @@ void loadUser(User* users) {
 	ifstream file("user.txt");
 
 	if (!file) {
-		cout << "Error: Could not open file." << endl;
 		return;
 	}
+
+	userCount = 0;
 
 	string line;
 	while (getline(file, line) && userCount < MAX_USERS) {
@@ -131,9 +132,9 @@ void saveUser(User* users) {
 void userMenu() {
 
 	char loginChoice;
-	User user;
+	User users[MAX_USERS];
 	string enteredUsername, enteredPassword;
-	loadUser(&user);
+	loadUser(users);
 
 	cout << "=================================" << endl;
 	cout << "            USER MENU            " << endl;
@@ -155,9 +156,8 @@ void userMenu() {
 			cout << "            Register            \n";
 			cout << "================================\n";
 
-			registerUser(&user);
-			saveUser(&user);
-			break;
+			registerUser(users);
+			saveUser(users);
 
 
 		case '2':
@@ -165,7 +165,7 @@ void userMenu() {
 			cout << "             Login              \n";
 			cout << "================================\n";
 
-			loginUser(&user);
+			loginUser(users);
 			break;
 
 		case '0':
