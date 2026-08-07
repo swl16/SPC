@@ -18,11 +18,15 @@ struct Member {
 
 
 
-void registerUser(User* users);
-int loginUser(User* users);
-void loadUser(User* users);
-void saveUser(User* users);
+void registerUser(Member* members);
+int loginUser(Member* members);
+void loadUser(Member* members);
+void saveUser(Member* members);
 void userLogin();
+void resetPassword(Member* members);
+void logoutUser();
+void displaymenu();
+void clearScreen();
 void adminMenu();
 
 void viewMembershipPlan(Member member);

@@ -13,9 +13,9 @@ const int MAX_USERS = 1000;
 int userCount = 0;
 string loggedInUser = "";
 
-void registerUser(User* users) {   // user registration 
+void registerUser(Member* members) {   // user registration 
 
-	User registeringUser = User();
+	Member newMember;
 
 	string username, password;
 
@@ -29,7 +29,7 @@ void registerUser(User* users) {   // user registration
 
 		bool usernameExists = false;
 		for (int i = 0; i < userCount; i++) {
-			if (users[i].usernames == username) {
+			if (members[i].loginInfo.usernames == username) {
 				cout << "Username already exists. Please try again.\n";
 				usernameExists = true;
 				break;
@@ -46,16 +46,35 @@ void registerUser(User* users) {   // user registration
 	cout << "Enter a new password: ";
 	cin >> password;
 
-	registeringUser.usernames = username;
-	registeringUser.passwords = password;
-	users[userCount] = registeringUser;
+	newMember.loginInfo.usernames = username;
+	newMember.loginInfo.passwords = password;
+
+	cout << "\n--- Personal Information ---\n";
+	cin.ignore(); // Clear the input buffer before getline
+
+	cout << "Enter Full Name: ";
+	getline(cin, newMember.name);
+
+	cout << "Enter Age: ";
+	cin >> newMember.age;
+
+	cout << "Enter Gender (M/F): ";
+	cin >> newMember.gender;
+
+	cout << "Enter Phone Number: ";
+	cin >> newMember.phNo;
+
+	cout << "Enter Email Address: ";
+	cin >> newMember.email;
+
+	members[userCount] = newMember;
 	userCount++;
 
 	cout << "Registration successful!\n";
 
 }
 
-int loginUser(User* users) {    // user login
+int loginUser(Member* members) {    // user login
 
 	if (!loggedInUser.empty()) {
 		cout << "You are already logged in as " << loggedInUser << ". Please log out first.\n";
@@ -70,7 +89,7 @@ int loginUser(User* users) {    // user login
 
 	bool found = false;
 	for (int i = 0; i < userCount; ++i) {
-		if (users[i].usernames == username && users[i].passwords == password) {
+		if (members[i].loginInfo.usernames == username && members[i].loginInfo.passwords == password) {
 			loggedInUser = username;
 			found = true;
 			break;
@@ -91,7 +110,7 @@ int loginUser(User* users) {    // user login
 	return 0;
 }
 
-void loadUser(User* users) {
+void loadUser(Member * members) {
 	ifstream file("user.txt");
 
 	if (!file) {
@@ -104,19 +123,29 @@ void loadUser(User* users) {
 	while (getline(file, line) && userCount < MAX_USERS) {
 
 		stringstream ss(line);
-		User userInfo;
+		Member userInfo;
 
-		getline(ss, userInfo.usernames, ',');
-		getline(ss, userInfo.passwords, ',');
+		string ageStr, genderStr;
 
-		users[userCount] = userInfo;
+		getline(ss, userInfo.loginInfo.usernames, ',');
+		getline(ss, userInfo.loginInfo.passwords, ',');
+		getline(ss, userInfo.name, ',');
+		getline(ss, ageStr, ',');
+		getline(ss, genderStr, ',');
+		getline(ss, userInfo.phNo, ',');
+		getline(ss, userInfo.email, ',');
+
+		userInfo.age = stoi(ageStr);
+		userInfo.gender = genderStr[0];
+
+		members[userCount] = userInfo;
 		userCount++;
 	}
 
 	file.close();
 }
 
-void saveUser(User* users) {
+void saveUser(Member*members) {
 	ofstream file("user.txt");
 
 	if (!file) {
@@ -125,14 +154,16 @@ void saveUser(User* users) {
 	}
 
 	for (int i = 0; i < userCount; i++) {
-		file << users[i].usernames << "," << users[i].passwords << endl;
+		file << members[i].loginInfo.usernames << "," << members[i].loginInfo.passwords
+			<< "," << members[i].name << "," << members[i].age << "," << members[i].gender
+			<< "," << members[i].phNo << "," << members[i].email << endl;
 	}
 
 	file.close();
 
 }
 
-void resetPassword(User* users) {   // user reset password
+void resetPassword(Member*members) {   // user reset password
 	cout << "\n--- Password Reset ---\n";
 
 	string username;
@@ -141,7 +172,7 @@ void resetPassword(User* users) {   // user reset password
 
 	int userIndex = -1;
 	for (int i = 0; i < userCount; ++i) {
-		if (users[i].usernames == username) {
+		if (members[i].loginInfo.usernames == username) {
 			userIndex = i;
 			break;
 		}
@@ -151,7 +182,7 @@ void resetPassword(User* users) {   // user reset password
 		string newPassword;
 		cout << "Enter your new password: ";
 		cin >> newPassword;
-		users[userIndex].passwords = newPassword;
+		members[userIndex].loginInfo.passwords = newPassword;
 		cout << "Password for user '" << username << "' has been reset successfully.\n";
 	}
 	else {
@@ -203,9 +234,9 @@ void clearScreen() {
 void userLogin() {
 
 	char loginChoice;
-	User users[MAX_USERS];
+	Member members[MAX_USERS];
 	string enteredUsername, enteredPassword;
-	loadUser(users);
+	loadUser(members);
 
 
 	do {
@@ -216,21 +247,21 @@ void userLogin() {
 		switch (loginChoice) {
 
 		case '1':
-			registerUser(users);
-			saveUser(users);
-
+			registerUser(members);
+			saveUser(members);
+			break;
 
 		case '2':
 			cout << "================================\n";
 			cout << "             Login              \n";
 			cout << "================================\n";
 
-			loginUser(users);
+			loginUser(members);
 			break;
 
 		case '3':
-			resetPassword(users);
-			saveUser(users);
+			resetPassword(members);
+			saveUser(members);
 			break;
 
 		case '4':
