@@ -127,9 +127,11 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="membership.cpp" />
     <ClCompile Include="membershipPlan.txt" />
+    <ClCompile Include="ScheduleMenu.cpp" />
     <ClCompile Include="UserMenu.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ScheduleMenu.hpp" />
     <ClInclude Include="User.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

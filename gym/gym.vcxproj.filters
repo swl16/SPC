@@ -30,9 +30,15 @@
     <ClCompile Include="membershipPlan.txt">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ScheduleMenu.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="User.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ScheduleMenu.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
