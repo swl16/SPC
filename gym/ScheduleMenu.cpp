@@ -1,7 +1,11 @@
 #include "ScheduleMenu.hpp"
 
 void scheduleMenu() {
-    vector<Schedule> schedules; // Vector to store schedules
+    vector<Schedule> schedules;
+
+    // --- NEW: Load existing schedules from the file immediately ---
+    loadSchedulesFromFile(schedules);
+
     int choice;
 
     do {
@@ -28,17 +32,73 @@ void scheduleMenu() {
         }
 
     } while (choice != 0);
+}
 
+// --- NEW HELPER: Load from file ---
+void loadSchedulesFromFile(vector<Schedule>& schedules) {
+    ifstream inFile("Schedules.csv");
+    if (!inFile.is_open()) {
+        return; // File doesn't exist yet, which is fine for the first run
+    }
+
+    string line;
+    while (getline(inFile, line)) {
+        stringstream ss(line);
+        string idStr, date, name, startStr, endStr, trainer, cancelStr;
+
+        // Parse CSV columns
+        getline(ss, idStr, ',');
+        getline(ss, date, ',');
+        getline(ss, name, ',');
+        getline(ss, startStr, ',');
+        getline(ss, endStr, ',');
+        getline(ss, trainer, ',');
+        getline(ss, cancelStr, ',');
+
+        if (idStr.empty()) continue;
+
+        // Rebuild the schedule object
+        Schedule s;
+        s.scheduleID = stoi(idStr);
+        s.date = date;
+        s.className = name;
+        s.startTime = stoi(startStr);
+        s.endTime = stoi(endStr);
+        s.trainerName = trainer;
+        s.isCanceled = (cancelStr == "1"); // 1 means true, 0 means false
+
+        schedules.push_back(s);
+    }
+    inFile.close();
+}
+
+// --- NEW HELPER: Save to file ---
+void saveSchedulesToFile(const vector<Schedule>& schedules) {
+    ofstream outFile("Schedules.csv");
+    if (outFile.is_open()) {
+        for (const Schedule& s : schedules) {
+            outFile << s.scheduleID << ","
+                << s.date << ","
+                << s.className << ","
+                << s.startTime << ","
+                << s.endTime << ","
+                << s.trainerName << ","
+                << (s.isCanceled ? "1" : "0") << "\n";
+        }
+        outFile.close();
+    }
+    else {
+        cout << "Error: Could not save to Schedules.csv.\n";
+    }
 }
 
 void addschedule(vector<Schedule>& schedules) {
     Schedule newClass;
 
-    // Auto-increment ID based on the last element, or start at 100
     newClass.scheduleID = schedules.empty() ? 100 : schedules.back().scheduleID + 1;
-    newClass.isCanceled = false; // Always default to active when adding
+    newClass.isCanceled = false;
 
-    cin.ignore(); // Clear buffer in case menu input left an enter key
+    cin.ignore();
     cout << "\n--- Add New Schedule ---\n";
     cout << "Enter schedule name: ";
     getline(cin, newClass.className);
@@ -56,20 +116,20 @@ void addschedule(vector<Schedule>& schedules) {
     cout << "Enter trainer name: ";
     getline(cin, newClass.trainerName);
 
-    // 1. Basic Time Validation
     if (newClass.startTime >= newClass.endTime) {
         cout << "Error: Start time must be before end time.\n";
         return;
     }
 
-    // 2. Automated Clash Validation
-    if (hasConflict(schedules, newClass.date, newClass.startTime, newClass.endTime)) {
+    if (hasConflict(schedules, newClass.date, newClass.startTime, newClass.endTime, -1)) {
         cout << "Error: This time slot is already taken by an active class.\n";
     }
     else {
-        // 3. Final Decision
         schedules.push_back(newClass);
         cout << "Schedule added successfully with ID: " << newClass.scheduleID << "\n";
+
+        // --- NEW: Save immediately ---
+        saveSchedulesToFile(schedules);
     }
 }
 
@@ -89,10 +149,9 @@ void displayschedule(const vector<Schedule>& schedules) {
         << "Status\n";
     cout << "-------------------------------------------------------------------------------\n";
 
-    bool activeFound = false; // Track if we actually print anything active
+    bool activeFound = false;
 
     for (const Schedule& s : schedules) {
-        // Skip canceled classes so they do not show up in the display
         if (s.isCanceled) {
             continue;
         }
@@ -102,8 +161,8 @@ void displayschedule(const vector<Schedule>& schedules) {
             << setw(15) << s.className
             << setw(10) << s.startTime
             << setw(10) << s.endTime
-            << setw(15) << s.trainerName
-            << "Active\n"; // We can hardcode "Active" here since canceled ones are skipped
+            << setw(15) << (s.trainerName.empty() ? "None" : s.trainerName)
+            << "Active\n";
 
         activeFound = true;
     }
@@ -127,7 +186,6 @@ void searchschedule(const vector<Schedule>& schedules) {
     bool found = false;
 
     for (const Schedule& s : schedules) {
-        // Skip canceled classes
         if (s.isCanceled) {
             continue;
         }
@@ -150,7 +208,7 @@ void searchschedule(const vector<Schedule>& schedules) {
                 << setw(15) << s.className
                 << setw(10) << s.startTime
                 << setw(10) << s.endTime
-                << setw(15) << s.trainerName
+                << setw(15) << (s.trainerName.empty() ? "None" : s.trainerName)
                 << "Active\n";
 
             found = true;
@@ -181,7 +239,6 @@ void updateschedule(vector<Schedule>& schedules) {
             cout << "\nSchedule found! Enter new details below.\n";
             cin.ignore();
 
-            // Use temporary variables so we don't ruin the original data if there is a conflict
             string tempName, tempDate;
             int tempStart, tempEnd;
 
@@ -197,21 +254,21 @@ void updateschedule(vector<Schedule>& schedules) {
             cout << "Enter new end time ( eg. 1600 ): ";
             cin >> tempEnd;
 
-            // Validate the temporary data
             if (tempStart >= tempEnd) {
                 cout << "Error: Start time must be before end time. Update failed.\n";
             }
-            // Pass 'searchID' so it doesn't conflict with its old self
             else if (hasConflict(schedules, tempDate, tempStart, tempEnd, searchID)) {
                 cout << "Error: This time slot conflicts with another class. Update failed.\n";
             }
             else {
-                // Safe to apply updates!
                 s.className = tempName;
                 s.date = tempDate;
                 s.startTime = tempStart;
                 s.endTime = tempEnd;
                 cout << "Schedule updated successfully!\n";
+
+                // --- NEW: Save updates ---
+                saveSchedulesToFile(schedules);
             }
             break;
         }
@@ -235,26 +292,26 @@ void assigntrainer(vector<Schedule>& schedules) {
 
     bool found = false;
 
-    // Loop through the vector to find the matching ID
     for (Schedule& s : schedules) {
         if (s.scheduleID == searchID) {
             found = true;
 
-            // Prevent assigning trainers to soft-deleted classes
             if (s.isCanceled) {
                 cout << "Error: Cannot assign a trainer to a canceled schedule.\n";
             }
             else {
                 cout << "Current Trainer: " << (s.trainerName.empty() ? "None" : s.trainerName) << "\n";
 
-                // Clear the buffer before using getline
                 cin.ignore();
                 cout << "Enter new trainer name: ";
                 getline(cin, s.trainerName);
 
                 cout << "Trainer assigned successfully to Schedule ID " << searchID << "!\n";
+
+                // --- NEW: Save changes ---
+                saveSchedulesToFile(schedules);
             }
-            break; // Stop looping once we find and update the schedule
+            break;
         }
     }
 
@@ -276,21 +333,21 @@ void cancelschedule(vector<Schedule>& schedules) {
 
     bool found = false;
 
-    // Loop through to find the matching ID
     for (Schedule& s : schedules) {
         if (s.scheduleID == searchID) {
             found = true;
 
-            // Check if it is already canceled to prevent redundant actions
             if (s.isCanceled) {
                 cout << "Schedule ID " << searchID << " is already marked as canceled.\n";
             }
             else {
-                // Flip the boolean switch
                 s.isCanceled = true;
                 cout << "Schedule ID " << searchID << " has been successfully canceled!\n";
+
+                // --- NEW: Save changes ---
+                saveSchedulesToFile(schedules);
             }
-            break; // Stop looping once we find it
+            break;
         }
     }
 
@@ -301,16 +358,13 @@ void cancelschedule(vector<Schedule>& schedules) {
 
 bool hasConflict(const vector<Schedule>& schedules, string date, int startTime, int endTime, int excludeID) {
     for (const Schedule& s : schedules) {
-        // Check active schedules on the same date, ignoring the one we might be updating
         if (!s.isCanceled && s.date == date && s.scheduleID != excludeID) {
-
-            // Overlap logic
             if ((startTime >= s.startTime && startTime < s.endTime) ||
                 (endTime > s.startTime && endTime <= s.endTime) ||
                 (startTime <= s.startTime && endTime >= s.endTime)) {
-                return true; // Conflict found!
+                return true;
             }
         }
     }
-    return false; // No conflicts
+    return false;
 }

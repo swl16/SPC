@@ -124,6 +124,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Admin.cpp" />
+    <ClCompile Include="AttendanceTracker.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="membership.cpp" />
     <ClCompile Include="membershipPlan.txt" />
@@ -131,6 +132,7 @@
     <ClCompile Include="UserMenu.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AttendanceTracker.hpp" />
     <ClInclude Include="ScheduleMenu.hpp" />
     <ClInclude Include="User.hpp" />
   </ItemGroup>
