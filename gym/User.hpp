@@ -8,7 +8,7 @@ struct User {
 };
 
 struct Member {
-	string id;
+	User loginInfo;
 	string name;
 	int age;
 	char gender;
