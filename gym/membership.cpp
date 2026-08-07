@@ -5,12 +5,15 @@
 #include<fstream>
 #include <sstream>
 
+#include"User.hpp"
+
 using namespace std;
 
-void viewMembershipPlan() {
+void viewMembershipPlan(Member member) {
 	ifstream membershipFile("membershipPlan.txt");
+	ifstream memberFile("UserMembership.txt");
 
-	if (!membershipFile.is_open()) {
+	if (!membershipFile.is_open() || !memberFile.is_open()) {
 		cerr << "Error opening file!" << endl;
 		return;
 	}
