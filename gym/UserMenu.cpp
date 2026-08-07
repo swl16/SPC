@@ -12,7 +12,7 @@ using namespace std;
 extern string loggedInUser;
 extern int userCount;
 
-void displayUserDetails(Member* members) {
+void viewProfile(Member* members) {
 
 	if (loggedInUser.empty()) {
 		cout << "Error: No user is currently logged in.\n";
@@ -36,6 +36,10 @@ void displayUserDetails(Member* members) {
 			break;
 		}
 	}
+}
+
+void editProfile(Member* members) {
+
 }
 
 void userMenu(){
