@@ -254,6 +254,7 @@ void registerMembershipPlan() {
 		}
 		else {
 			cout << "Invalid Plan No. Please try again." << endl;
+			return;
 		}
 	} while (true);
 }
@@ -323,11 +324,11 @@ void renewMembership(Member member) {
 	}
 
 	char currentExpireBuffer[20];
-	strftime(currentExpireBuffer, sizeof(currentExpireBuffer), "%Y/%m/%d", &currentExpireTm);
+	strftime(currentExpireBuffer, sizeof(currentExpireBuffer), "%Y/%m/%d", &purchaseTm);
 	string currentExpireDateStr(currentExpireBuffer);
 
 	// Calculate NEW extended expiration date (add another duration period)
-	tm newExpireTm = currentExpireTm;
+	tm newExpireTm = purchaseTm;
 	newExpireTm.tm_mon += duration;
 	mktime(&newExpireTm); // Normalizes months (e.g. month 13 becomes next year Jan)
 
@@ -365,16 +366,16 @@ void renewMembership(Member member) {
 void membershipPlan(Member member) {
 	clearScreen();
 
-	viewMembershipPlan(member);
-
-	cout << endl;
-	cout << "1. Subscribe a membership plan" << endl;
-	cout << "2. Renew your membership" << endl;
-	cout << "0. Return to Member Menu" << endl;
-
 	int choice; 
 	do {
+		viewMembershipPlan(member);
+
+		cout << endl;
+		cout << "1. Subscribe a membership plan" << endl;
+		cout << "2. Renew your membership" << endl;
+		cout << "0. Return to Member Menu" << endl << endl;
 		cout << "Enter your choice (or '0' to return to menu): ";
+
 		if (!(cin >> choice)) { // Input validation for non-numeric input
 			cin.clear();
 			cin.ignore(1000, '\n');
