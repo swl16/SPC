@@ -9,7 +9,6 @@
 
 using namespace std;
 
-const int MAX_USERS = 1000;
 int userCount = 0;
 string loggedInUser = "";
 
@@ -257,6 +256,7 @@ void userLogin() {
 			cout << "================================\n";
 
 			loginUser(members);
+			userMenu(members);
 			break;
 
 		case '3':
