@@ -123,7 +123,29 @@ void displayReportsMenu() {
 	cout << "--------------------------------------------------" << endl;
 }
 
-void adminMenu() {
+int viewAllMembers(Member* members, int userCount) {
+	int total = 0;
+	cout << "==================================================" << endl;
+	cout << "                VIEW ALL MEMBERS				   " << endl;
+	cout << "==================================================" << endl;
+
+	cout << "Username" << "\tName" << "\tAge" << "\tGender" << "\tPhone" << "\tEmail";
+
+	for (int i = 0; i < userCount; i++) {
+		cout << members[i].loginInfo.usernames << "\t" << members[i].name << "\t" << members[i].age << "\t" << members[i].gender << "\t" 
+			 << members[i].phNo << "\t" << members[i].email << endl;
+
+		total++;
+	}
+
+	cout << "--------------------------------------------------" << endl;
+
+	cout << "Total Members : " << total << endl;
+
+	return 1;
+}
+
+void adminMenu(Member* members, int userCount) {
 
 	char choice, choose;
 
@@ -134,7 +156,7 @@ void adminMenu() {
 
 		switch (choice) {
 		case '1': // View All Members
-			
+			viewAllMembers(members, userCount);
 			break;
 
 		case '2': // Membership Plan Management
@@ -142,6 +164,30 @@ void adminMenu() {
 				displayMembershipPlanMenu();
 				cout << "Enter your choice: ";
 				cin >> choose;
+
+				switch (choose){
+					case '1': // Call function to add membership plan
+
+						break;
+
+					case '2': // Call function to view membership plans
+
+						break;
+
+					case '3': // Call function to update membership plan
+
+						break;
+
+					case '4': // Call function to delete membership plan
+						
+						break;
+
+					case '0':
+						cout << "Returning to Admin Menu...\n";
+						break;
+				default:
+					break;
+				}
 
 			} while (choose != '0');
 
