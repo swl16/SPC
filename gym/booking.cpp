@@ -12,5 +12,6 @@
 using namespace std;
 
 void bookClass(Member member) {
-	ifstream 
+	ifstream classFile("classes.txt");
+	jj
 }
