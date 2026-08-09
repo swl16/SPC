@@ -145,6 +145,22 @@ int viewAllMembers(Member* members, int userCount) {
 	return 1;
 }
 
+void addMembershipPlan() {
+	// Implementation for adding a membership plan
+}
+
+void viewMembershipPlans() {
+	// Implementation for viewing membership plans
+}
+
+void updateMembershipPlan() {
+	// Implementation for updating a membership plan
+}
+
+void deleteMembershipPlan() {
+	// Implementation for deleting a membership plan
+}
+
 void adminMenu(Member* members, int userCount) {
 
 	char choice, choose;
