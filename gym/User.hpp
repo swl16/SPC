@@ -44,8 +44,8 @@ void userMenu(Member* members);
 void displaymenu();
 void clearScreen();
 
-void adminLogin();
-void adminMenu();
+void adminLogin(Member* members, int userCount);
+void adminMenu(Member* members, int userCount);
 void displayadminMenu();
 void displayMembershipPlanMenu();
 void displayClassMenu();
@@ -56,5 +56,5 @@ void displayReportsMenu();
 
 
 void viewMembershipPlan(Member member);
-void membershipPlan();
+void membershipPlan(Member member);
 
