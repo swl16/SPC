@@ -1,13 +1,73 @@
-#include<iostream>
-#include<iomanip>
-#include<vector>
+#include <iostream>
+#include <iomanip>
+#include <vector>
+#include <fstream>
+#include <sstream>
+#include <string>
+#include <limits>
 
 #include "User.hpp"
 #include "ScheduleMenu.hpp"
 
 using namespace std;
 
-void adminLogin() {
+int getIntegerInput(const string& message, int min, int max) {
+	int value;
+
+	while (true) {
+		cout << message;
+
+		if (cin >> value && value >= min && value <= max) {
+			return value;
+		}
+
+		cout << "Invalid input. Please enter a number from "
+			<< min << " to " << max << ".\n";
+
+		cin.clear();
+		cin.ignore(numeric_limits<streamsize>::max(), '\n');
+	}
+}
+
+double getPositiveDouble(const string& message) {
+	double value;
+
+	while (true) {
+		cout << message;
+
+		if (cin >> value && value > 0) {
+			return value;
+		}
+
+		cout << "Invalid amount. Please enter a value greater than 0.\n";
+
+		cin.clear();
+		cin.ignore(numeric_limits<streamsize>::max(), '\n');
+	}
+}
+
+string getNonEmptyString(const string& message) {
+	string value;
+
+	while (true) {
+		cout << message;
+		getline(cin >> ws, value);
+
+		if (!value.empty()) {
+			return value;
+		}
+
+		cout << "Input cannot be empty. Please try again.\n";
+	}
+}
+
+void pauseScreen() {
+	cout << "\nPress ENTER to continue...";
+	cin.ignore(numeric_limits<streamsize>::max(), '\n');
+	cin.get();
+}
+
+void adminLogin(Member* members, int userCount) {
 
 	string adminUsername, adminPassword;
 
@@ -21,10 +81,10 @@ void adminLogin() {
 
 	if (adminUsername == "gymAdmin" && adminPassword == "gymAdmin123") {
 		cout << "Login successful! Welcome, Admin." << endl;
-		cin.ignore();
-		cout << "\nPress enter to continue.\n";
-		cin.get();
-		adminMenu();
+		
+		pauseScreen();
+
+		adminMenu(members, userCount);
 
 	}
 	else {
@@ -123,30 +183,67 @@ void displayReportsMenu() {
 	cout << "--------------------------------------------------" << endl;
 }
 
-int viewAllMembers(Member* members, int userCount) {
-	int total = 0;
+void viewAllMembers(Member* members, int userCount) {
+
+	loadUser(members);
+
 	cout << "==================================================" << endl;
 	cout << "                VIEW ALL MEMBERS				   " << endl;
 	cout << "==================================================" << endl;
 
-	cout << "Username" << "\tName" << "\tAge" << "\tGender" << "\tPhone" << "\tEmail";
+	if (userCount == 0) {
+		cout << "No member records found.\n";
+		pauseScreen();
+		return;
+	}
+
+
+	cout << "Username" << "\tName" << "\tAge" << "\tGender" << "\tPhone" << "\tEmail" << endl;
+	cout << "--------------------------------------------------------------------------\n";
 
 	for (int i = 0; i < userCount; i++) {
 		cout << members[i].loginInfo.usernames << "\t" << members[i].name << "\t" << members[i].age << "\t" << members[i].gender << "\t" 
 			 << members[i].phNo << "\t" << members[i].email << endl;
 
-		total++;
 	}
 
 	cout << "--------------------------------------------------" << endl;
 
-	cout << "Total Members : " << total << endl;
+	cout << "Total Members : " << userCount << endl;
 
-	return 1;
+	cout << "\nPress ENTER back to Admin Menu.\n";
+	cin.ignore(numeric_limits<streamsize>::max(), '\n');
+	cin.get();
+	
 }
 
 void addMembershipPlan() {
-	// Implementation for adding a membership plan
+	
+	string planName, planDuration;
+	double price;
+
+	cout << "Enter plan name: ";
+	cin >> planName;
+	cout << "Enter plan duration : ";
+	cin >> planDuration;
+	cout << "Enter plan price: ";
+	cin >> price;
+
+	ofstream membershipFile("membershipPlan.txt");
+
+	if (!membershipFile) {
+		cout << "Error: Could not open file." << endl;
+		return;
+	}
+
+	membershipFile << planName << "," << planDuration << "," << price << endl;
+	membershipFile.close();
+
+	cout << "\nPress ENTER back to Membership Plan Menu.\n";
+	cin.ignore(numeric_limits<streamsize>::max(), '\n');
+	cin.get();
+
+
 }
 
 void viewMembershipPlans() {
