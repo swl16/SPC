@@ -104,54 +104,92 @@ void bookClass(Member member) {
     
     do {
         int i = 1;
-        cout << "Select Date (Book up to 2 days ahead, including today." << endl;
+        cout << "Select Date (Book up to 2 days ahead, including today.)" << endl;
         for (const string& validDate : validDates) {
-            cout << i << " " << validDate << endl;
+            cout << i << ". " << validDate << endl;
             i++;
         }
 
-        cout << "\nEnter your choice (or '0' to return menu) : ";
+        cout << "------------------------------------------------" << endl;
+        cout << "Enter your choice (or '0' to return to menu) : ";
 
-        if (!(cin >> choice)) { // Input validation for non-numeric input
+        if (!(cin >> dateChoice)) { // Input validation for non-numeric input
             cin.clear();
             cin.ignore(1000, '\n');
             cout << "Invalid input. Please enter a number." << endl;
             continue;
         }
 
-        if (choice == 0) {
+        if (dateChoice == 0) {
             cout << "Returning to menu..." << endl;
             // call main menu func
             break;
         }
 
-        switch {
-        case '1':
-            i = 0;
-            cout << "STEP 2 :" << endl;
-            cout << "Select Start Time" << endl;
-            cout << left << setw(5) << "No."
+        if (dateChoice < 1 || dateChoice > static_cast<int>(validDates.size())) {
+            cout << "Invalid option! Please select a valid date number." << endl;
+            continue;
+        }
+
+        string selectedDate = validDates[choice - 1];
+        
+        vector<AvailableClass> classesForSelectedDate;
+        for (const auto& item : availableClasses) {
+            if (item.date == selectedDate) {
+                classesForSelectedDate.push_back(item);
+            }
+        }
+
+        if (classesForSelectedDate.empty()) {
+            cout << "\nNo classes available on " << selectedDate << ". Please pick another date." << endl;
+            continue;
+        }
+
+        cout << "\n------------------------------------------------" << endl;
+        cout << "STEP 2 :" << endl;
+        cout << "Select Start Time" << endl;
+        cout << "------------------------------------------------" << endl;
+        
+        cout << left << setw(5) << "No."
                         << left << setw(15) << "Class Name"
                         << left << setw(12) << "Coach"
                         << left << setw(8) << "Time"
                         << left << setw(10) << "Capacity"
                         << right << setw(10) << "Fee (RM)" << endl;
-            cout << "------------------------------------------------" << endl;
-            cout << fixed << setprecision(2);
-            for (const auto& ac : availableClasses) {
-                if (ac.date == validDates[0]) {
-                    cout << left << setw(5) << (i + 1)
-                        << left << setw(15) << ac.classType.name
-                        << left << setw(12) << ac.classType.coach.name
-                        << left << setw(8) << ac.time
-                        << left << setw(10) << ac.maxCapacity
-                        << right << setw(10) << ac.classType.price << endl;
-                }
-            }
-            cout << "------------------------------------------------" << endl;
+            
+        cout << "------------------------------------------------" << endl;
+        cout << fixed << setprecision(2);
 
-
+        for (size_t idx = 0; idx < classesForSelectedDate.size(); ++idx) {
+            cout << left << setw(5) << (idx + 1)
+                << left << setw(15) << classesForSelectedDate[idx].classType.name
+                << left << setw(12) << classesForSelectedDate[idx].classType.coach.name
+                << left << setw(8) << classesForSelectedDate[idx].time
+                << left << setw(10) << classesForSelectedDate[idx].MaxCapacity
+                << right << setw(10) << classesForSelectedDate[idx].classType.price << endl; 
         }
+        cout << "------------------------------------------------" << endl;
+       
+        int timeChoice;
+        cout << "\nEnter Option No. (1-" << classesForSelectedDate.size() << ") to book (or '0' to back):";
+
+        if (!(cin >> timeChoice)) { // Input validation for non-numeric input
+            cin.clear();
+            cin.ignore(1000, '\n');
+            cout << "Invalid input. Please enter a number." << endl;
+            continue;
+        }
+
+        if (timeChoice == 0) {
+            continue;
+        }
+
+        if (timeChoice < 1 || timeChoice > static_cast<int>(classesForSelectedDate.size())) {
+            cout << "Invalid class selection!" << endl;
+            continue;
+        }
+
+        AvailableClass selectedClass = classesForSelectedDate[timeChoice - 1];
     }
 
 
