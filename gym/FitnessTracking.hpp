@@ -1,5 +1,6 @@
 #include <iostream>
 #include "User.hpp"
+#include <vector>
 using namespace std;
 
 struct FitnessRecord {
