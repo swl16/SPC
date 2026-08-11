@@ -1,4 +1,5 @@
 #include<iostream>
+#include "FitnessTracking.hpp"
 
 using namespace std;
 
@@ -14,8 +15,8 @@ struct Member {
 	char gender;
 	string phNo;
 	string email;
+	FitnessRecord fitness;
 };
-
 
 
 void registerUser(Member* members);
