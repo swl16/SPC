@@ -113,11 +113,12 @@ void logWorkoutSession(Member& members) {
 	}
 }
 
-void generateFitnessReport() {
+void generateFitnessReport(const Member& members) {
 	cout << "\n==============================\n";
 	cout << "     FITNESS PROGRESS REPORT\n";
-	cout << "\n==============================\n";
-	cout << "Username  : " << user.username << 
+	cout << "\n==============================\n"; 
+	cout << "Name  : " << members.name << "\n";
+
 }
 
 

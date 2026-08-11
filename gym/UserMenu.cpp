@@ -65,7 +65,7 @@ void userMenu(){
 		cout << "11. Gym Check - In\n";
 		cout << "12. Gym Check - Out\n";
 		cout << "13. Record Fitness Progress\n";
-		cout << "14. View Fitness Progress\n";
+		cout << "14. Fitness Tracking\n";
 		cout << "0. Logout\n";
 		cout << "--------------------------------------------------" << endl;
 		cout << "Enter your choice : ";
