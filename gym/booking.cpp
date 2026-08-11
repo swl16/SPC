@@ -190,8 +190,79 @@ void bookClass(Member member) {
         }
 
         AvailableClass selectedClass = classesForSelectedDate[timeChoice - 1];
-    }
+
+        ifstream checkFile("classBookings.txt");
+        int bID, cID, currentCapacityCount = 0;
+        string uName, bDate, bTime;
+        bool alreadyBooked = false;
+
+        if (checkFile.is_open()) {
+            while (checkFile >> bID >> uName >> cID >> bDate >> bTime) {
+                if (cID == selectedClass.classType.classID && bDate == selectedClass.date && bTime == selectedClass.time) {
+                    currentCapacityCount++;
+                    if (uName == member.loginInfo.usernames) {
+                        alreadyBooked = true;
+                    }
+                }
+            }
+            checkFile.close();
+        }
+
+        if (alreadyBooked) {
+            cout << "\n[ERROR] You have already booked " << selectedClass.classType.name
+                << " on " << selectedClass.date << " at " << selectedClass.time << "!" << endl;
+            continue;
+        }
+
+        if (currentCapacityCount >= selectedClass.MaxCapacity) {
+            cout << "\n[ERROR] Class is FULL! Capacity limit reached." << endl;
+            continue;
+        }
+
+        int newBookingID = generateBookingID("classBookings.txt");
+       
+        
+        cout << "\n================================================" << endl;
+        cout << "           CLASS BOOKING CONFIRMATION           " << endl;
+        cout << "================================================" << endl;
+        cout << "Booking ID  : " << newBookingID << endl;
+        cout << "Class       : " << selectedClass.classType.name << endl;
+        cout << "Coach       : " << selectedClass.classType.coach.name << endl;
+        cout << "Date & Time : " << selectedClass.date << " @ " << selectedClass.time << endl;
+        cout << "Fee Paid    : RM " << selectedClass.classType.price << endl;
+        cout << "================================================" << endl;
+        
+        char confirm;
+        cout << "\nConfirm booking? (Y/N): ";
+        cin >> confirm;
+
+        if (confirm == 'Y' || confirm == 'y') { 
+            ClassBooking classBooked = { newBookingID, member.name, selectedClass, validDates[0] };
+            //process to payment
+            break;
+        }
+        else {
+            cout << "Booking cancelled." << endl;
+        }
+   
+    } while (true);
 
 
+
+}
+
+void bookTrainer() {
+
+}
+
+void viewBooking(Member member) {
+    cout << "================================================" << endl;
+    cout << "               MY ACTIVE BOOKINGS               " << endl;
+    cout << "================================================" << endl << endl;
+
+    
+}
+
+void cancelBooking() {
 
 }
