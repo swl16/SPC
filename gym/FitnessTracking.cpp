@@ -1,6 +1,9 @@
 #include <iostream>
 #include <string>
 #include "User.hpp"
+#include <iomanip>
+#include "FitnessTracking.hpp"
+using namespace std;
 
 double calculateBMI(double weight, double height) {
 	return weight / (height * height);
@@ -101,7 +104,7 @@ void logWorkoutSession(Member& members) {
 		
 		members.fitness.caloriesBurned += estCalories;
 
-		cout << fixed << setprecison(1);
+		cout << fixed << setprecision(1);
 		cout << "-> Logged : " << minutes << " minutes | Estimate Calories Burned : " << estCalories << " kcal\n";
 		cout << "\nDo you want to log another workout session for today? (Y/N) : ";
 		cin >> choice;
@@ -113,13 +116,106 @@ void logWorkoutSession(Member& members) {
 	}
 }
 
-void generateFitnessReport(const Member& members) {
-	cout << "\n==============================\n";
-	cout << "     FITNESS PROGRESS REPORT\n";
-	cout << "\n==============================\n"; 
-	cout << "Name  : " << members.name << "\n";
+void resetFitnessMetrics(Member& member) {
+	char confirm;
+    cout << "\nAre you sure you want to reset workout duration and calories burned to 0? (Y/N): ";
+    cin >> confirm;
 
+    if (confirm == 'Y' || confirm == 'y') {
+        member.fitness.workoutDuration = 0;
+        member.fitness.caloriesBurned = 0.0;
+        cout << "[SUCCESS] Accumulated workout logs have been reset to zero.\n";
+    } else {
+        cout << "[CANCELLED] Reset action aborted.\n";
+    }
 }
+
+void generateFitnessReport(const Member& members) {
+	cout << string(40, '=') << "\n";
+	cout << "     FITNESS PROGRESS REPORT\n";
+	cout << string(40, '=') << "\n";
+	cout << "Name  : " << members.name << "\n";
+	cout << string(40, '-') << "\n";
+
+	cout << fixed << setprecision(2);
+	cout << left << setw(20) << "Current Weight" << ": " << members.fitness.weight << " kg\n";
+	cout << left << setw(20) << "Current Height" << ": " << members.fitness.height << " m\n";
+	cout << left << setw(20) << "BMI Score" << ": " << members.fitness.bmi << "\n";
+	cout << string(45, '-') << "\n";
+	cout << left << setw(20) << "Logged Workout Time" << ": " << members.fitness.workoutDuration << " mins\n";
+
+	if (members.fitness.targetWorkoutMins > 0) {
+		cout << left << setw(30) << "Weekly Workout Goal" << ": " << members.fitness.targetWorkoutMins << " minutes/week\n";
+
+		cout << left << setw(20) << "Goal Status : ";
+		if (members.fitness.workoutDuration >= members.fitness.targetWorkoutMins) {
+			cout << "[ACHIEVED] Goal reached!\n";
+		}
+		else {
+			int remaining = members.fitness.targetWorkoutMins - members.fitness.workoutDuration;
+			cout << "[IN PROGRESS] " << remaining << " minutes remaining\n";
+		}
+	}
+	else {
+		cout << left << setw(30) << "Weekly Workout Goal" << ": Not Set\n";
+		cout << left << setw(20) << "Goal Status" << ": N/A\n";
+	}
+
+	cout << left << setw(20) << "Total Calories : " << members.fitness.caloriesBurned << " kcal\n";
+	cout << string(40, '=') << "\n";
+}
+
+void fitnessMenu(Member& members) {
+	int choice = 0;
+
+	do {
+		cout << "\n" << string(50, '=') << "\n";
+		cout << "     FITNESS TRACKER MODULE MENU\n";
+		cout << "\n" << string(50, '=') << "\n";
+		cout << "1. Set Weekly Workout Goal(mins / week)\n";
+		cout << "2. Update Body Metrics (Weight / Height)\n";
+		cout << "3. Log Workout Session\n";
+		cout << "4. Reset Fitness Metrics\n";
+		cout << "5. Generate Fitness Progress Report\n";
+		cout << "6. Exit Fitness Module\n";
+		cout << "\n" << string(50, '=') << "\n";
+		cout << "Enter your choice (1-6) : ";
+
+		if (!(cin >> choice)) {
+			cout << "Invalid input. Please enter a number between 1 and 6.\n";
+			cin.clear();
+			cin.ignore(numeric_limits<streamsize>::max(), '\n');
+			continue;
+		}
+
+		switch (choice) {
+		case 1:
+			setFitnessGoal(members);
+			break;
+		case 2:
+			updateFitnessMetrics(members);
+			break;
+		case 3:
+			logWorkoutSession(members);
+			break;
+		case 4:
+			resetFitnessMetrics(members);
+			break;
+		case 5:
+			generateFitnessReport(members);
+			break;
+		case 6:
+			cout << "\nExiting Fitness Module.\n";
+			break;
+		default:
+			cout << "Invalid choice. Please select 1-6.\n";
+		}
+
+	} while (choice != 6);
+}
+
+
+
 
 
 

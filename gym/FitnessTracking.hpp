@@ -15,6 +15,6 @@ double calculateBMI(double weight, double height);
 void setFitnessGoal(Member& members);
 void updateFitnessMetrics(Member& members);
 void logWorkoutSession(Member& members);
-void generateFitnessReport(const Member& members);
 void resetFitnessMetrics(Member& members);
+void generateFitnessReport(const Member& members);
 void fitnessMenu(Member& members);
