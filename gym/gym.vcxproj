@@ -129,6 +129,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="membership.cpp" />
     <ClCompile Include="membershipPlan.txt" />
+    <ClCompile Include="Payment.cpp" />
     <ClCompile Include="ScheduleMenu.cpp" />
     <ClCompile Include="UserLogin.cpp" />
     <ClCompile Include="UserMenu.cpp" />

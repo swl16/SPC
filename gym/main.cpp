@@ -25,10 +25,10 @@ int main() {
 			userLogin();
 			break;
 		case '2':
-			adminMenu();
+			adminLogin();
 			break;
 		case '0':
-			cout << "Thank you!" << endl;
+			cout << "Thank you for using Fitness Gym!" << endl;
 			break;
 		default:
 			cout << "Invalid choice. Please try again." << endl;
