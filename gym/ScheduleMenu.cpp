@@ -1,37 +1,9 @@
 #include "ScheduleMenu.hpp"
 
-void scheduleMenu() {
+void scheduleMain() {
     vector<Schedule> schedules;
-
     // --- NEW: Load existing schedules from the file immediately ---
     loadSchedulesFromFile(schedules);
-
-    int choice;
-
-    do {
-        cout << "\n=== Gym Schedule Management ===\n";
-        cout << "1. Add Schedule\n";
-        cout << "2. Display Schedules\n";
-        cout << "3. Search Schedule by Date\n";
-        cout << "4. Update Schedule\n";
-        cout << "5. Cancel Schedule\n";
-        cout << "6. Assign Trainer\n";
-        cout << "0. Exit\n";
-        cout << "Enter your choice: ";
-        cin >> choice;
-
-        switch (choice) {
-        case 1: addschedule(schedules); break;
-        case 2: displayschedule(schedules); break;
-        case 3: searchschedule(schedules); break;
-        case 4: updateschedule(schedules); break;
-        case 5: cancelschedule(schedules); break;
-        case 6: assigntrainer(schedules); break;
-        case 0: cout << "Exiting Schedule Module...\n"; break;
-        default: cout << "Invalid choice. Try again.\n";
-        }
-
-    } while (choice != 0);
 }
 
 // --- NEW HELPER: Load from file ---
