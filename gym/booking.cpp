@@ -44,7 +44,7 @@ void bookClass(Member member) {
     while (cFile >> c.classID >> c.name >> c.coach.trainerID >> c.coach.name >> c.price) {
         catalog.push_back(c);
     }
-
+    1001 Yoga 0001 Jason 30.00
     cFile.close();
 
     vector<string> validDates;
@@ -70,7 +70,7 @@ void bookClass(Member member) {
 
     while (classFile >> ac.classType.classID >> ac.date >> ac.time >> ac.MaxCapacity) {
         bool isValidDate = false;
-
+        
         for (const string& validDate : validDates) {
             if (ac.date == validDate) {
                 isValidDate = true;
@@ -260,7 +260,60 @@ void viewBooking(Member member) {
     cout << "               MY ACTIVE BOOKINGS               " << endl;
     cout << "================================================" << endl << endl;
 
+    vector<Class> classCatalog = loadClassCatalog();
+    vector<Trainer> trainerCatalog = loadTrainerCatalog();
     
+    ifstream classFile("classBookings.txt");
+    int bID, cID;
+    string uName, bDate, bTime;
+    bool foundClass = false;
+
+    cout << "\n[ FITNESS CLASS RESERVATIONS ]" << endl;
+    cout << left << setw(12) << "Booking ID"
+        << left << setw(18) << "Class Name"
+        << left << setw(15) << "Coach"
+        << left << setw(12) << "Date"
+        << left << setw(10) << "Time"
+        << right << setw(10) << "Fee (RM)" << endl;
+    cout << "-----------------------------------------------------------------------------------" << endl;
+    cout << fixed << setprecision(2);
+
+    if (classFile.is_open()) {
+        // classBookings.txt format: bookingID username classID date time
+        while (classFile >> bID >> uName >> cID >> bDate >> bTime) {
+            if (uName == member.loginInfo.usernames) {
+                string className = "Unknown";
+                string coachName = "Unknown";
+                double originalPrice = 0.0;
+
+                // Look up class details from catalog
+                for (const auto& item : classCatalog) {
+                    if (item.classID == cID) {
+                        className = item.name;
+                        coachName = item.coach.name;
+                        originalPrice = item.price;
+                        break;
+                    }
+                }
+
+                // Premium members pay RM 0.00
+                double chargedPrice = isPremium ? 0.00 : originalPrice;
+
+                cout << left << setw(12) << bID
+                    << left << setw(18) << className
+                    << left << setw(15) << coachName
+                    << left << setw(12) << bDate
+                    << left << setw(10) << bTime
+                    << right << setw(10) << chargedPrice << endl;
+                foundClass = true;
+            }
+        }
+        classFile.close();
+
+        if (!foundClass) {
+            cout << "No active fitness class reservations found." << endl;
+        }
+    }
 }
 
 void cancelBooking() {
