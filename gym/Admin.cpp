@@ -157,7 +157,7 @@ void displayScheduleMenu() {
 	cout << "2. View Class Schedule\n";
 	cout << "3. Update Class Schedule\n";
 	cout << "4. Remove Class Schedule\n";
-	cout << "5. Check Trainer Conflicts\n";
+	cout << "5. Check Trainer Conflicts\n"; 
 	cout << "0. Back to Admin Menu\n";
 	cout << "--------------------------------------------------" << endl;
 }

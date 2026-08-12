@@ -8,7 +8,7 @@ void scheduleMain() {
 
 // --- NEW HELPER: Load from file ---
 void loadSchedulesFromFile(vector<Schedule>& schedules) {
-    ifstream inFile("Schedules.csv");
+    ifstream inFile("Schedules.txt");
     if (!inFile.is_open()) {
         return; // File doesn't exist yet, which is fine for the first run
     }
@@ -46,7 +46,7 @@ void loadSchedulesFromFile(vector<Schedule>& schedules) {
 
 // --- NEW HELPER: Save to file ---
 void saveSchedulesToFile(const vector<Schedule>& schedules) {
-    ofstream outFile("Schedules.csv");
+    ofstream outFile("Schedules.txt");
     if (outFile.is_open()) {
         for (const Schedule& s : schedules) {
             outFile << s.scheduleID << ","
