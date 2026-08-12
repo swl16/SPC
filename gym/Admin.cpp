@@ -259,6 +259,7 @@ void deleteMembershipPlan() {
 	// Implementation for deleting a membership plan
 }
 
+
 void adminMenu(Member* members, int userCount) {
 
 	char choice, choose;
@@ -267,6 +268,8 @@ void adminMenu(Member* members, int userCount) {
 		displayadminMenu();
 		cout << "Enter your choice: ";
 		cin >> choice;
+
+		vector<Schedule> schedules;
 
 		switch (choice) {
 		case '1': // View All Members
@@ -328,7 +331,6 @@ void adminMenu(Member* members, int userCount) {
 
 		case '5': // Schedule Management
 
-			vector<Schedule> schedules;
 			loadSchedulesFromFile(schedules);
 
 			do {
