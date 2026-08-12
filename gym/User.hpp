@@ -1,5 +1,6 @@
 #pragma once
 #include<iostream>
+#include "FitnessTracking.hpp"
 
 using namespace std;
 
@@ -17,6 +18,7 @@ struct Member {
 	char gender;
 	string phNo;
 	string email;
+	FitnessRecord fitness;
 };
 
 struct Payment {
@@ -26,7 +28,6 @@ struct Payment {
 	string paymentDate;
 	string paymentMethod;
 };
-
 
 
 void registerUser(Member* members);

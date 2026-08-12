@@ -36,10 +36,10 @@
     <ClCompile Include="AttendanceTracker.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="UserLogin.cpp">
+    <ClCompile Include="FitnessTracking.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Payment.cpp">
+    <ClCompile Include="UserLogin.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -51,6 +51,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="AttendanceTracker.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FitnessTracking.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

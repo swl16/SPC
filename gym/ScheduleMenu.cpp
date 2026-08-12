@@ -1,42 +1,111 @@
 #include "ScheduleMenu.hpp"
 
-void scheduleMenu() {
-    vector<Schedule> schedules;
 
-    // --- NEW: Load existing schedules from the file immediately ---
-    loadSchedulesFromFile(schedules);
 
-    int choice;
+//Input validation function
+int getIntegerInput(const string& message, int min, int max) {
+    int value;
+    while (true) {
+        cout << message;
+        if (cin >> value && value >= min && value <= max) {
+            return value;
+        }
+        cout << "Invalid input. Please enter a number from " << min << " to " << max << ".\n";
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    }
+}
 
-    do {
-        cout << "\n=== Gym Schedule Management ===\n";
-        cout << "1. Add Schedule\n";
-        cout << "2. Display Schedules\n";
-        cout << "3. Search Schedule by Date\n";
-        cout << "4. Update Schedule\n";
-        cout << "5. Cancel Schedule\n";
-        cout << "6. Assign Trainer\n";
-        cout << "0. Exit\n";
-        cout << "Enter your choice: ";
-        cin >> choice;
+string getNonEmptyString(const string& message) {
+    string value;
+    while (true) {
+        cout << message;
+        getline(cin >> ws, value); // ws extracts leading whitespace/newlines safely
+        if (!value.empty()) {
+            return value;
+        }
+        cout << "Input cannot be empty. Please try again.\n";
+    }
+}
 
-        switch (choice) {
-        case 1: addschedule(schedules); break;
-        case 2: displayschedule(schedules); break;
-        case 3: searchschedule(schedules); break;
-        case 4: updateschedule(schedules); break;
-        case 5: cancelschedule(schedules); break;
-        case 6: assigntrainer(schedules); break;
-        case 0: cout << "Exiting Schedule Module...\n"; break;
-        default: cout << "Invalid choice. Try again.\n";
+bool isValidDate(const string& date, bool allowPast) {
+    // 1. Check length and slash positions
+    if (date.length() != 10) return false;
+    if (date[4] != '/' || date[7] != '/') return false;
+
+    // 2. Check if all other characters are digits
+    for (int i = 0; i < 10; i++) {
+        if (i == 4 || i == 7) continue;
+        if (!isdigit(date[i])) return false;
+    }
+
+    // 3. Extract year, month, and day as integers
+    int year = stoi(date.substr(0, 4));
+    int month = stoi(date.substr(5, 2));
+    int day = stoi(date.substr(8, 2));
+
+    // 4. Basic calendar range checks
+    if (month < 1 || month > 12) return false;
+    if (day < 1 || day > 31) return false;
+
+    int daysInMonth[] = { 0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+
+    // Leap year calculation for February
+    if (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0)) {
+        daysInMonth[2] = 29;
+    }
+
+    if (day > daysInMonth[month]) return false;
+
+    // 5. Check against the actual current date
+    if (!allowPast) {
+        time_t t = time(nullptr);
+        tm* now = localtime(&t);
+
+        int currentYear = now->tm_year + 1900;
+        int currentMonth = now->tm_mon + 1;
+        int currentDay = now->tm_mday;
+
+        // Convert both dates to an integer (e.g., 20260812) for easy comparison
+        int inputDateInt = (year * 10000) + (month * 100) + day;
+        int currentDateInt = (currentYear * 10000) + (currentMonth * 100) + currentDay;
+
+        if (inputDateInt < currentDateInt) {
+            return false; // Date is successfully rejected for being in the past
+        }
+    }
+
+    return true;
+}
+
+string getValidDate(const string& message, bool allowPast = false) {
+    string date;
+    while (true) {
+        cout << message;
+        getline(cin >> ws, date);
+
+        if (isValidDate(date, allowPast)) {
+            return date;
         }
 
-    } while (choice != 0);
+        if (!allowPast) {
+            cout << "Invalid date! Please use YYYY/MM/DD format. The date cannot be in the past.\n";
+        }
+        else {
+            cout << "Invalid date! Please ensure it is a real calendar date in YYYY/MM/DD format.\n";
+        }
+    }
+}
+
+void pauseScreen() {
+    cout << "\nPress ENTER to continue...";
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    cin.get();
 }
 
 // --- NEW HELPER: Load from file ---
 void loadSchedulesFromFile(vector<Schedule>& schedules) {
-    ifstream inFile("Schedules.csv");
+    ifstream inFile("Schedules.txt");
     if (!inFile.is_open()) {
         return; // File doesn't exist yet, which is fine for the first run
     }
@@ -74,7 +143,7 @@ void loadSchedulesFromFile(vector<Schedule>& schedules) {
 
 // --- NEW HELPER: Save to file ---
 void saveSchedulesToFile(const vector<Schedule>& schedules) {
-    ofstream outFile("Schedules.csv");
+    ofstream outFile("Schedules.txt");
     if (outFile.is_open()) {
         for (const Schedule& s : schedules) {
             outFile << s.scheduleID << ","
@@ -88,7 +157,7 @@ void saveSchedulesToFile(const vector<Schedule>& schedules) {
         outFile.close();
     }
     else {
-        cout << "Error: Could not save to Schedules.csv.\n";
+        cout << "Error: Could not save to file.\n";
     }
 }
 
@@ -98,23 +167,17 @@ void addschedule(vector<Schedule>& schedules) {
     newClass.scheduleID = schedules.empty() ? 100 : schedules.back().scheduleID + 1;
     newClass.isCanceled = false;
 
-    cin.ignore();
+
     cout << "\n--- Add New Schedule ---\n";
-    cout << "Enter schedule name: ";
-    getline(cin, newClass.className);
 
-    cout << "Enter schedule date (YYYY/MM/DD): ";
-    getline(cin, newClass.date);
+    newClass.className = getNonEmptyString("Enter schedule name: ");
 
-    cout << "Enter start time (eg. 1400): ";
-    cin >> newClass.startTime;
+    newClass.date = getValidDate("Enter schedule date (YYYY/MM/DD): ");
 
-    cout << "Enter end time (eg. 1600): ";
-    cin >> newClass.endTime;
+    newClass.startTime = getIntegerInput("Enter start time (eg. 1400): ", 1000, 2000);
 
-    cin.ignore();
-    cout << "Enter trainer name: ";
-    getline(cin, newClass.trainerName);
+    newClass.endTime = getIntegerInput("Enter end time (eg. 1600): ", 1000, 2000);
+    newClass.trainerName = getNonEmptyString("Enter trainer name: ");
 
     if (newClass.startTime >= newClass.endTime) {
         cout << "Error: Start time must be before end time.\n";
@@ -180,8 +243,7 @@ void searchschedule(const vector<Schedule>& schedules) {
 
     string searchDate;
     cout << "\n--- Search Schedule by Date ---\n";
-    cout << "Enter the date you want to search (YYYY/MM/DD): ";
-    cin >> searchDate;
+    searchDate = getValidDate("Enter the date you want to search (YYYY/MM/DD): ");
 
     bool found = false;
 
@@ -228,48 +290,107 @@ void updateschedule(vector<Schedule>& schedules) {
 
     int searchID;
     cout << "\n--- Update Schedule ---\n";
-    cout << "Enter the Schedule ID you want to update: ";
-    cin >> searchID;
+	searchID = getIntegerInput("Enter the Schedule ID you want to update: ", 100, 9999);
 
     bool found = false;
 
     for (Schedule& s : schedules) {
         if (s.scheduleID == searchID) {
             found = true;
-            cout << "\nSchedule found! Enter new details below.\n";
-            cin.ignore();
+            char updateChoice;
+            bool isModified = false;
 
-            string tempName, tempDate;
-            int tempStart, tempEnd;
+            do {
+                cout << "\n--- Updating Schedule ID: " << s.scheduleID << " ---\n";
+                cout << "Current Details:\n";
+                cout << "1. Class Name : " << s.className << "\n";
+                cout << "2. Date       : " << s.date << "\n";
+                cout << "3. Start Time : " << s.startTime << "\n";
+                cout << "4. End Time   : " << s.endTime << "\n";
+                cout << "0. Finish & Save Changes\n";
+                cout << "--------------------------------\n";
+                cout << "Enter the number of the field you want to change: ";
+                cin >> updateChoice;
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
-            cout << "Enter new schedule name: ";
-            getline(cin, tempName);
+                string tempDate;
+                int tempStart, tempEnd;
 
-            cout << "Enter new schedule date (YYYY/MM/DD): ";
-            getline(cin, tempDate);
+                switch (updateChoice) {
+                case '1' :
+                    s.className = getNonEmptyString("Enter new schedule name: ");
+                    isModified = true;
+                    cout << "Class name updated successfully!\n";
+                    break;
 
-            cout << "Enter new start time ( eg. 1400 ): ";
-            cin >> tempStart;
+                case '2':
 
-            cout << "Enter new end time ( eg. 1600 ): ";
-            cin >> tempEnd;
+                    tempDate = getValidDate("Enter new schedule date (YYYY/MM/DD): ");
 
-            if (tempStart >= tempEnd) {
-                cout << "Error: Start time must be before end time. Update failed.\n";
-            }
-            else if (hasConflict(schedules, tempDate, tempStart, tempEnd, searchID)) {
-                cout << "Error: This time slot conflicts with another class. Update failed.\n";
-            }
-            else {
-                s.className = tempName;
-                s.date = tempDate;
-                s.startTime = tempStart;
-                s.endTime = tempEnd;
-                cout << "Schedule updated successfully!\n";
+                    if (hasConflict(schedules, tempDate, s.startTime, s.endTime, searchID)) {
+                        cout << "Error: The current time slot (" << s.startTime << "-" << s.endTime
+                            << ") conflicts with another class on " << tempDate << ". Update failed.\n";
+                    }
+                    else {
+                        s.date = tempDate;
+                        isModified = true;
+                        cout << "Date updated successfully!\n";
+                    }
+                    break;
 
-                // --- NEW: Save updates ---
-                saveSchedulesToFile(schedules);
-            }
+                case '3':
+
+                    tempStart = getIntegerInput("Enter new start time (eg. 1400): ", 0, 2400);
+
+                    if (tempStart >= s.endTime) {
+                        cout << "Error: Start time must be before the current end time (" << s.endTime << "). Update failed.\n";
+                    }
+                    else if (hasConflict(schedules, s.date, tempStart, s.endTime, searchID)) {
+                        cout << "Error: This new start time conflicts with another class. Update failed.\n";
+                    }
+                    else {
+                        s.startTime = tempStart;
+                        isModified = true;
+                        cout << "Start time updated successfully!\n";
+                    }
+
+                    break;
+                case '4':
+
+                    tempEnd = getIntegerInput("Enter new end time (eg. 1600): ", 0, 2400);
+
+                    if (s.startTime >= tempEnd) {
+                        cout << "Error: End time must be after the current start time (" << s.startTime << "). Update failed.\n";
+                    }
+                    else if (hasConflict(schedules, s.date, s.startTime, tempEnd, searchID)) {
+                        cout << "Error: This new end time conflicts with another class. Update failed.\n";
+                    }
+                    else {
+                        s.endTime = tempEnd;
+                        isModified = true;
+                        cout << "End time updated successfully!\n";
+                    }
+
+                    break;
+
+                case '0':
+
+                    if (isModified) {
+                        saveSchedulesToFile(schedules);
+                        cout << "\nAll changes saved to file successfully!\n";
+                    }
+                    else {
+                        cout << "\nNo changes were made.\n";
+                    }
+
+                    break;
+
+                default:
+                    cout << "Invalid choice. Please try again.\n";
+                }
+
+            } while (updateChoice != '0');
+
             break;
         }
     }
@@ -287,8 +408,8 @@ void assigntrainer(vector<Schedule>& schedules) {
 
     int searchID;
     cout << "\n--- Assign Trainer ---\n";
-    cout << "Enter the Schedule ID to assign a trainer: ";
-    cin >> searchID;
+    searchID = getIntegerInput("Enter the Schedule ID to assign a trainer: ", 100, 9999);
+
 
     bool found = false;
 
@@ -302,9 +423,7 @@ void assigntrainer(vector<Schedule>& schedules) {
             else {
                 cout << "Current Trainer: " << (s.trainerName.empty() ? "None" : s.trainerName) << "\n";
 
-                cin.ignore();
-                cout << "Enter new trainer name: ";
-                getline(cin, s.trainerName);
+                s.trainerName = getNonEmptyString("Enter new trainer name: ");
 
                 cout << "Trainer assigned successfully to Schedule ID " << searchID << "!\n";
 
@@ -328,8 +447,7 @@ void cancelschedule(vector<Schedule>& schedules) {
 
     int searchID;
     cout << "\n--- Cancel Schedule ---\n";
-    cout << "Enter the Schedule ID you want to cancel: ";
-    cin >> searchID;
+    searchID = getIntegerInput("Enter the Schedule ID you want to cancel: ", 100, 99999);
 
     bool found = false;
 

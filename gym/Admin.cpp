@@ -154,10 +154,11 @@ void displayScheduleMenu() {
 	cout << "              SCHEDULE MANAGEMENT				   " << endl;
 	cout << "==================================================" << endl;
 	cout << "1. Add Class Schedule\n";
-	cout << "2. View Class Schedule\n";
-	cout << "3. Update Class Schedule\n";
-	cout << "4. Remove Class Schedule\n";
-	cout << "5. Check Trainer Conflicts\n";
+	cout << "2. View All Class Schedules\n";
+	cout << "3. Search Schedule by Date\n";
+	cout << "4. Update Class Schedule\n";
+	cout << "5. Assign Trainer to Schedule\n";
+	cout << "6. Cancel Class Schedule\n";
 	cout << "0. Back to Admin Menu\n";
 	cout << "--------------------------------------------------" << endl;
 }
@@ -299,6 +300,7 @@ void adminMenu(Member* members, int userCount) {
 						cout << "Returning to Admin Menu...\n";
 						break;
 				default:
+					cout << "Invalid choice. Please try again." << endl;
 					break;
 				}
 
@@ -325,28 +327,51 @@ void adminMenu(Member* members, int userCount) {
 			break;
 
 		case '5': // Schedule Management
-			
+
+			vector<Schedule> schedules;
+			loadSchedulesFromFile(schedules);
+
 			do {
 				displayScheduleMenu();
 				cout << "Enter your choice: ";
 				cin >> choose;
+				cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
 				switch (choose) {
 				case '1':
 					// Call function to add class schedule
+					addschedule(schedules);
+					pauseScreen();
 					break;
+
 				case '2':
 					// Call function to view class schedule
+					displayschedule(schedules);
+					pauseScreen();
 					break;
+
 				case '3':
-					// Call function to update class schedule
+					// Call function to search class schedule
+					searchschedule(schedules);
+					pauseScreen();
 					break;
+
 				case '4':
-					// Call function to remove class schedule
+					// Call function to update class schedule
+					updateschedule(schedules);
+					pauseScreen();
 					break;
+
 				case '5':
-					// Call function to check trainer conflicts
+					// Call function to assign trainer
+					assigntrainer(schedules);
+					pauseScreen();
 					break;
+				case '6':
+					cancelschedule(schedules);
+					pauseScreen();
+					break;
+
 				case '0':
 					cout << "Returning to Admin Menu...\n";
 					break;

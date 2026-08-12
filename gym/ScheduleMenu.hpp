@@ -1,10 +1,11 @@
-#pragma once
 #include <iostream>
 #include <iomanip>
 #include <string>
 #include <vector>
 #include <fstream>
 #include <sstream>
+#include <cctype>
+#include <ctime>
 using namespace std;
 
 struct Schedule {
@@ -17,10 +18,12 @@ struct Schedule {
     bool isCanceled;
 };
 
-// This is the new "main" function for your specific module
-void scheduleMenu();
+int getIntegerInput(const string& message, int min, int max);
+string getNonEmptyString(const string& message);
+bool isValidDate(const string& date, bool allowPast);
+string getValidDate(const string& message, bool allowPast = false);
+void pauseScreen();
 
-// Your existing prototypes
 void addschedule(vector<Schedule>& schedules);
 void displayschedule(const vector<Schedule>& schedules);
 void searchschedule(const vector<Schedule>& schedules);
