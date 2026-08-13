@@ -5,6 +5,7 @@
 #include <sstream>
 #include <string>
 #include <limits>
+#include <cstdio>
 
 #include "User.hpp"
 #include "ScheduleMenu.hpp"
@@ -27,6 +28,24 @@ int getIntegerInput(const string& message, int min, int max) {
 		cin.clear();
 		cin.ignore(numeric_limits<streamsize>::max(), '\n');
 	}
+}
+
+int generateBookingID(const string& filename) {
+	ifstream file(filename);
+	if (!file.is_open()) return 0001; // Default start ID
+
+	int lastID = 0000;
+	string line;
+	while (getline(file, line)) {
+		if (line.empty()) continue;
+		stringstream ss(line);
+		int currentID;
+		if (ss >> currentID) {
+			lastID = currentID;
+		}
+	}
+	file.close();
+	return lastID + 1;
 }
 
 double getPositiveDouble(const string& message) {
@@ -219,16 +238,46 @@ void viewAllMembers(Member* members, int userCount) {
 }
 
 void addMembershipPlan() {
-	
+	int id = generateBookingID("membershipPlan.txt");
 	string planName, planDuration;
 	double price;
 
-	cout << "Enter plan name: ";
+	cout << "\n================================================" << endl;
+	cout << "            ADD NEW MEMBERSHIP PLAN             " << endl;
+	cout << "================================================" << endl << endl;
+
+	cout << "Enter plan name (no spaces, e.g. Quarterly / Premium_Pass): ";
 	cin >> planName;
-	cout << "Enter plan duration : ";
-	cin >> planDuration;
-	cout << "Enter plan price: ";
-	cin >> price;
+
+	do {
+		cout << "Enter Duration (in months, e.g., 1, 3, 6, 12): ";
+		if (cin >> duration && duration > 0) break;
+
+		cin.clear();
+		cin.ignore(1000, '\n');
+		cout << "Invalid duration. Please enter a positive number." << endl;
+	} while (true);
+
+	do {
+		cout << "Enter Price (RM, e.g., 150.00): ";
+		if (cin >> price && price >= 0) break;
+
+		cin.clear();
+		cin.ignore(1000, '\n');
+		cout << "Invalid price. Please enter a valid amount." << endl;
+	} while (true);
+	cin.ignore(1000, '\n');
+
+	cout << "\nEnter Plan Benefits separated by semicolons ';'" << endl;
+	cout << "Example: Free locker access; Unlimited gym entrance" << endl;
+	cout << "Benefits: ";
+
+	string benefits;
+	getline(cin, benefits);
+
+	if (benefits.empty()) {
+		benefits = "Standard gym access"; // Default fallback if left blank
+	}
 
 	ofstream membershipFile("membershipPlan.txt");
 
@@ -237,26 +286,319 @@ void addMembershipPlan() {
 		return;
 	}
 
-	membershipFile << planName << "," << planDuration << "," << price << endl;
+	membershipFile << id << " " << planName << " " << planDuration << " " << fixed << setprecision(2) << price << " " << benefits << endl;
+	membershipFile.close();
+
+	cout << "The new membership is successfully added." << endl;
+	cout << "\n------------------------------------------------" << endl;
+	cout << "           CONFIRM NEW PLAN DETAILS             " << endl;
+	cout << "------------------------------------------------" << endl;
+	cout << "Plan ID   : " << id << endl;
+	cout << "Plan Name : " << planName << endl;
+	cout << "Duration  : " << planDuration << (duration == 1 ? " Month" : " Months") << endl;
+	cout << "Price     : RM " << fixed << setprecision(2) << price << endl;
+	cout << "Benefits  : " << benefits << endl;
+	cout << "------------------------------------------------" << endl;
+	cout << "\nPress ENTER back to Membership Plan Menu.\n";
+	cin.ignore(numeric_limits<streamsize>::max(), '\n');
+	cin.get();
+}
+
+void viewMembershipPlans() {
+	ifstream membershipFile("membershipPlan.txt");
+
+	if (!membershipFile.is_open()) {
+		cerr << "Error opening file!" << endl;
+		return;
+	}
+
+	int no, duration;
+	string planName;
+	double price;
+	string description;
+
+	cout << "================================================" << endl;
+	cout << "                MEMBERSHIP PLANS                " << endl;
+	cout << "================================================" << endl << endl;
+
+	cout << left << setw(5) << "No."
+		<< left << setw(15) << "Plan Name"
+		<< left << setw(15) << "Duration"
+		<< left << setw(15) << "Price" << endl;
+	cout << "------------------------------------------------" << endl;
+
+	cout << fixed << setprecision(2);
+
+	while (membershipFile >> no >> planName >> duration >> price) {
+		string durationStr = to_string(duration) + (duration == 1 ? " Month" : " Months");
+		string priceStr = "RM " + to_string(price).substr(0, to_string(price).find('.') + 3);
+
+		cout << left << setw(5) << no
+			<< left << setw(15) << planName
+			<< left << setw(15) << durationStr
+			<< left << setw(15) << priceStr << endl;
+
+		string ignoreBenefits;
+		getline(membershipFile, ignoreBenefits);
+	}
+
+	cout << "------------------------------------------------" << endl;
+
+	membershipFile.clear();
+	membershipFile.seekg(0);
+
+	while (membershipFile >> no >> planName >> duration >> price) {
+		string benefits;
+		getline(membershipFile >> ws, benefits);
+
+		cout << planName << " Plan Benefits:" << endl;
+
+		stringstream ss(benefits);
+		string item;
+
+		while (getline(ss, item, ';')) {
+			cout << "- " << item << endl;
+		}
+
+		cout << "------------------------------------------------" << endl;
+	}
+
 	membershipFile.close();
 
 	cout << "\nPress ENTER back to Membership Plan Menu.\n";
 	cin.ignore(numeric_limits<streamsize>::max(), '\n');
 	cin.get();
-
-
-}
-
-void viewMembershipPlans() {
-	// Implementation for viewing membership plans
 }
 
 void updateMembershipPlan() {
-	// Implementation for updating a membership plan
+	ifstream membershipFile("membershipPlan.txt");
+
+	if (!membershipFile.is_open()) {
+		cerr << "Error: Could not open membershipPlan.txt!" << endl;
+		return;
+	}
+
+	cout << "\n================================================" << endl;
+	cout << "              UPDATE MEMBERSHIP PLAN            " << endl;
+	cout << "================================================" << endl << endl;
+
+	int planID, duration;
+	string planName, benefits;
+	double price;
+
+	cout << left << setw(8) << "ID"
+		<< left << setw(18) << "Plan Name"
+		<< left << setw(12) << "Duration"
+		<< right << setw(10) << "Price (RM)" << endl;
+	cout << "------------------------------------------------" << endl;
+
+	bool hasPlans = false;
+	while (inFile >> planID >> planName >> duration >> price) {
+		getline(inFile >> ws, benefits); // Read benefits string
+		hasPlans = true;
+
+		string durationStr = to_string(duration) + (duration == 1 ? " Mo" : " Mos");
+
+		cout << fixed << setprecision(2);
+		cout << left << setw(8) << planID
+			<< left << setw(18) << planName
+			<< left << setw(12) << durationStr
+			<< right << setw(10) << price << endl;
+	}
+	membershipFile.close();
+
+	if (!hasPlans) {
+		cout << "No membership plans found in database." << endl;
+		return;
+	}
+
+	int targetID;
+	cout << "\nEnter Plan ID to update (or 0 to cancel): ";
+	if (!(cin >> targetID) || targetID == 0) {
+		cout << "Update cancelled." << endl;
+		return;
+	}
+
+	string newName, newBenefits;
+	int newDuration;
+	double newPrice;
+
+	cout << "\n--- ENTER NEW PLAN DETAILS ---" << endl;
+	cout << "Enter New Plan Name (no spaces, e.g. Gold_Pass): ";
+	cin >> newName;
+
+	do {
+		cout << "Enter New Duration (in months): ";
+		if (cin >> newDuration && newDuration > 0) break;
+
+		cin.clear();
+		cin.ignore(1000, '\n');
+		cout << "Invalid input. Please enter a positive number." << endl;
+	} while (true);
+
+	do {
+		cout << "Enter New Price (RM): ";
+		if (cin >> newPrice && newPrice >= 0) break;
+
+		cin.clear();
+		cin.ignore(1000, '\n');
+		cout << "Invalid input. Please enter a valid price." << endl;
+	} while (true);
+
+	cin.ignore(1000, '\n'); // Clear buffer before getline
+	cout << "Enter New Benefits (separated by ';'): ";
+	getline(cin, newBenefits);
+
+	if (newBenefits.empty()) {
+		newBenefits = "Standard gym access";
+	}
+
+	ifstream srcFile("membershipPlan.txt");
+	ofstream tempFile("temp.txt");
+
+	if (!srcFile.is_open() || !tempFile.is_open()) {
+		cerr << "Error updating membership database!" << endl;
+		return;
+	}
+
+	bool updated = false;
+	while (srcFile >> planID >> planName >> duration >> price) {
+		getline(srcFile >> ws, benefits);
+
+		if (planID == targetID) {
+			// Write NEW updated record
+			tempFile << planID << " "
+				<< newName << " "
+				<< newDuration << " "
+				<< fixed << setprecision(2) << newPrice << " "
+				<< newBenefits << "\n";
+			updated = true;
+		}
+		else {
+			// Write existing unchanged record
+			tempFile << planID << " "
+				<< planName << " "
+				<< duration << " "
+				<< fixed << setprecision(2) << price << " "
+				<< benefits << "\n";
+		}
+	}
+
+	srcFile.close();
+	tempFile.close();
+
+	// Replace original file with updated file
+	remove("membershipPlan.txt");
+	rename("temp.txt", "membershipPlan.txt");
+
+	if (updated) {
+		cout << "\n================================================" << endl;
+		cout << "     MEMBERSHIP PLAN UPDATED SUCCESSFULLY!      " << endl;
+		cout << "================================================" << endl;
+	}
+	else {
+		cout << "\n[ERROR] Plan ID " << targetID << " not found!" << endl;
+	}
 }
 
 void deleteMembershipPlan() {
-	// Implementation for deleting a membership plan
+	ifstream membershipFile("membershipPlan.txt");
+
+	if (!membershipFile.is_open()) {
+		cerr << "Error: Could not open membershipPlan.txt!" << endl;
+		return;
+	}
+
+	cout << "\n================================================" << endl;
+	cout << "             DELETE MEMBERSHIP PLAN             " << endl;
+	cout << "================================================" << endl << endl;
+
+	int planID, duration;
+	string planName, benefits;
+	double price;
+
+	cout << left << setw(8) << "ID"
+		<< left << setw(18) << "Plan Name"
+		<< left << setw(12) << "Duration"
+		<< right << setw(10) << "Price (RM)" << endl;
+	cout << "------------------------------------------------" << endl;
+
+	bool hasPlans = false;
+	while (inFile >> planID >> planName >> duration >> price) {
+		getline(inFile >> ws, benefits); 
+		hasPlans = true;
+
+		string durationStr = to_string(duration) + (duration == 1 ? " Mo" : " Mos");
+
+		cout << fixed << setprecision(2);
+		cout << left << setw(8) << planID
+			<< left << setw(18) << planName
+			<< left << setw(12) << durationStr
+			<< right << setw(10) << price << endl;
+	}
+	inFile.close();
+
+	if (!hasPlans) {
+		cout << "No membership plans found in database." << endl;
+		return;
+	}
+
+	int targetID;
+	cout << "\nEnter Plan ID to DELETE (or 0 to cancel): ";
+	if (!(cin >> targetID) || targetID == 0) {
+		cout << "Deletion cancelled." << endl;
+		return;
+	}
+
+	char confirm;
+	cout << "Are you sure you want to delete Plan ID " << targetID << "? (Y/N): ";
+	cin >> confirm;
+
+	if (confirm != 'Y' && confirm != 'y') {
+		cout << "Deletion cancelled." << endl;
+		return;
+	}
+
+	ifstream srcFile("membershipPlan.txt");
+	ofstream tempFile("temp.txt");
+
+	if (!srcFile.is_open() || !tempFile.is_open()) {
+		cerr << "Error updating membership database!" << endl;
+		return;
+	}
+
+	bool deleted = false;
+	while (srcFile >> planID >> planName >> duration >> price) {
+		getline(srcFile >> ws, benefits);
+
+		if (planID == targetID) {
+			deleted = true;
+		}
+		else {
+			// Write existing unchanged record
+			tempFile << planID << " "
+				<< planName << " "
+				<< duration << " "
+				<< fixed << setprecision(2) << price << " "
+				<< benefits << "\n";
+		}
+	}
+
+	srcFile.close();
+	tempFile.close();
+
+	// Replace original file with updated temp file
+	remove("membershipPlan.txt");
+	rename("temp.txt", "membershipPlan.txt");
+
+	if (deleted) {
+		cout << "\n================================================" << endl;
+		cout << "     MEMBERSHIP PLAN DELETED SUCCESSFULLY!      " << endl;
+		cout << "================================================" << endl;
+	}
+	else {
+		cout << "\n[ERROR] Plan ID " << targetID << " not found!" << endl;
+	}
 }
 
 void adminMenu(Member* members, int userCount) {
@@ -281,19 +623,19 @@ void adminMenu(Member* members, int userCount) {
 
 				switch (choose){
 					case '1': // Call function to add membership plan
-
+						addMembershipPlan();
 						break;
 
 					case '2': // Call function to view membership plans
-
+						viewMembershipPlans();
 						break;
 
 					case '3': // Call function to update membership plan
-
+						updateMembershipPlan();
 						break;
 
 					case '4': // Call function to delete membership plan
-						
+						deleteMembershipPlan();
 						break;
 
 					case '0':

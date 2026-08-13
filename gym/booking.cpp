@@ -256,8 +256,21 @@ void bookTrainer() {
 }
 
 void viewBooking(Member member) {
+    time_t now = time(nullptr);
+    tm ltm;
+
+#ifdef _WIN32
+    localtime_s(&ltm, &now);
+#else
+    ltm = *localtime(&now);
+#endif
+
+    char buffer[20];
+    strftime(buffer, sizeof(buffer), "%Y/%m/%d", &ltm);
+    string todayDate = string(buffer);
+
     cout << "================================================" << endl;
-    cout << "               MY ACTIVE BOOKINGS               " << endl;
+    cout << "             FITNESS CLASS BOOKINGS             " << endl;
     cout << "================================================" << endl << endl;
 
     vector<Class> classCatalog = loadClassCatalog();
@@ -268,14 +281,14 @@ void viewBooking(Member member) {
     string uName, bDate, bTime;
     bool foundClass = false;
 
-    cout << "\n[ FITNESS CLASS RESERVATIONS ]" << endl;
+    cout << "\n----------------UPCOMING CLASSES----------------" << endl;
     cout << left << setw(12) << "Booking ID"
         << left << setw(18) << "Class Name"
         << left << setw(15) << "Coach"
         << left << setw(12) << "Date"
         << left << setw(10) << "Time"
         << right << setw(10) << "Fee (RM)" << endl;
-    cout << "-----------------------------------------------------------------------------------" << endl;
+    cout << "------------------------------------------------" << endl;
     cout << fixed << setprecision(2);
 
     if (classFile.is_open()) {
