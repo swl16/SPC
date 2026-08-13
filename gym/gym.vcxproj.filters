@@ -62,7 +62,7 @@
     <ClInclude Include="FitnessTracking.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="booking.h">
+    <ClInclude Include="booking.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
