@@ -125,6 +125,7 @@
   <ItemGroup>
     <ClCompile Include="Admin.cpp" />
     <ClCompile Include="AttendanceTracker.cpp" />
+    <ClCompile Include="booking.cpp" />
     <ClCompile Include="FitnessTracking.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="membership.cpp" />
@@ -136,9 +137,17 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AttendanceTracker.hpp" />
+    <ClInclude Include="booking.h" />
     <ClInclude Include="FitnessTracking.hpp" />
     <ClInclude Include="ScheduleMenu.hpp" />
     <ClInclude Include="User.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="availableClasses.txt" />
+    <Text Include="classBookings.txt" />
+    <Text Include="classes.txt" />
+    <Text Include="user.txt" />
+    <Text Include="UserMembership.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -42,6 +42,12 @@
     <ClCompile Include="UserLogin.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Payment.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="booking.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="User.hpp">
@@ -56,5 +62,15 @@
     <ClInclude Include="FitnessTracking.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="booking.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="availableClasses.txt" />
+    <Text Include="classBookings.txt" />
+    <Text Include="classes.txt" />
+    <Text Include="user.txt" />
+    <Text Include="UserMembership.txt" />
   </ItemGroup>
 </Project>
