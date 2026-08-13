@@ -6,6 +6,10 @@ using namespace std;
 
 int main() {
 
+	const int MAX_MEMBERS = 100; // Adjust max size as needed
+	Member members[MAX_MEMBERS];
+	int userCount = 0;
+
 	char choice;
 
 	cout << "================================" << endl;

@@ -9,6 +9,7 @@
 
 #include "User.hpp"
 #include "ScheduleMenu.hpp"
+#include "UserLogin.cpp"
 
 using namespace std;
 
@@ -86,7 +87,7 @@ void pauseScreen() {
 	cin.get();
 }
 
-void adminLogin(Member* members, int userCount) {
+void adminLogin() {
 
 	string adminUsername, adminPassword;
 
@@ -103,7 +104,7 @@ void adminLogin(Member* members, int userCount) {
 		
 		pauseScreen();
 
-		adminMenu(members, userCount);
+		adminMenu();
 
 	}
 	else {
@@ -203,7 +204,9 @@ void displayReportsMenu() {
 	cout << "--------------------------------------------------" << endl;
 }
 
-void viewAllMembers(Member* members, int userCount) {
+void viewAllMembers() {
+
+	Member members[MAX_USERS];
 
 	loadUser(members);
 
@@ -218,7 +221,7 @@ void viewAllMembers(Member* members, int userCount) {
 	}
 
 
-	cout << "Username" << "\tName" << "\tAge" << "\tGender" << "\tPhone" << "\tEmail" << endl;
+	cout << "Username\tName\tAge\tGender\tPhone\tEmail" << endl;
 	cout << "--------------------------------------------------------------------------\n";
 
 	for (int i = 0; i < userCount; i++) {
@@ -601,18 +604,21 @@ void deleteMembershipPlan() {
 	}
 }
 
-void adminMenu(Member* members, int userCount) {
+
+void adminMenu() {
 
 	char choice, choose;
+	vector<Schedule> schedules;
 
 	do {
 		displayadminMenu();
 		cout << "Enter your choice: ";
 		cin >> choice;
 
+
 		switch (choice) {
 		case '1': // View All Members
-			viewAllMembers(members, userCount);
+			viewAllMembers();
 			break;
 
 		case '2': // Membership Plan Management
@@ -670,7 +676,6 @@ void adminMenu(Member* members, int userCount) {
 
 		case '5': // Schedule Management
 
-			vector<Schedule> schedules;
 			loadSchedulesFromFile(schedules);
 
 			do {
