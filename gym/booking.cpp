@@ -7,7 +7,7 @@
 #include <ctime>
 
 #include"User.hpp"
-#include"booking.hpp"
+#include"ScheduleMenu.hpp"
 
 using namespace std;
 
@@ -30,22 +30,13 @@ int generateBookingID(const string& filename) {
 }
 
 void bookClass(Member member) {
-    ifstream cFile("classes.txt");
-	ifstream classFile("availableClasses.txt");
+    vector<Schedule> allSchedules;
+    loadSchedulesFromFile(allSchedules);
 
-    if (!classFile.is_open() || !cFile.is_open()) {
-        cerr << "Error opening availableClasses.txt!" << endl;
+    if (allSchedules.empty()) {
+        cout << "\nNo gym schedules available at the moment." << endl;
         return;
     }
-
-    vector<Class> catalog;
-    Class c;
-
-    while (cFile >> c.classID >> c.name >> c.coach.trainerID >> c.coach.name >> c.price) {
-        catalog.push_back(c);
-    }
-    1001 Yoga 0001 Jason 30.00
-    cFile.close();
 
     vector<string> validDates;
     time_t now = time(nullptr);
@@ -65,33 +56,21 @@ void bookClass(Member member) {
         validDates.push_back(string(buffer));
     }
 
-    vector<AvailableClass> availableClasses;
-    AvailableClass ac;
+    vector<Schedule> availableClasses;
 
-    while (classFile >> ac.classType.classID >> ac.date >> ac.time >> ac.MaxCapacity) {
-        bool isValidDate = false;
-        
-        for (const string& validDate : validDates) {
-            if (ac.date == validDate) {
-                isValidDate = true;
+    for (const auto& s : allSchedules) {
+        if (s.isCanceled) continue; 
+
+        for (const string& d : validDates) {
+            if (s.date == d) {
+                availableClasses.push_back(s);
                 break;
             }
         }
-
-        if (isValidDate) {
-            for (const auto& item : catalog) {
-                if (item.classID == ac.classType.classID) {
-                    ac.classType = item;
-                    availableClasses.push_back(ac);
-                    break;
-                }
-            }
-        }
-    } 
-    classFile.close();
+    }
     
     if (availableClasses.empty()) {
-        cout << "No classes available at the moment." << endl;
+        cout << "No classes available for the next 3 days." << endl;
         return;
     }
 
@@ -100,14 +79,14 @@ void bookClass(Member member) {
     cout << "                  CLASS BOOKING                 " << endl;
     cout << "================================================" << endl << endl;
 
-    cout << "STEP 1 :" << endl;
-    
     do {
-        int i = 1;
+        cout << "STEP 1 :" << endl;
         cout << "Select Date (Book up to 2 days ahead, including today.)" << endl;
-        for (const string& validDate : validDates) {
-            cout << i << ". " << validDate << endl;
-            i++;
+        cout << "------------------------------------------------" << endl;
+        for (size_t i = 0; i < validDates.size(); ++i) {
+            cout << (i + 1) << ". " << validDates[i];
+            if (i == 0) cout << " (Today)";
+            cout << endl;
         }
 
         cout << "------------------------------------------------" << endl;
@@ -131,9 +110,9 @@ void bookClass(Member member) {
             continue;
         }
 
-        string selectedDate = validDates[choice - 1];
+        string selectedDate = validDates[dateChoice - 1];
         
-        vector<AvailableClass> classesForSelectedDate;
+        vector<Schedule> classesForSelectedDate;
         for (const auto& item : availableClasses) {
             if (item.date == selectedDate) {
                 classesForSelectedDate.push_back(item);
@@ -151,36 +130,26 @@ void bookClass(Member member) {
         cout << "------------------------------------------------" << endl;
         
         cout << left << setw(5) << "No."
-                        << left << setw(15) << "Class Name"
-                        << left << setw(12) << "Coach"
-                        << left << setw(8) << "Time"
-                        << left << setw(10) << "Capacity"
-                        << right << setw(10) << "Fee (RM)" << endl;
+            << left << setw(8) << "ID"
+            << left << setw(18) << "Class Name"
+            << left << setw(15) << "Trainer"
+            << left << setw(12) << "Time Slot" << endl;
             
         cout << "------------------------------------------------" << endl;
-        cout << fixed << setprecision(2);
-
         for (size_t idx = 0; idx < classesForSelectedDate.size(); ++idx) {
+            string timeRange = to_string(classesForSelectedDate[idx].startTime) + "-" + to_string(classesForSelectedDate[idx].endTime);
             cout << left << setw(5) << (idx + 1)
-                << left << setw(15) << classesForSelectedDate[idx].classType.name
-                << left << setw(12) << classesForSelectedDate[idx].classType.coach.name
-                << left << setw(8) << classesForSelectedDate[idx].time
-                << left << setw(10) << classesForSelectedDate[idx].MaxCapacity
-                << right << setw(10) << classesForSelectedDate[idx].classType.price << endl; 
+                << left << setw(8) << classesForSelectedDate[idx].scheduleID
+                << left << setw(18) << classesForSelectedDate[idx].className
+                << left << setw(15) << (classesForSelectedDate[idx].trainerName.empty() ? "None" : classesForSelectedDate[idx].trainerName)
+                << left << setw(12) << timeRange << endl;
         }
         cout << "------------------------------------------------" << endl;
        
         int timeChoice;
         cout << "\nEnter Option No. (1-" << classesForSelectedDate.size() << ") to book (or '0' to back):";
 
-        if (!(cin >> timeChoice)) { // Input validation for non-numeric input
-            cin.clear();
-            cin.ignore(1000, '\n');
-            cout << "Invalid input. Please enter a number." << endl;
-            continue;
-        }
-
-        if (timeChoice == 0) {
+        if (!(cin >> timeChoice) || timeChoice == 0) { 
             continue;
         }
 
@@ -189,33 +158,26 @@ void bookClass(Member member) {
             continue;
         }
 
-        AvailableClass selectedClass = classesForSelectedDate[timeChoice - 1];
+        Schedule selectedClass = classesForSelectedDate[timeChoice - 1];
 
         ifstream checkFile("classBookings.txt");
-        int bID, cID, currentCapacityCount = 0;
-        string uName, bDate, bTime;
+        int bID, cID;
+        string uName;
         bool alreadyBooked = false;
 
         if (checkFile.is_open()) {
-            while (checkFile >> bID >> uName >> cID >> bDate >> bTime) {
-                if (cID == selectedClass.classType.classID && bDate == selectedClass.date && bTime == selectedClass.time) {
-                    currentCapacityCount++;
-                    if (uName == member.loginInfo.usernames) {
-                        alreadyBooked = true;
-                    }
+            while (checkFile >> bID >> uName >> cID ) {
+                if (cID == selectedClass.scheduleID && uName == member.loginInfo.usernames) {
+                    alreadyBooked = true;
+                    break;
                 }
             }
             checkFile.close();
         }
 
         if (alreadyBooked) {
-            cout << "\n[ERROR] You have already booked " << selectedClass.classType.name
-                << " on " << selectedClass.date << " at " << selectedClass.time << "!" << endl;
-            continue;
-        }
-
-        if (currentCapacityCount >= selectedClass.MaxCapacity) {
-            cout << "\n[ERROR] Class is FULL! Capacity limit reached." << endl;
+            cout << "\n[ERROR] You have already booked " << selectedClass.className
+                << " on " << selectedClass.date << " at " << selectedClass.startTime << "!" << endl;
             continue;
         }
 
@@ -226,10 +188,12 @@ void bookClass(Member member) {
         cout << "           CLASS BOOKING CONFIRMATION           " << endl;
         cout << "================================================" << endl;
         cout << "Booking ID  : " << newBookingID << endl;
-        cout << "Class       : " << selectedClass.classType.name << endl;
-        cout << "Coach       : " << selectedClass.classType.coach.name << endl;
-        cout << "Date & Time : " << selectedClass.date << " @ " << selectedClass.time << endl;
-        cout << "Fee Paid    : RM " << selectedClass.classType.price << endl;
+        cout << "Schedule ID : " << selectedClass.scheduleID << endl;
+        cout << "Class       : " << selectedClass.className << endl;
+        cout << "Trainer     : " << (selectedClass.trainerName.empty() ? "None" : selectedClass.trainerName) << endl;
+        cout << "Date        : " << selectedClass.date << endl;
+        cout << "Time Slot   : " << selectedClass.startTime << " - " << selectedClass.endTime << endl;
+        cout << "Fee Status  : " << "RM 0.00 (Premium Covered) Standard Rate" << endl;
         cout << "================================================" << endl;
         
         char confirm;
@@ -237,7 +201,6 @@ void bookClass(Member member) {
         cin >> confirm;
 
         if (confirm == 'Y' || confirm == 'y') { 
-            ClassBooking classBooked = { newBookingID, member.name, selectedClass, validDates[0] };
             //process to payment
             break;
         }
@@ -246,16 +209,18 @@ void bookClass(Member member) {
         }
    
     } while (true);
-
-
-
-}
-
-void bookTrainer() {
-
 }
 
 void viewBooking(Member member) {
+    vector<Schedule> allSchedules;
+    loadSchedulesFromFile(allSchedules);
+
+    ifstream classFile("classBookings.txt");
+    if (!classFile.is_open()) {
+        cout << "\nNo class booking records found." << endl;
+        return;
+    }
+
     time_t now = time(nullptr);
     tm ltm;
 
@@ -273,59 +238,54 @@ void viewBooking(Member member) {
     cout << "             FITNESS CLASS BOOKINGS             " << endl;
     cout << "================================================" << endl << endl;
 
-    vector<Class> classCatalog = loadClassCatalog();
-    vector<Trainer> trainerCatalog = loadTrainerCatalog();
     
-    ifstream classFile("classBookings.txt");
-    int bID, cID;
-    string uName, bDate, bTime;
+    int bID, sID;
+    string uName;
     bool foundClass = false;
 
-    cout << "\n----------------UPCOMING CLASSES----------------" << endl;
+    cout << "\n---------------UPCOMING CLASSES----------------" << endl;
     cout << left << setw(12) << "Booking ID"
+        << left << setw(12) << "Schedule ID"
         << left << setw(18) << "Class Name"
-        << left << setw(15) << "Coach"
+        << left << setw(15) << "Trainer"
         << left << setw(12) << "Date"
-        << left << setw(10) << "Time"
-        << right << setw(10) << "Fee (RM)" << endl;
+        << left << setw(12) << "Time Slot"
+        << left << setw(10) << "Status" << endl;
     cout << "------------------------------------------------" << endl;
     cout << fixed << setprecision(2);
 
-    if (classFile.is_open()) {
-        // classBookings.txt format: bookingID username classID date time
-        while (classFile >> bID >> uName >> cID >> bDate >> bTime) {
-            if (uName == member.loginInfo.usernames) {
-                string className = "Unknown";
-                string coachName = "Unknown";
-                double originalPrice = 0.0;
+    while (classFile >> bID >> uName >> sID) {
+        if (uName == member.loginInfo.usernames) {
+            Schedule matchedSchedule;
+            bool scheduleFound = false;
 
-                // Look up class details from catalog
-                for (const auto& item : classCatalog) {
-                    if (item.classID == cID) {
-                        className = item.name;
-                        coachName = item.coach.name;
-                        originalPrice = item.price;
-                        break;
-                    }
+            for (const auto& s : allSchedules) {
+                if (s.scheduleID == sID) {
+                    matchedSchedule = s;
+                    scheduleFound = true;
+                    break;
                 }
+            }
 
-                // Premium members pay RM 0.00
-                double chargedPrice = isPremium ? 0.00 : originalPrice;
+            if (scheduleFound) {
+                string timeStr = to_string(matchedSchedule.startTime) + "-" + to_string(matchedSchedule.endTime);
+                string statusStr = matchedSchedule.isCanceled ? "CANCELED BY ADMIN" : "ACTIVE";
 
                 cout << left << setw(12) << bID
-                    << left << setw(18) << className
-                    << left << setw(15) << coachName
-                    << left << setw(12) << bDate
-                    << left << setw(10) << bTime
-                    << right << setw(10) << chargedPrice << endl;
+                    << left << setw(12) << matchedSchedule.scheduleID
+                    << left << setw(18) << matchedSchedule.className
+                    << left << setw(15) << (matchedSchedule.trainerName.empty() ? "None" : matchedSchedule.trainerName)
+                    << left << setw(12) << matchedSchedule.date
+                    << left << setw(12) << timeStr
+                    << left << setw(10) << statusStr << endl;
                 foundClass = true;
             }
         }
-        classFile.close();
+    }
+    classFile.close();
 
-        if (!foundClass) {
-            cout << "No active fitness class reservations found." << endl;
-        }
+    if (!foundClass) {
+        cout << "You currently have no active class bookings." << endl;
     }
 }
 

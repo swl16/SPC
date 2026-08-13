@@ -1,3 +1,5 @@
+#pragma once
+
 #include <iostream>
 #include <iomanip>
 #include <string>
@@ -16,6 +18,13 @@ struct Schedule {
     string className;
     string trainerName;
     bool isCanceled;
+};
+
+struct ClassBooking {
+    int bookingID;
+    string username;
+    int scheduleID;
+    string bookingDate;
 };
 
 int getIntegerInput(const string& message, int min, int max);

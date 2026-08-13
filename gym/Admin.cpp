@@ -242,7 +242,8 @@ void viewAllMembers() {
 
 void addMembershipPlan() {
 	int id = generateBookingID("membershipPlan.txt");
-	string planName, planDuration;
+	string planName;
+	int planDuration;
 	double price;
 
 	cout << "\n================================================" << endl;
@@ -254,7 +255,7 @@ void addMembershipPlan() {
 
 	do {
 		cout << "Enter Duration (in months, e.g., 1, 3, 6, 12): ";
-		if (cin >> duration && duration > 0) break;
+		if (cin >> planDuration && planDuration > 0) break;
 
 		cin.clear();
 		cin.ignore(1000, '\n');
@@ -298,7 +299,7 @@ void addMembershipPlan() {
 	cout << "------------------------------------------------" << endl;
 	cout << "Plan ID   : " << id << endl;
 	cout << "Plan Name : " << planName << endl;
-	cout << "Duration  : " << planDuration << (duration == 1 ? " Month" : " Months") << endl;
+	cout << "Duration  : " << planDuration << (planDuration == 1 ? " Month" : " Months") << endl;
 	cout << "Price     : RM " << fixed << setprecision(2) << price << endl;
 	cout << "Benefits  : " << benefits << endl;
 	cout << "------------------------------------------------" << endl;
@@ -396,8 +397,8 @@ void updateMembershipPlan() {
 	cout << "------------------------------------------------" << endl;
 
 	bool hasPlans = false;
-	while (inFile >> planID >> planName >> duration >> price) {
-		getline(inFile >> ws, benefits); // Read benefits string
+	while (membershipFile >> planID >> planName >> duration >> price) {
+		getline(membershipFile >> ws, benefits); // Read benefits string
 		hasPlans = true;
 
 		string durationStr = to_string(duration) + (duration == 1 ? " Mo" : " Mos");
@@ -527,8 +528,8 @@ void deleteMembershipPlan() {
 	cout << "------------------------------------------------" << endl;
 
 	bool hasPlans = false;
-	while (inFile >> planID >> planName >> duration >> price) {
-		getline(inFile >> ws, benefits); 
+	while (membershipFile >> planID >> planName >> duration >> price) {
+		getline(membershipFile >> ws, benefits);
 		hasPlans = true;
 
 		string durationStr = to_string(duration) + (duration == 1 ? " Mo" : " Mos");
@@ -539,7 +540,7 @@ void deleteMembershipPlan() {
 			<< left << setw(12) << durationStr
 			<< right << setw(10) << price << endl;
 	}
-	inFile.close();
+	membershipFile.close();
 
 	if (!hasPlans) {
 		cout << "No membership plans found in database." << endl;

@@ -5,17 +5,6 @@
 
 using namespace std;
 
-struct Trainer {
-    int TrainerID;
-    string Name;
-    double HourlyRate;
-};
-
-struct AvailableTrainer {
-    Trainer trainer;
-    string date;
-    string time;
-};
 
 struct Class {
     int classID;
@@ -34,14 +23,7 @@ struct AvailableClass {
 struct ClassBooking {
     int bookingID;
     string username;
-    AvailableClass classBooked;
+    int scheduleID;
     string bookingDate; 
 };
 
-struct TrainerBooking {
-    int bookingID;
-    string username;
-    AvailableTrainer assignedTrainer;
-    string bookingDate;
-    string slotTime;    
-};
