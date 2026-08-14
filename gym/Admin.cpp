@@ -14,6 +14,14 @@ using namespace std;
 
 extern int userCount;
 
+struct MembershipPlanRecord {
+	int id;
+	string planName;
+	int duration;
+	double price;
+	string benefits;
+};
+
 //int getIntegerInput(const string& message, int min, int max) {
 //	int value;
 //
@@ -55,6 +63,52 @@ int generatePlanID(const string& filename) {
 	return lastID + 1;
 }
 
+vector<MembershipPlanRecord> loadMembershipPlans(const string& filename) {
+	vector<MembershipPlanRecord> plans;
+	ifstream file(filename);
+	if (!file.is_open()) return plans;
+
+	string line;
+	while (getline(file, line)) {
+		if (line.empty()) continue;
+		stringstream ss(line);
+		MembershipPlanRecord p;
+		string idStr, durationStr, priceStr;
+
+		getline(ss, idStr, ',');
+		getline(ss, p.planName, ',');
+		getline(ss, durationStr, ',');
+		getline(ss, priceStr, ',');
+		getline(ss, p.benefits, '\n');
+
+		try {
+			p.id = stoi(idStr);
+			p.duration = stoi(durationStr);
+			p.price = stod(priceStr);
+		}
+		catch (...) {
+			continue; // skip malformed line instead of crashing
+		}
+
+		plans.push_back(p);
+	}
+	file.close();
+	return plans;
+}
+
+void saveMembershipPlans(const string& filename, const vector<MembershipPlanRecord>& plans) {
+	ofstream file(filename);
+	if (!file) {
+		cout << "Error: Could not open file." << endl;
+		return;
+	}
+	for (const auto& p : plans) {
+		file << p.id << "," << p.planName << "," << p.duration << ","
+			<< fixed << setprecision(2) << p.price << "," << p.benefits << "\n";
+	}
+	file.close();
+}
+
 double getPositiveDouble(const string& message) {
 	double value;
 
@@ -93,14 +147,6 @@ double getPositiveDouble(const string& message) {
 //	cin.get();
 //}
 
-
-struct MembershipPlanRecord {
-	int id;
-	string planName;
-	int duration;
-	double price;
-	string benefits;
-};
 
 void adminLogin() {
 
@@ -226,12 +272,17 @@ void viewAllMembers() {
 	}
 
 
-	cout << "Username\tName\tAge\tGender\tPhone\tEmail" << endl;
+	cout << left << setw(15) << "Username" << setw(20) << "Name" << setw(6) << "Age"
+		<< setw(8) << "Gender" << setw(15) << "Phone" << "Email" << endl;
 	cout << "--------------------------------------------------------------------------\n";
 
 	for (int i = 0; i < userCount; i++) {
-		cout << members[i].loginInfo.usernames << "\t" << members[i].name << "\t" << members[i].age << "\t" << members[i].gender << "\t" 
-			 << members[i].phNo << "\t" << members[i].email << endl;
+		cout << left << setw(15) << members[i].loginInfo.usernames
+			<< setw(20) << members[i].name
+			<< setw(6) << members[i].age
+			<< setw(8) << members[i].gender
+			<< setw(15) << members[i].phNo
+			<< members[i].email << endl;
 
 	}
 
@@ -246,21 +297,22 @@ void viewAllMembers() {
 }
 
 void addMembershipPlan() {
-	int id = generatePlanID("membershipPlan.txt");
-	string planName;
-	int planDuration;
-	double price;
+	const string filename = "membershipPlan.txt";
+	vector<MembershipPlanRecord> plans = loadMembershipPlans(filename);
+
+	MembershipPlanRecord p;
+	p.id = generatePlanID(filename);
 
 	cout << "\n================================================" << endl;
 	cout << "            ADD NEW MEMBERSHIP PLAN             " << endl;
 	cout << "================================================" << endl << endl;
 
 	cout << "Enter plan name (no spaces, e.g. Quarterly / Premium_Pass): ";
-	cin >> planName;
+	cin >> p.planName;
 
 	do {
 		cout << "Enter Duration (in months, e.g., 1, 3, 6, 12): ";
-		if (cin >> planDuration && planDuration > 0) break;
+		if (cin >> p.duration && p.duration > 0) break;
 
 		cin.clear();
 		cin.ignore(1000, '\n');
@@ -269,7 +321,7 @@ void addMembershipPlan() {
 
 	do {
 		cout << "Enter Price (RM, e.g., 150.00): ";
-		if (cin >> price && price >= 0) break;
+		if (cin >> p.price && p.price >= 0) break;
 
 		cin.clear();
 		cin.ignore(1000, '\n');
@@ -281,32 +333,24 @@ void addMembershipPlan() {
 	cout << "Example: Free locker access; Unlimited gym entrance" << endl;
 	cout << "Benefits: ";
 
-	string benefits;
-	getline(cin, benefits);
+	getline(cin, p.benefits);
 
-	if (benefits.empty()) {
-		benefits = "Standard gym access"; // Default fallback if left blank
+	if (p.benefits.empty()) {
+		p.benefits = "Standard gym access"; // Default fallback if left blank
 	}
 
-	ofstream membershipFile("membershipPlan.txt");
-
-	if (!membershipFile) {
-		cout << "Error: Could not open file." << endl;
-		return;
-	}
-
-	membershipFile << id << "," << planName << "," << planDuration << "," << fixed << setprecision(2) << price << "," << benefits << endl;
-	membershipFile.close();
+	plans.push_back(p);
+	saveMembershipPlans(filename, plans);
 
 	cout << "The new membership is successfully added." << endl;
 	cout << "\n------------------------------------------------" << endl;
 	cout << "           CONFIRM NEW PLAN DETAILS             " << endl;
 	cout << "------------------------------------------------" << endl;
-	cout << "Plan ID   : " << id << endl;
-	cout << "Plan Name : " << planName << endl;
-	cout << "Duration  : " << planDuration << (planDuration == 1 ? " Month" : " Months") << endl;
-	cout << "Price     : RM " << fixed << setprecision(2) << price << endl;
-	cout << "Benefits  : " << benefits << endl;
+	cout << "Plan ID   : " << p.id << endl;
+	cout << "Plan Name : " << p.planName << endl;
+	cout << "Duration  : " << p.duration << (p.duration == 1 ? " Month" : " Months") << endl;
+	cout << "Price     : RM " << fixed << setprecision(2) << p.price << endl;
+	cout << "Benefits  : " << p.benefits << endl;
 	cout << "------------------------------------------------" << endl;
 	cout << "\nPress ENTER back to Membership Plan Menu.\n";
 	cin.ignore(numeric_limits<streamsize>::max(), '\n');
@@ -615,6 +659,7 @@ void adminMenu(Member* members, int userCount) {
 
 	char choice, choose;
 	vector<Schedule> schedules;
+	loadSchedulesFromFile(schedules);
 
 	do {
 		displayadminMenu();
