@@ -5,9 +5,8 @@
 using namespace std;
 
 int main() {
-
-	const int MAX_MEMBERS = 100; // Adjust max size as needed
-	Member members[MAX_MEMBERS];
+ 
+	Member* members[MAX_USERS];
 	int userCount = 0;
 
 	char choice;
@@ -23,6 +22,17 @@ int main() {
 	do {
 		cout << "Enter your choice: ";
 		cin >> choice;
+
+		if (cin.fail()) {
+			if (cin.eof()) {
+				cout << "\nInput closed. Exiting." << endl;
+				break;
+			}
+			cin.clear();
+			cin.ignore(numeric_limits<streamsize>::max(), '\n');
+			cout << "Invalid input. Please try again." << endl;
+			continue;
+		}
 
 		switch (choice) {
 		case '1':

@@ -2,8 +2,10 @@
 #include <vector>
 
 
-#include "User.hpp"
+//#include "User.hpp"
 using namespace std;
+
+struct Member;
 
 struct FitnessRecord {
 	double weight;

@@ -57,12 +57,12 @@ void viewProfile(Member* members) {
 	cout << "================================\n";
 	cout << "         USER PROFILE           \n";
 	cout << "================================\n";
-	cout << "Username: " << members[i].loginInfo.usernames << endl;
-	cout << "Name: " << members[i].name << endl;
-	cout << "Age: " << members[i].age << endl;
-	cout << "Gender: " << members[i].gender << endl;
+	cout << "Username    : " << members[i].loginInfo.usernames << endl;
+	cout << "Name        : " << members[i].name << endl;
+	cout << "Age         : " << members[i].age << endl;
+	cout << "Gender      : " << members[i].gender << endl;
 	cout << "Phone Number: " << members[i].phNo << endl;
-	cout << "Email: " << members[i].email << endl;
+	cout << "Email       : " << members[i].email << endl;
 }
 
 void editProfile(Member* members) {

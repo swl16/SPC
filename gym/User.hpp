@@ -46,16 +46,19 @@ void displaymenu();
 void clearScreen();
 
 void adminLogin();
-void adminMenu();
+void adminMenu(Member* members, int userCount);
 void displayadminMenu();
 void displayMembershipPlanMenu();
 void displayClassMenu();
 void displayTrainerMenu();
-void displayScheduleMenu();
+//void displayScheduleMenu();
 void displayAttendanceMenu();
 void displayReportsMenu();
 
 
 void viewMembershipPlan(Member member);
 void membershipPlan(Member member);
+void bookClass(Member member);
+void viewBooking(Member member);
+void cancelBooking();
 

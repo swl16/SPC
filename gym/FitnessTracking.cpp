@@ -214,14 +214,3 @@ void fitnessMenu(Member& members) {
 	} while (choice != 6);
 }
 
-
-
-
-
-
-
-
-
-
-
-
