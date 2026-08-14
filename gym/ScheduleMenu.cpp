@@ -113,7 +113,7 @@ void loadSchedulesFromFile(vector<Schedule>& schedules) {
     string line;
     while (getline(inFile, line)) {
         stringstream ss(line);
-        string idStr, date, name, startStr, endStr, trainer, cancelStr;
+        string idStr, date, name, startStr, endStr, trainer, price, classCapacity, cancelStr;
 
         // Parse CSV columns
         getline(ss, idStr, ',');
@@ -122,6 +122,8 @@ void loadSchedulesFromFile(vector<Schedule>& schedules) {
         getline(ss, startStr, ',');
         getline(ss, endStr, ',');
         getline(ss, trainer, ',');
+        getline(ss, price, ',');
+        getline(ss, classCapacity, ',');
         getline(ss, cancelStr, ',');
 
         if (idStr.empty()) continue;
@@ -134,6 +136,8 @@ void loadSchedulesFromFile(vector<Schedule>& schedules) {
         s.startTime = stoi(startStr);
         s.endTime = stoi(endStr);
         s.trainerName = trainer;
+        s.price = stod(price);
+        s.classCapacity = stoi(classCapacity);
         s.isCanceled = (cancelStr == "1"); // 1 means true, 0 means false
 
         schedules.push_back(s);
@@ -152,6 +156,8 @@ void saveSchedulesToFile(const vector<Schedule>& schedules) {
                 << s.startTime << ","
                 << s.endTime << ","
                 << s.trainerName << ","
+                << s.price << ","
+                << s.classCapacity << ","
                 << (s.isCanceled ? "1" : "0") << "\n";
         }
         outFile.close();
@@ -178,6 +184,8 @@ void addschedule(vector<Schedule>& schedules) {
 
     newClass.endTime = getIntegerInput("Enter end time (eg. 1600): ", 1000, 2000);
     newClass.trainerName = getNonEmptyString("Enter trainer name: ");
+    //price
+    newClass.classCapacity = getIntegerInput("Enter the Class Capacity: ", 5, 30);
 
     if (newClass.startTime >= newClass.endTime) {
         cout << "Error: Start time must be before end time.\n";

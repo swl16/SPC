@@ -17,7 +17,10 @@ struct Schedule {
     int endTime;         // 24-hour format e.g., 1500 (3:00 PM)
     string className;
     string trainerName;
+    double price;
+    int classCapacity;
     bool isCanceled;
+    
 };
 
 struct ClassBooking {

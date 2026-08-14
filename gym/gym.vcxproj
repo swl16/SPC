@@ -137,7 +137,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AttendanceTracker.hpp" />
-    <ClInclude Include="booking.hpp" />
     <ClInclude Include="FitnessTracking.hpp" />
     <ClInclude Include="ScheduleMenu.hpp" />
     <ClInclude Include="User.hpp" />
