@@ -10,7 +10,7 @@ double calculateBMI(double weight, double height) {
 }
 
 void setFitnessGoal(Member& members) {
-	cout << "\n=====SET WEEKLY WORKOUT GOAL=====\n";
+	cout << "\n-----SET WEEKLY WORKOUT GOAL-----\n";
 
 	int targetMins;
 
@@ -28,7 +28,7 @@ void setFitnessGoal(Member& members) {
 
 void updateFitnessMetrics(Member& members) {
 	double newWeight, newHeight;
-	cout << "\n===== UPDATE WEIGHT & HEIGHT =====\n";
+	cout << "\n----- UPDATE WEIGHT & HEIGHT -----\n";
 	cout << "Enter current weight (kg) : ";
 	while (!(cin >> newWeight) || newWeight <= 0) {
 		cout << "Invalid weight. Please enter a positive number : ";
@@ -64,7 +64,7 @@ void updateFitnessMetrics(Member& members) {
 
 void logWorkoutSession(Member& members) {
 	char choice;
-	cout << "\n===== LOG WORKOUT SESSION =====\n";
+	cout << "\n----- LOG WORKOUT SESSION -----\n";
 
 	do {
 		int minutes;
@@ -131,17 +131,17 @@ void resetFitnessMetrics(Member& member) {
 }
 
 void generateFitnessReport(const Member& members) {
-	cout << string(40, '=') << "\n";
+	cout << "===================================\n";
 	cout << "     FITNESS PROGRESS REPORT\n";
-	cout << string(40, '=') << "\n";
+	cout << "===================================\n";
 	cout << "Name  : " << members.name << "\n";
-	cout << string(40, '-') << "\n";
+	cout << "-----------------------------------\n";
 
 	cout << fixed << setprecision(2);
 	cout << left << setw(20) << "Current Weight" << ": " << members.fitness.weight << " kg\n";
 	cout << left << setw(20) << "Current Height" << ": " << members.fitness.height << " m\n";
 	cout << left << setw(20) << "BMI Score" << ": " << members.fitness.bmi << "\n";
-	cout << string(45, '-') << "\n";
+	cout << "----------------------------------------\n";
 	cout << left << setw(20) << "Logged Workout Time" << ": " << members.fitness.workoutDuration << " mins\n";
 
 	if (members.fitness.targetWorkoutMins > 0) {
@@ -162,23 +162,23 @@ void generateFitnessReport(const Member& members) {
 	}
 
 	cout << left << setw(20) << "Total Calories : " << members.fitness.caloriesBurned << " kcal\n";
-	cout << string(40, '=') << "\n";
+	cout << "-----------------------------------\n";
 }
 
 void fitnessMenu(Member& members) {
 	int choice = 0;
 
 	do {
-		cout << "\n" << string(50, '=') << "\n";
+		cout << "===========================================\n";
 		cout << "     FITNESS TRACKER MODULE MENU\n";
-		cout << "\n" << string(50, '=') << "\n";
+		cout << "===========================================\n";
 		cout << "1. Set Weekly Workout Goal(mins / week)\n";
 		cout << "2. Update Body Metrics (Weight / Height)\n";
 		cout << "3. Log Workout Session\n";
 		cout << "4. Reset Fitness Metrics\n";
 		cout << "5. Generate Fitness Progress Report\n";
 		cout << "6. Exit Fitness Module\n";
-		cout << "\n" << string(50, '=') << "\n";
+		cout << "===========================================\n";
 		cout << "Enter your choice (1-6) : ";
 
 		if (!(cin >> choice)) {
