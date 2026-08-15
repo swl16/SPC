@@ -270,13 +270,13 @@ void displaymenu() {
 	cout << "-----------------------------------\n";
 }
 
-//void clearScreen() {
-//#ifdef _WIN32 // Check if the system is Windows
-//	system("cls");
-//#else // Otherwise, assume it's a POSIX-compliant system (like Linux or macOS)
-//	system("clear");
-//#endif
-//}
+void clearScreen() {
+#ifdef _WIN32 // Check if the system is Windows
+	system("cls");
+#else // Otherwise, assume it's a POSIX-compliant system (like Linux or macOS)
+	system("clear");
+#endif
+}
 
 
 void userLogin() {

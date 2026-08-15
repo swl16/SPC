@@ -98,4 +98,5 @@ void displayClassMenu();
 void displayMembershipPlanMenu();
 
 void pauseScreen();
+void clearScreen();
 

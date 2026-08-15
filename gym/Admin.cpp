@@ -6,6 +6,7 @@
 #include <string>
 #include <limits>
 #include <cstdio>
+#include <algorithm>
 
 #include "User.hpp"
 #include "ScheduleMenu.hpp"
@@ -239,7 +240,7 @@ void addMembershipPlan() {
 		cin.ignore(numeric_limits<streamsize>::max(), '\n');
 		cout << "Invalid price. Please enter a valid amount." << endl;
 	} while (true);
-	cin.ignore(numeric_limits<streamsize>::max()0, '\n');
+	cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
 	cout << "\nEnter Plan Benefits separated by semicolons ';'" << endl;
 	cout << "Example: Free locker access; Unlimited gym entrance" << endl;
