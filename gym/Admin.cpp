@@ -570,7 +570,7 @@ void adminMenu(Member* members, int userCount) {
 				case '3': //update class
 					break;
 				default:
-					
+					break;
 				}
 
 			} while (choose != '0');
