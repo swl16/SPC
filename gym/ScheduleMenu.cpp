@@ -16,6 +16,19 @@ int getIntegerInput(const string& message, int min, int max) {
     }
 }
 
+double getDoubleInput(const string& message, double min, double max) {
+    double value;
+    while (true) {
+        cout << message;
+        if (cin >> value && value >= min && value <= max) {
+            return value;
+        }
+        cout << "Invalid input. Please enter an amount from " << fixed << setprecision(2) << min << " to " << max << ".\n";
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    }
+}
+
 string getNonEmptyString(const string& message) {
     string value;
     while (true) {
@@ -184,7 +197,7 @@ void addschedule(vector<Schedule>& schedules) {
 
     newClass.endTime = getIntegerInput("Enter end time (eg. 1600): ", 1000, 2000);
     newClass.trainerName = getNonEmptyString("Enter trainer name: ");
-    //price
+    newClass.price = getDoubleInput("Enter class fee (RM, e.g., 30.00): ", 0.0, 500.0);
     newClass.classCapacity = getIntegerInput("Enter the Class Capacity: ", 5, 30);
 
     if (newClass.startTime >= newClass.endTime) {
