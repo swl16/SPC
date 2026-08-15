@@ -223,30 +223,38 @@ void displayschedule(const vector<Schedule>& schedules) {
         return;
     }
 
-    cout << "\n--- All Gym Schedules ---\n";
-    cout << left << setw(5) << "ID"
-        << setw(15) << "Date"
-        << setw(15) << "Class Name"
-        << setw(10) << "Start"
-        << setw(10) << "End"
-        << setw(15) << "Trainer"
-        << "Status\n";
+    cout << "\n====================================================================================================\n";
+    cout << "                                         ALL GYM SCHEDULES                                          \n";
+    cout << "====================================================================================================\n";
+    cout << left << setw(6) << "ID"
+        << setw(13) << "Date"
+        << setw(16) << "Class Name"
+        << setw(8) << "Start"
+        << setw(8) << "End"
+        << setw(16) << "Trainer"
+        << setw(10) << "Capacity"
+        << right << setw(10) << "Fee (RM)"
+        << "   " << left << setw(8) << "Status\n";
     cout << "-------------------------------------------------------------------------------\n";
 
     bool activeFound = false;
+
+    cout << fixed << setprecision(2);
 
     for (const Schedule& s : schedules) {
         if (s.isCanceled) {
             continue;
         }
 
-        cout << left << setw(5) << s.scheduleID
-            << setw(15) << s.date
-            << setw(15) << s.className
-            << setw(10) << s.startTime
-            << setw(10) << s.endTime
-            << setw(15) << (s.trainerName.empty() ? "None" : s.trainerName)
-            << "Active\n";
+        cout << left << setw(6) << s.scheduleID
+            << setw(13) << s.date
+            << setw(16) << s.className
+            << setw(8) << s.startTime
+            << setw(8) << s.endTime
+            << setw(16) << (s.trainerName.empty() ? "None" : s.trainerName)
+            << setw(10) << s.classCapacity
+            << right << setw(10) << s.price
+            << "   " << left << setw(8) << "Active\n";
 
         activeFound = true;
     }
@@ -275,24 +283,31 @@ void searchschedule(const vector<Schedule>& schedules) {
 
         if (s.date == searchDate) {
             if (!found) {
-                cout << "\nResults for " << searchDate << ":\n";
-                cout << left << setw(5) << "ID"
-                    << setw(15) << "Date"
-                    << setw(15) << "Class Name"
-                    << setw(10) << "Start"
-                    << setw(10) << "End"
-                    << setw(15) << "Trainer"
-                    << "Status\n";
-                cout << "-------------------------------------------------------------------------------\n";
+                cout << "\n====================================================================================================\n";
+                cout << "                                     RESULTS FOR " << searchDate << "                                      \n";
+                cout << "====================================================================================================\n";
+                cout << left << setw(6) << "ID"
+                    << setw(13) << "Date"
+                    << setw(16) << "Class Name"
+                    << setw(8) << "Start"
+                    << setw(8) << "End"
+                    << setw(16) << "Trainer"
+                    << setw(10) << "Capacity"
+                    << right << setw(10) << "Fee (RM)"
+                    << "   " << left << setw(8) << "Status\n";
+                cout << "----------------------------------------------------------------------------------------------------\n";
             }
 
-            cout << left << setw(5) << s.scheduleID
-                << setw(15) << s.date
-                << setw(15) << s.className
-                << setw(10) << s.startTime
-                << setw(10) << s.endTime
-                << setw(15) << (s.trainerName.empty() ? "None" : s.trainerName)
-                << "Active\n";
+            cout << fixed << setprecision(2);
+            cout << left << setw(6) << s.scheduleID
+                << setw(13) << s.date
+                << setw(16) << s.className
+                << setw(8) << s.startTime
+                << setw(8) << s.endTime
+                << setw(16) << (s.trainerName.empty() ? "None" : s.trainerName)
+                << setw(10) << s.classCapacity
+                << right << setw(10) << s.price
+                << "   " << left << setw(8) << "Active\n";
 
             found = true;
         }
@@ -311,7 +326,7 @@ void updateschedule(vector<Schedule>& schedules) {
 
     int searchID;
     cout << "\n--- Update Schedule ---\n";
-	searchID = getIntegerInput("Enter the Schedule ID you want to update: ", 100, 9999);
+	searchID = getIntegerInput("Enter the Schedule ID you want to update: ", 1000, 9999);
 
     bool found = false;
 
@@ -322,15 +337,19 @@ void updateschedule(vector<Schedule>& schedules) {
             bool isModified = false;
 
             do {
+                cout << fixed << setprecision(2);
                 cout << "\n--- Updating Schedule ID: " << s.scheduleID << " ---\n";
                 cout << "Current Details:\n";
                 cout << "1. Class Name : " << s.className << "\n";
                 cout << "2. Date       : " << s.date << "\n";
                 cout << "3. Start Time : " << s.startTime << "\n";
                 cout << "4. End Time   : " << s.endTime << "\n";
+                cout << "5. Trainer    : " << (s.trainerName.empty() ? "None" : s.trainerName) << "\n";
+                cout << "6. Fee (RM)   : RM " << s.price << "\n";
+                cout << "7. Capacity   : " << s.classCapacity << "\n";
                 cout << "0. Finish & Save Changes\n";
                 cout << "--------------------------------\n";
-                cout << "Enter the number of the field you want to change: ";
+                cout << "Enter choice: ";
                 cin >> updateChoice;
                 cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
