@@ -4,6 +4,7 @@
 #include<string>
 #include<fstream>
 #include<sstream>
+#include<regex>
 
 #include"User.hpp"
 
@@ -53,18 +54,52 @@ void registerUser(Member* members) {   // user registration
 
 	cout << "Enter Full Name: ";
 	getline(cin, newMember.name);
+	if (!newMember.name.empty()) {
+		cout << "Name cannot be empty.\n";
+		return;
+	}
 
 	cout << "Enter Age: ";
 	cin >> newMember.age;
+	if (cin >> newMember.age && newMember.age > 0 && newMember.age < 120) {
+		cout << "Invalid age. Please enter a whole number between 1 and 119.\n";
+		return;
+	}
 
-	cout << "Enter Gender (M/F): ";
-	cin >> newMember.gender;
+	while (true) {
+		char g;
+		cout << "Enter Gender (M/F): ";
+		cin >> g;
+		g = toupper(g);
+		if (g == 'M' || g == 'F') {
+			newMember.gender = g;
+			break;
+		}
+		cout << "Invalid gender. Please enter M or F.\n";
+	}
 
-	cout << "Enter Phone Number: ";
-	cin >> newMember.phNo;
+	while (true) {
+		cout << "Enter Phone Number (without -): ";
+		cin >> newMember.phNo;
+		bool allDigits = !newMember.phNo.empty();
+		for (char c : newMember.phNo) {
+			if (!isdigit(static_cast<unsigned char>(c))) { allDigits = false; break; }
+		}
+		if (allDigits && newMember.phNo.length() >= 12) break;
+		cout << "Invalid phone number. Digits only, at least 7 characters.\n";
+	}
 
-	cout << "Enter Email Address: ";
-	cin >> newMember.email;
+	while (true) {
+		cout << "Enter Email Address: ";
+		cin >> newMember.email;
+		// Minimal sanity check: must contain '@' and a '.' after it
+		size_t at = newMember.email.find('@');
+		size_t dot = newMember.email.find('.', at == string::npos ? 0 : at);
+		if (at != string::npos && at > 0 && dot != string::npos && dot < newMember.email.length() - 1) {
+			break;
+		}
+		cout << "Invalid email address. Please try again.\n";
+	}
 
 	members[userCount] = newMember;
 	userCount++;
@@ -120,6 +155,8 @@ void loadUser(Member * members) {
 
 	string line;
 	while (getline(file, line) && userCount < MAX_USERS) {
+
+		if (line.empty()) continue;
 
 		stringstream ss(line);
 		Member userInfo;
@@ -255,8 +292,9 @@ void userLogin() {
 			cout << "             Login              \n";
 			cout << "================================\n";
 
-			loginUser(members);
-			userMenu(members);
+			if (loginUser(members)) {
+				userMenu(members);
+			}
 			break;
 
 		case '3':

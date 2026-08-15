@@ -22,23 +22,7 @@ struct MembershipPlanRecord {
 	string benefits;
 };
 
-//int getIntegerInput(const string& message, int min, int max) {
-//	int value;
-//
-//	while (true) {
-//		cout << message;
-//
-//		if (cin >> value && value >= min && value <= max) {
-//			return value;
-//		}
-//
-//		cout << "Invalid input. Please enter a number from "
-//			<< min << " to " << max << ".\n";
-//
-//		cin.clear();
-//		cin.ignore(numeric_limits<streamsize>::max(), '\n');
-//	}
-//}
+
 
 int generatePlanID(const string& filename) {
 	ifstream file(filename);
@@ -126,27 +110,6 @@ double getPositiveDouble(const string& message) {
 	}
 }
 
-//string getNonEmptyString(const string& message) {
-//	string value;
-//
-//	while (true) {
-//		cout << message;
-//		getline(cin >> ws, value);
-//
-//		if (!value.empty()) {
-//			return value;
-//		}
-//
-//		cout << "Input cannot be empty. Please try again.\n";
-//	}
-//}
-//
-//void pauseScreen() {
-//	cout << "\nPress ENTER to continue...";
-//	cin.ignore(numeric_limits<streamsize>::max(), '\n');
-//	cin.get();
-//}
-
 
 void adminLogin() {
 
@@ -207,19 +170,18 @@ void displayMembershipPlanMenu() {
 
 void displayClassMenu() {
 	cout << "==================================================" << endl;
-	cout << "               CLASSES & SCHEDULE				   " << endl;
+	cout << "               CLASSES SCHEDULE				   " << endl;
 	cout << "==================================================" << endl;
-	cout << "1. Add Class\n";
+	cout << "1. Add Class Schedule\n";
 	cout << "2. View Class Schedule\n";
-	cout << "3. Update Class\n";
-	cout << "4. Cancel Class\n";
-	cout << "5. Delete Class\n";
-	cout << "6. Check Class Capacity\n";
+	cout << "3. Update Class Schedule\n";
+	cout << "4. Search Class Schedule by Date\n";
+	cout << "5. Cancel Class Schedule\n";
+	cout << "6. Delete Class Schedule\n";
+	cout << "7. Check Class Capacity\n";
 	cout << "0. Back to Admin Menu\n";
 	cout << "--------------------------------------------------" << endl;
 }
-
-
 
 
 
@@ -233,8 +195,7 @@ void displayAttendanceMenu() {
 	cout << "--------------------------------------" << endl;
 }
 
-void viewTodatAttendance(){}
-void viewWeeklyAttandance(){}
+
 
 void displayReportsMenu() {
 	cout << "==================================================" << endl;
@@ -247,9 +208,6 @@ void displayReportsMenu() {
 	cout << "--------------------------------------------------" << endl;
 }
 
-void membershipReport(){}
-void classPopularReport(){}
-void monthlyReport(){}
 
 void viewAllMembers() {
 
@@ -552,25 +510,19 @@ void deleteMembershipPlan() {
 	}
 }
 
-void addClass(){
 
-}
-
-void viewClass(){
-
-}
-
-void updateClass(){
-
-}
-
-void cancelClass(){
-
-}
 
 void checkClassCapacity(){
 
 }
+
+void viewTodayAttendance(){}
+void viewWeeklyAttandance(){}
+
+void membershipReport() {}
+void classPopularReport() {}
+void monthlyReport() {}
+
 
 void adminMenu(Member* members, int userCount) {
 
