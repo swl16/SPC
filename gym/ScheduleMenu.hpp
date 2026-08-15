@@ -41,7 +41,6 @@ void displayschedule(const vector<Schedule>& schedules);
 void searchschedule(const vector<Schedule>& schedules);
 void updateschedule(vector<Schedule>& schedules);
 void cancelschedule(vector<Schedule>& schedules);
-void assigntrainer(vector<Schedule>& schedules);
 bool hasConflict(const vector<Schedule>& schedules, string date, int startTime, int endTime, int excludeID = -1);
 void loadSchedulesFromFile(vector<Schedule>& schedules);
 void saveSchedulesToFile(const vector<Schedule>& schedules);

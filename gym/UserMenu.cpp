@@ -4,9 +4,10 @@
 #include<string>
 #include<fstream>
 #include<sstream>
+#include <regex>
 
 #include "User.hpp"
-//#include "ScheduleMenu.hpp"
+#include "FitnessTracking.hpp"
 
 using namespace std;
 
@@ -23,7 +24,7 @@ void displayUserMenu() {
 	cout << "4. Book / View Class\n";
 	cout << "5. View / Cancel Bookings\n";
 	cout << "6. Payment History\n";
-	cout << "7. Gym Attendance Tracking\n";
+	cout << "7. Gym Attendance\n";
 	cout << "8. Fitness Progress\n";
 	cout << "9. Delete Account\n";
 	cout << "0. Logout\n";
@@ -88,28 +89,78 @@ void editProfile(Member* members) {
 
 		switch (choice){
 		case '1':
-			cout << "Enter new name: ";
+
+			cout << "Enter Full Name: ";
 			getline(cin, members[i].name);
+			if (members[i].name.empty()) {
+				cout << "Name cannot be empty.\n";
+				return;
+			}
 			cout << "Name updated successfully.\n";
 			break;
+
 		case'2':
 			cout << "Enter new age: ";
 			cin >> members[i].age;
+			if (!(cin >> members[i].age && members[i].age > 0 && members[i].age < 120)) {
+				cout << "Invalid age. Please enter a whole number between 1 and 119.\n";
+				return;
+			}
+
 			cout << "Age updated successfully.\n";
 			break;
+
 		case '3':
-			cout << "Enter new gender (M/F): ";
-			cin >> members[i].gender;
+
+			while (true) {
+				char g;
+				cout << "Enter new gender (M/F): ";
+				cin >> g;
+				g = toupper(g);
+				if (g == 'M' || g == 'F') {
+					members[i].gender = g;
+					break;
+				}
+				cout << "Invalid gender. Please enter M or F.\n";
+			}
+
 			cout << "Gender updated successfully.\n";
 			break;
+
 		case '4':
-			cout << "Enter new phone number: ";
-			cin >> members[i].phNo;
+			while (true) {
+				cout << "Enter New Phone Number (without - ): ";
+				cin >> members[i].phNo;
+
+				// Check whether every character is a digit
+				if (regex_match(members[i].phNo, regex("[0-9]{10,11}"))) {
+					break;
+				}
+
+				cout << "Invalid phone number!\n";
+				cout << "Phone number must contain 10-11 digits only.\n";
+				cout << "Do not use '-' , spaces, or alphabets.\n";
+			}
+
 			cout << "Phone number updated successfully.\n";
 			break;
+
 		case '5':
-			cout << "Enter new email: ";
-			cin >> members[i].email;
+
+			while (true) {
+				cout << "Enter Email Address: ";
+				cin >> members[i].email;
+
+				regex emailPattern("[a-z0-9]+@gmail\\.com");
+
+				if (regex_match(members[i].email, emailPattern)) {
+					break;
+				}
+
+				cout << "Invalid email address!\n";
+				cout << "Please enter a valid email such as example@gmail.com\n";
+			}
+
 			cout << "Email updated successfully.\n";
 			break;
 
@@ -121,6 +172,7 @@ void editProfile(Member* members) {
 	}while(choice != '0');
 
 	saveUser(members); // Save the updated profile to the file
+	cout << "Profile updated & saved successfully.\n";
 }
 
 void viewMembershipPlans() {
@@ -203,7 +255,7 @@ void userMenu(Member* members) {
 			break;
 
 		case '0':
-			cout << "Logging out...\n";
+			logoutUser();
 			break;
 
 		default:
