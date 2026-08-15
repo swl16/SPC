@@ -19,18 +19,13 @@ void displayUserMenu() {
 	cout << "==================================================" << endl;
 	cout << "1. View My Profile\n";
 	cout << "2. Edit My Profile\n";
-	cout << "3. View Membership Plans\n";
-	cout << "4. Renew Membership\n";
-	cout << "5. View Class Schedule\n";
-	cout << "6. Book Gym Class\n";
-	cout << "7. View My Bookings\n";
-	cout << "8. Cancel Booking\n";
-	cout << "9. View Payment History\n";
-	cout << "10. Gym Check - In\n";
-	cout << "11. Gym Check - Out\n";
-	cout << "12. Record Fitness Progress\n";
-	cout << "13. View Fitness Progress\n";
-	cout << "14. Delete Account\n";
+	cout << "3. Buy / Renew Membership Plans\n";
+	cout << "4. Book / View Class\n";
+	cout << "5. View / Cancel Bookings\n";
+	cout << "6. Payment History\n";
+	cout << "7. Gym Attendance Tracking\n";
+	cout << "8. Fitness Progress\n";
+	cout << "9. Delete Account\n";
 	cout << "0. Logout\n";
 	cout << "--------------------------------------------------" << endl;
 }
@@ -169,7 +164,7 @@ void viewFitnessProgress() {
 
 void userMenu(Member* members) {
 
-	int choice;
+	char choice;
 
 	do{
 
@@ -178,54 +173,36 @@ void userMenu(Member* members) {
 		cin >> choice;
 
 		switch (choice) {
-		case 1:
+		case '1':
 			viewProfile(members);
 			break;
 
-		case 2:
+		case '2':
 			editProfile(members);
 			break;
 
-		case 3:
+		case '3':
 			break;
 
-		case 4:
+		case '4':
 			break;
 
-		case 5:
+		case '5':
 			break;
 
-		case 6:
+		case '6':
 			break;
 
-		case 7:
+		case '7':
 			break;
 
-		case 8:
+		case '8':
 			break;
 
-		case 9:
+		case '9':
 			break;
 
-		case 10:
-			break;
-
-		case 11:
-			break;
-
-		case 12:
-			break;
-
-		case 13:
-			break;
-
-		case 14:
-			break;
-
-		case 15:
-			break;
-
-		case 0:
+		case '0':
 			cout << "Logging out...\n";
 			break;
 
