@@ -29,6 +29,13 @@ struct Payment {
 	string paymentMethod;
 };
 
+struct MembershipPlanRecord {
+	int id;
+	string planName;
+	int duration;
+	double price;
+	string benefits;
+};
 
 void registerUser(Member* members);
 int loginUser(Member* members);
@@ -49,13 +56,14 @@ void adminLogin();
 void adminMenu(Member* members, int userCount);
 void displayadminMenu();
 void displayMembershipPlanMenu();
+void addMembershipPlan();
 void displayClassMenu();
 void displayTrainerMenu();
 //void displayScheduleMenu();
 void displayAttendanceMenu();
 void displayReportsMenu();
 
-
+vector<MembershipPlanRecord> loadMembershipPlans(const string& filename);
 void viewMembershipPlan(Member member);
 void membershipPlan(Member member);
 void bookClass(Member member);

@@ -14,16 +14,6 @@ using namespace std;
 
 extern int userCount;
 
-struct MembershipPlanRecord {
-	int id;
-	string planName;
-	int duration;
-	double price;
-	string benefits;
-};
-
-
-
 int generatePlanID(const string& filename) {
 	ifstream file(filename);
 	if (!file.is_open()) return 0001; // Default start ID
@@ -45,39 +35,6 @@ int generatePlanID(const string& filename) {
 	}
 	file.close();
 	return lastID + 1;
-}
-
-vector<MembershipPlanRecord> loadMembershipPlans(const string& filename) {
-	vector<MembershipPlanRecord> plans;
-	ifstream file(filename);
-	if (!file.is_open()) return plans;
-
-	string line;
-	while (getline(file, line)) {
-		if (line.empty()) continue;
-		stringstream ss(line);
-		MembershipPlanRecord p;
-		string idStr, durationStr, priceStr;
-
-		getline(ss, idStr, ',');
-		getline(ss, p.planName, ',');
-		getline(ss, durationStr, ',');
-		getline(ss, priceStr, ',');
-		getline(ss, p.benefits, '\n');
-
-		try {
-			p.id = stoi(idStr);
-			p.duration = stoi(durationStr);
-			p.price = stod(priceStr);
-		}
-		catch (...) {
-			continue; // skip malformed line instead of crashing
-		}
-
-		plans.push_back(p);
-	}
-	file.close();
-	return plans;
 }
 
 void saveMembershipPlans(const string& filename, const vector<MembershipPlanRecord>& plans) {
@@ -261,15 +218,16 @@ void addMembershipPlan() {
 	cout << "            ADD NEW MEMBERSHIP PLAN             " << endl;
 	cout << "================================================" << endl << endl;
 
-	cout << "Enter plan name (no spaces, e.g. Quarterly / Premium_Pass): ";
-	cin >> p.planName;
+	cout << "Generated Plan ID: " << p.id << endl;
+	cout << "Enter plan name (e.g. Quarterly / Premium  Pass): ";
+	getline(cin >> ws, p.planName);
 
 	do {
 		cout << "Enter Duration (in months, e.g., 1, 3, 6, 12): ";
 		if (cin >> p.duration && p.duration > 0) break;
 
 		cin.clear();
-		cin.ignore(1000, '\n');
+		cin.ignore(numeric_limits<streamsize>::max(), '\n');
 		cout << "Invalid duration. Please enter a positive number." << endl;
 	} while (true);
 
@@ -278,10 +236,10 @@ void addMembershipPlan() {
 		if (cin >> p.price && p.price >= 0) break;
 
 		cin.clear();
-		cin.ignore(1000, '\n');
+		cin.ignore(numeric_limits<streamsize>::max(), '\n');
 		cout << "Invalid price. Please enter a valid amount." << endl;
 	} while (true);
-	cin.ignore(1000, '\n');
+	cin.ignore(numeric_limits<streamsize>::max()0, '\n');
 
 	cout << "\nEnter Plan Benefits separated by semicolons ';'" << endl;
 	cout << "Example: Free locker access; Unlimited gym entrance" << endl;
@@ -290,13 +248,9 @@ void addMembershipPlan() {
 	getline(cin, p.benefits);
 
 	if (p.benefits.empty()) {
-		p.benefits = "Standard gym access"; // Default fallback if left blank
+		p.benefits = "Standard gym access";
 	}
 
-	plans.push_back(p);
-	saveMembershipPlans(filename, plans);
-
-	cout << "The new membership is successfully added." << endl;
 	cout << "\n------------------------------------------------" << endl;
 	cout << "           CONFIRM NEW PLAN DETAILS             " << endl;
 	cout << "------------------------------------------------" << endl;
@@ -306,15 +260,25 @@ void addMembershipPlan() {
 	cout << "Price     : RM " << fixed << setprecision(2) << p.price << endl;
 	cout << "Benefits  : " << p.benefits << endl;
 	cout << "------------------------------------------------" << endl;
-	cout << "\nPress ENTER back to Membership Plan Menu.\n";
-	cin.ignore(numeric_limits<streamsize>::max(), '\n');
-	cin.get();
+
+	char confirm;
+	cout << "Save this membership plan to database? (Y/N): ";
+	cin >> confirm;
+
+	if (confirm == 'Y' || confirm == 'y') {
+		plans.push_back(p);
+		saveMembershipPlans(filename, plans);
+
+		cout << "The new membership is successfully added." << endl;
+	} else {
+		cout << "\nOperation cancelled. Plan was not saved." << endl;
+	}
+
+	pauseScreen();
 }
 
 void viewMembershipPlans() {
 	vector<MembershipPlanRecord> plans = loadMembershipPlans("membershipPlan.txt");
-
-	
 
 	cout << "================================================" << endl;
 	cout << "                MEMBERSHIP PLANS                " << endl;
@@ -353,11 +317,7 @@ void viewMembershipPlans() {
 
 		cout << "------------------------------------------------" << endl;
 	}
-
-
-	cout << "\nPress ENTER back to Membership Plan Menu.\n";
-	cin.ignore(numeric_limits<streamsize>::max(), '\n');
-	cin.get();
+	pauseScreen();
 }
 
 void updateMembershipPlan() {
@@ -402,15 +362,15 @@ void updateMembershipPlan() {
 	for (auto& p : plans) {
 		if (p.id == targetID) {
 			cout << "\n--- ENTER NEW PLAN DETAILS ---" << endl;
-			cout << "Enter New Plan Name (no spaces, e.g. Gold_Pass): ";
-			cin >> p.planName;
+			cout << "Enter New Plan Name (e.g. Gold Pass): ";
+			getline(cin >> ws, p.planName);
 
 			do {
 				cout << "Enter New Duration (in months): ";
 				if (cin >> p.duration && p.duration > 0) break;
 
 				cin.clear();
-				cin.ignore(1000, '\n');
+				cin.ignore(numeric_limits<streamsize>::max(), '\n');
 				cout << "Invalid input. Please enter a positive number." << endl;
 			} while (true);
 
@@ -419,17 +379,19 @@ void updateMembershipPlan() {
 				if (cin >> p.price && p.price >= 0) break;
 
 				cin.clear();
-				cin.ignore(1000, '\n');
+				cin.ignore(numeric_limits<streamsize>::max(), '\n');
 				cout << "Invalid input. Please enter a valid price." << endl;
 			} while (true);
 
-			cin.ignore(1000, '\n'); // Clear buffer before getline
+			cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Clear buffer before getline
 			cout << "Enter New Benefits (separated by ';'): ";
 			getline(cin, p.benefits);
 
 			if (p.benefits.empty()) {
 				p.benefits = "Standard gym access";
 			}
+			updated = true;
+			break;
 		}
 	}
 
@@ -442,6 +404,8 @@ void updateMembershipPlan() {
 	else {
 		cout << "\n[ERROR] Plan ID " << targetID << " not found!" << endl;
 	}
+
+	pauseScreen();
 }
 
 void deleteMembershipPlan() {
@@ -508,6 +472,8 @@ void deleteMembershipPlan() {
 	else {
 		cout << "\n[ERROR] Plan ID " << targetID << " not found!" << endl;
 	}
+
+	pauseScreen();
 }
 
 
@@ -531,6 +497,7 @@ void adminMenu(Member* members, int userCount) {
 	loadSchedulesFromFile(schedules);
 
 	do {
+		clearScreen();
 		displayadminMenu();
 		cout << "Enter your choice: ";
 		cin >> choice;
