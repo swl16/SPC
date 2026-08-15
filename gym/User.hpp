@@ -1,5 +1,6 @@
 #pragma once
 #include<iostream>
+#include<vector>
 #include "FitnessTracking.hpp"
 
 using namespace std;
@@ -71,6 +72,7 @@ void editProfile(Member* members);
 // membership
 void viewMembershipPlan(Member member);
 void membershipPlan(Member member);
+vector<MembershipPlanRecord> loadMembershipPlans(const string& filename);
 
 // booking
 void bookClass(Member member);
@@ -80,6 +82,8 @@ void cancelBooking();
 // payment
 
 // attendance
+void displayAttendanceMenu();
+void displayReportsMenu();
 
 // fitness
 void fitnessMenu(Member& member);
@@ -90,19 +94,8 @@ void adminMenu(Member* members, int userCount);
 
 void displaymenu();
 void displayadminMenu();
-void displayMembershipPlanMenu();
 void displayClassMenu();
-void displayTrainerMenu();
-//void displayScheduleMenu();
-void displayAttendanceMenu();
-void displayReportsMenu();
-
-vector<MembershipPlanRecord> loadMembershipPlans(const string& filename);
-void viewMembershipPlan(Member member);
-void membershipPlan(Member member);
-void bookClass(Member member);
-void viewBooking(Member member);
-void cancelBooking();
+void displayMembershipPlanMenu();
 
 void pauseScreen();
 
