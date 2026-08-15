@@ -10,6 +10,41 @@
 
 using namespace std;
 
+vector<MembershipPlanRecord> loadMembershipPlans(const string& filename) {
+	vector<MembershipPlanRecord> plans;
+	ifstream file(filename);
+	if (!file.is_open()) return plans;
+
+	string line;
+	while (getline(file, line)) {
+		if (line.empty()) continue;
+		stringstream ss(line);
+		MembershipPlanRecord p;
+		string idStr, durationStr, priceStr;
+
+		getline(ss, idStr, ',');
+		getline(ss, p.planName, ',');
+		getline(ss, durationStr, ',');
+		getline(ss, priceStr, ',');
+		getline(ss, p.benefits, '\n');
+
+		if (idStr.empty()) continue;
+
+		try {
+			p.id = stoi(idStr);
+			p.duration = stoi(durationStr);
+			p.price = stod(priceStr);
+		}
+		catch (...) {
+			continue; // skip malformed line instead of crashing
+		}
+
+		plans.push_back(p);
+	}
+	file.close();
+	return plans;
+}
+
 string getCurrentDate() {
 	time_t now = time(nullptr);
 	tm* ltm = localtime(&now);
@@ -18,11 +53,81 @@ string getCurrentDate() {
 	return string(buffer);
 }
 
+bool hasActiveMembership(const string& username) {
+	ifstream memberFile("UserMembership.txt");
+	if (!memberFile.is_open()) return false;
+
+	string fileUser, planIDStr, datePurchase;
+	int currentPlanId = -1;
+	bool recordFound = false;
+
+	string line;
+	while (getline(memberFile, line)) {
+		if (line.empty()) continue;
+		stringstream ss(line);
+
+		getline(ss, fileUser, ',');
+		getline(ss, planIDStr, ',');
+		getline(ss, datePurchase, ',');
+
+		if (fileUser == username && !planIDStr.empty()) {
+			try {
+				currentPlanId = stoi(planIDStr);
+				recordFound = true;
+			}
+			catch (...) {
+				continue;
+			}
+			break;
+		}
+	}
+	memberFile.close();
+
+	if (!recordFound || currentPlanId == -1) return false;
+
+	// Look up plan duration
+	vector<MembershipPlanRecord> plans = loadMembershipPlans("membershipPlan.txt");
+	int duration = 0;
+	bool planFound = false;
+
+	for (const auto& p : plans) {
+		if (p.id == currentPlanId) {
+			duration = p.duration;
+			planFound = true;
+			break;
+		}
+	}
+
+	if (!planFound) return false;
+
+	// Calculate expiration date
+	tm purchaseTm = { 0 };
+	int year, month, day;
+	char sep1, sep2;
+	stringstream dateStream(datePurchase);
+
+	if (dateStream >> year >> sep1 >> month >> sep2 >> day) {
+		purchaseTm.tm_year = year - 1900;
+		purchaseTm.tm_mon = month - 1;
+		purchaseTm.tm_mday = day;
+		purchaseTm.tm_isdst = -1;
+
+		purchaseTm.tm_mon += duration;
+		time_t expireTime = mktime(&purchaseTm);
+		time_t now = time(nullptr);
+
+		// Active if expireTime is greater than or equal to the current time
+		return difftime(expireTime, now) > 0;
+	}
+
+	return false;
+}
+
 void viewMembershipPlan(Member member) {
-	ifstream membershipFile("membershipPlan.txt");
+	vector<MembershipPlanRecord>membership = loadMembershipPlans("membershipPlan.txt");
 	ifstream memberFile("UserMembership.txt");
 
-	if (!membershipFile.is_open() || !memberFile.is_open()) {
+	if (!memberFile.is_open()) {
 		cerr << "Error opening file!" << endl;
 		return;
 	}
@@ -31,7 +136,18 @@ void viewMembershipPlan(Member member) {
 	int targetPlanId = -1;
 	bool hasSubscription = false;
 
-	while (memberFile >> username >> targetPlanId >> datePurchase) {
+	string line;
+	while (getline(memberFile, line)) {
+		if (line.empty()) continue;
+		stringstream ss(line);
+		string planID;
+
+		getline(ss, username, ',');
+		getline(ss, planID, ',');
+		getline(ss, datePurchase, ',');
+	
+		targetPlanId = stoi(planID);
+
 		if (username == member.loginInfo.usernames) {
 			hasSubscription = true;
 			break; // Found active subscription!
@@ -39,11 +155,6 @@ void viewMembershipPlan(Member member) {
 	}
 
 	memberFile.close();
-
-	int no, duration;
-	string planName;
-	double price;
-	string description;
 
 	if (hasSubscription && targetPlanId != -1) {
 
@@ -59,12 +170,9 @@ void viewMembershipPlan(Member member) {
 			purchaseTm.tm_mday = day;
 			purchaseTm.tm_isdst = -1;
 
-			while (membershipFile >> no >> planName >> duration >> price) {
-				string ignoreBenefits;
-				getline(membershipFile, ignoreBenefits);
-
-				if (no == targetPlanId) {
-					purchaseTm.tm_mon += duration;
+			for (const auto& p : membership) {
+				if (p.id == targetPlanId) {
+					purchaseTm.tm_mon += p.duration;
 
 					time_t expireTime = mktime(&purchaseTm);
 					time_t now = time(nullptr);
@@ -83,18 +191,19 @@ void viewMembershipPlan(Member member) {
 					cout << "Name: " << member.name << endl;
 
 					if (daysLeft >= 0) {
-						cout << "Membership Plan Subscribed: " << planName << endl;
+						cout << "Membership Plan Subscribed: " << p.planName << endl;
 						cout << "Date Subscribed: " << datePurchase << endl;
 						cout << "Status: Active" << endl;
 						cout << "Expiry Date: " << dateExpire << "  (" << daysLeft << " days remaining.) " << endl << endl;
 					}
 					else {
 						cout << "Membership Plan Subscribed: - " << endl;
-						cout << "Membership plan " << planName << " EXPIRED " << abs(daysLeft) << " days ago." << endl << endl;
+						cout << "Membership plan " << p.planName << " EXPIRED " << abs(daysLeft) << " days ago." << endl << endl;
 					}
 					break;
 				}
 			}
+			
 		}
 	}
 	else {
@@ -111,80 +220,45 @@ void viewMembershipPlan(Member member) {
 	cout << "                MEMBERSHIP PLANS                " << endl;
 	cout << "================================================" << endl << endl;
 
-	cout << left << setw(5) << "No."
-		<< left << setw(15) << "Plan Name"
-		<< left << setw(15) << "Duration"
-		<< left << setw(15) << "Price" << endl;
-	cout << "------------------------------------------------" << endl;
-
-
-	membershipFile.clear();
-	membershipFile.seekg(0);
-
 	cout << fixed << setprecision(2);
 
-	while (membershipFile >> no >> planName >> duration >> price) {
-		string durationStr = to_string(duration) + (duration == 1 ? " Month" : " Months");
-		string priceStr = "RM " + to_string(price).substr(0, to_string(price).find('.') + 3);
+	for (const auto& p : membership) {
+		string durationStr = to_string(p.duration) + (p.duration == 1 ? " Month" : " Months");
+	
+		cout << "\nPlan ID   : " << p.id << endl;
+		cout << "Plan Name : " << p.planName << endl;
+		cout << "Duration  : " << durationStr << endl;
+		cout << "Price     : RM " << fixed << setprecision(2) << p.price << endl;
+		cout << "Benefits  :" << endl;
 
-		cout << left << setw(5) << no
-			<< left << setw(15) << planName
-			<< left << setw(15) << durationStr
-			<< left << setw(15) << priceStr << endl;
-
-		string ignoreBenefits;
-		getline(membershipFile, ignoreBenefits);
-	}
-
-	cout << "------------------------------------------------" << endl;
-
-	membershipFile.clear();
-	membershipFile.seekg(0);
-
-	while (membershipFile >> no >> planName >> duration >> price) {
-		string benefits;
-		getline(membershipFile >> ws, benefits);
-
-		cout << planName << " Plan Benefits:" << endl;
-
-		stringstream ss(benefits);
-		string item;
-
-		while (getline(ss, item, ';')) {
-			cout << "- " << item << endl;
+		stringstream benefitStream(p.benefits);
+		string singleBenefit;
+		while (getline(benefitStream, singleBenefit, ';')) {
+			if (!singleBenefit.empty()) {
+				cout << "  - " << singleBenefit << endl;
+			}
 		}
 
 		cout << "------------------------------------------------" << endl;
 	}
-
-	membershipFile.close();
 }
 
-void registerMembershipPlan() {
-	ifstream membershipFile("membershipPlan.txt");
+void registerMembershipPlan(Member member) {
 
-	if (!membershipFile.is_open()) {
-		cerr << "Error opening file!" << endl;
+	if (hasActiveMembership(member.loginInfo.usernames)) {
+		cout << "\n=================================================" << endl;
+		cout << "[NOTICE] You already have an ACTIVE membership!" << endl;
+		cout << "Please select Option 2 (Renew) to extend it or wait for the plan expired to register a new membership." << endl;
+		cout << "=================================================" << endl;
 		return;
 	}
 
-	int no, duration;
-	string planName;
-	double price;
-	
-	vector<int> planIDs;
-	vector<string> durationStr, name, priceStr;
+	vector<MembershipPlanRecord>membership = loadMembershipPlans("membershipPlan.txt");
 
-	while (membershipFile >> no >> planName >> duration >> price) {
-		planIDs.push_back(no); 
-		name.push_back(planName);
-		durationStr.push_back(to_string(duration) + (duration == 1 ? " Month" : " Months"));
-		priceStr.push_back("RM " + to_string(price).substr(0, to_string(price).find('.') + 3));
-
-		string ignoreBenefits;
-		getline(membershipFile, ignoreBenefits);
+	if (membership.empty()) {
+		cout << "No membership plans available to register." << endl;
+		return;
 	}
-	membershipFile.close();
 
 	int choice;
 	cout << "================================================" << endl;
@@ -207,8 +281,8 @@ void registerMembershipPlan() {
 		}
 
 		int selectedIndex = -1;
-		for (size_t i = 0; i < planIDs.size(); ++i) {
-			if (planIDs[i] == choice) {
+		for (size_t i = 0; i < membership.size(); ++i) {
+			if (membership[i].id == choice) {
 				selectedIndex = i;
 				break;
 			}
@@ -218,9 +292,9 @@ void registerMembershipPlan() {
 			cout << "\n------------------------------------------------" << endl;
 			cout << "           SELECTED PLAN CONFIRMATION           " << endl;
 			cout << "------------------------------------------------" << endl;
-			cout << "Plan Name : " << name[selectedIndex] << endl;
-			cout << "Duration  : " << durationStr[selectedIndex] << endl;
-			cout << "Price     : " << priceStr[selectedIndex] << endl;
+			cout << "Plan Name : " << membership[selectedIndex].planName << endl;
+			cout << "Duration  : " << membership[selectedIndex].duration << endl;
+			cout << "Price     : " << membership[selectedIndex].price << endl;
 
 			char confirm;
 			cout << "\nConfirm subscription? (Y/N): ";
@@ -228,7 +302,7 @@ void registerMembershipPlan() {
 
 			if (confirm == 'Y' || confirm == 'y') {
 				//process to payment
-				break;
+				return;
 
 				//string currentDate = getCurrentDate();
 
@@ -254,16 +328,16 @@ void registerMembershipPlan() {
 		}
 		else {
 			cout << "Invalid Plan No. Please try again." << endl;
-			return;
+			continue;
 		}
 	} while (true);
 }
 
 void renewMembership(Member member) {
-	ifstream membershipFile("membershipPlan.txt");
+	vector<MembershipPlanRecord>membership = loadMembershipPlans("membershipPlan.txt");
 	ifstream memberFile("UserMembership.txt");
 
-	if (!membershipFile.is_open() || !memberFile.is_open()) {
+	if (!memberFile.is_open()) {
 		cerr << "Error opening file!" << endl;
 		return;
 	}
@@ -271,35 +345,45 @@ void renewMembership(Member member) {
 	string username, datePurchase;
 	int currentPlanId = -1;
 	bool hasSubscription = false;
+	
+	string line;
+	while (getline(memberFile, line)) {
+		if (line.empty()) continue;
+		stringstream ss(line);
+		string planID;
 
-	while (memberFile >> username >> currentPlanId >> datePurchase) {
+		getline(ss, username, ',');
+		getline(ss, planID, ',');
+		getline(ss, datePurchase, ',');
+
+		currentPlanId = stoi(planID);
+
 		if (username == member.loginInfo.usernames) {
 			hasSubscription = true;
 			break; // Found active subscription!
 		}
 	}
+
 	memberFile.close();
 
 	if (!hasSubscription || currentPlanId == -1 ) {
 		cout << "\nNo existing subscription found. " << endl;
 		cout << "Please use 'Subscribe a membership plan' option first." << endl;
-		membershipFile.close();
 		return;
 	}
-
-	int no, duration = 0;
-	string planName;
-	double price = 0.0;
-
-	while (membershipFile >> no >> planName >> duration >> price) {
-		string ignoreBenefits;
-		getline(membershipFile, ignoreBenefits);
-		
-		if (no == currentPlanId) {
+	
+	MembershipPlanRecord plan = {0,"",0,0.0,""};
+	for (const auto& p : membership) {
+		if (p.id == currentPlanId) {
+			plan = p;
 			break;
 		}
 	}
-	membershipFile.close();
+	
+	if (plan.id == 0) {
+		cout << "\nError: Your subscribed plan is no longer available in the catalog.\n";
+		return;
+	}
 
 	tm purchaseTm = { 0 };
 	int year, month, day;
@@ -313,7 +397,7 @@ void renewMembership(Member member) {
 	purchaseTm.tm_isdst = -1;
 
 	// Calculate original expiration date
-	purchaseTm.tm_mon += duration;
+	purchaseTm.tm_mon += plan.duration;
 	time_t expireTime = mktime(&purchaseTm);
 	time_t now = time(nullptr);
 
@@ -323,44 +407,47 @@ void renewMembership(Member member) {
 		return;
 	}
 
-	char currentExpireBuffer[20];
-	strftime(currentExpireBuffer, sizeof(currentExpireBuffer), "%Y/%m/%d", &purchaseTm);
-	string currentExpireDateStr(currentExpireBuffer);
+	if (plan.id == currentPlanId) {
+		char currentExpireBuffer[20];
+		strftime(currentExpireBuffer, sizeof(currentExpireBuffer), "%Y/%m/%d", &purchaseTm);
+		string currentExpireDateStr(currentExpireBuffer);
 
-	// Calculate NEW extended expiration date (add another duration period)
-	tm newExpireTm = purchaseTm;
-	newExpireTm.tm_mon += duration;
-	mktime(&newExpireTm); // Normalizes months (e.g. month 13 becomes next year Jan)
+		// Calculate NEW extended expiration date (add another duration period)
+		tm newExpireTm = purchaseTm;
+		newExpireTm.tm_mon += plan.duration;
+		mktime(&newExpireTm); // Normalizes months (e.g. month 13 becomes next year Jan)
 
-	// Format NEW expiration date to string
-	char newExpireBuffer[20];
-	strftime(newExpireBuffer, sizeof(newExpireBuffer), "%Y/%m/%d", &newExpireTm);
-	string newExpireDateStr(newExpireBuffer);
+		// Format NEW expiration date to string
+		char newExpireBuffer[20];
+		strftime(newExpireBuffer, sizeof(newExpireBuffer), "%Y/%m/%d", &newExpireTm);
+		string newExpireDateStr(newExpireBuffer);
 
-	cout << "\n================================================" << endl;
-	cout << "              RENEW MEMBERSHIP PLAN             " << endl;
-	cout << "================================================" << endl << endl;
+		cout << "\n================================================" << endl;
+		cout << "              RENEW MEMBERSHIP PLAN             " << endl;
+		cout << "================================================" << endl << endl;
 	
-	string durationStr = to_string(duration) + (duration == 1 ? " Month" : " Months");
-	string priceStr = "RM " + to_string(price).substr(0, to_string(price).find('.') + 3);
+		string durationStr = to_string(plan.duration) + (plan.duration == 1 ? " Month" : " Months");
+	
 
-	cout << "Current Plan    : " << planName << endl;
-	cout << "Renew Duration  : " << durationStr << endl;
-	cout << "New expiry date : " << newExpireDateStr << endl;
-	cout << "Amount due      : " << priceStr << endl;
+		cout << "Current Plan    : " << plan.planName << endl;
+		cout << "Renew Duration  : " << durationStr << endl;
+		cout << "New expiry date : " << newExpireDateStr << endl;
+		cout << "Amount due      : " << fixed << setprecision(2) << plan.price << endl;
 
-	char confirm;
-	cout << "\nConfirm renewal? (Y/N): ";
-	cin >> confirm;
+		char confirm;
+		cout << "\nConfirm renewal? (Y/N): ";
+		cin >> confirm;
 
-	if (confirm == 'Y' || confirm == 'y') {
-		// process to payment
-		return;
+		if (confirm == 'Y' || confirm == 'y') {
+			// process to payment
+			return;
+		}
+		else {
+			cout << "Renewal cancelled." << endl;
+			return;
+		}
 	}
-	else {
-		cout << "Renewal cancelled." << endl;
-		return;
-	}
+	
 }
 
 void membershipPlan(Member member) {
@@ -385,7 +472,7 @@ void membershipPlan(Member member) {
 
 		switch (choice) {
 		case 1:
-			registerMembershipPlan();
+			registerMembershipPlan(member);
 			break;
 
 		case 2:
@@ -394,6 +481,7 @@ void membershipPlan(Member member) {
 
 		case 0:
 			cout << "Returning to menu..." << endl;
+			return;
 			// call main menu func
 			break;
 		
