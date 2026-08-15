@@ -47,9 +47,10 @@ vector<MembershipPlanRecord> loadMembershipPlans(const string& filename) {
 
 string getCurrentDate() {
 	time_t now = time(nullptr);
-	tm* ltm = localtime(&now);
+	tm ltm = {};
+	localtime_s(&ltm, &now);
 	char buffer[20];
-	strftime(buffer, sizeof(buffer), "%Y/%m/%d", ltm);
+	strftime(buffer, sizeof(buffer), "%Y/%m/%d", &ltm);
 	return string(buffer);
 }
 
