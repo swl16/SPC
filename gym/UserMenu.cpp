@@ -23,15 +23,14 @@ void displayUserMenu() {
 	cout << "4. Renew Membership\n";
 	cout << "5. View Class Schedule\n";
 	cout << "6. Book Gym Class\n";
-	cout << "7. Book Personal Trainer\n";
-	cout << "8. View My Bookings\n";
-	cout << "9. Cancel Booking\n";
-	cout << "10. Make Payment\n";
-	cout << "11. View Payment History\n";
-	cout << "12. Gym Check - In\n";
-	cout << "13. Gym Check - Out\n";
-	cout << "14. Record Fitness Progress\n";
-	cout << "15. View Fitness Progress\n";
+	cout << "7. View My Bookings\n";
+	cout << "8. Cancel Booking\n";
+	cout << "9. View Payment History\n";
+	cout << "10. Gym Check - In\n";
+	cout << "11. Gym Check - Out\n";
+	cout << "12. Record Fitness Progress\n";
+	cout << "13. View Fitness Progress\n";
+	cout << "14. Delete Account\n";
 	cout << "0. Logout\n";
 	cout << "--------------------------------------------------" << endl;
 }
