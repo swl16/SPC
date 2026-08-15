@@ -175,44 +175,6 @@ void editProfile(Member* members) {
 	cout << "Profile updated & saved successfully.\n";
 }
 
-void viewMembershipPlans() {
-}
-
-void renewMembership() {
-}
-
-void viewClassSchedule() {
-}
-
-void bookGymClass() {
-}
-
-void bookPersonalTrainer() {
-}
-
-void viewBookings() {
-}
-
-void cancelBooking() {
-}
-
-void makePayment() {
-}
-
-void viewPaymentHistory() {
-}
-
-void gymCheckIn() {
-}
-
-void gymCheckOut() {
-}
-
-void recordFitnessProgress() {
-}
-
-void viewFitnessProgress() {
-}
 
 void userMenu(Member* members) {
 
