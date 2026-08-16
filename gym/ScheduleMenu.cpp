@@ -73,15 +73,15 @@ bool isValidDate(const string& date, bool allowPast) {
 
     // 5. Check against the actual current date
     if (!allowPast) {
-         time_t futureTime = now + (i * 86400); // 86400 seconds = 1 day
-        tm ltm;
+        time_t t = time(nullptr);
+        tm nowTm;
 
-        #ifdef _WIN32
-        localtime_s(&ltm, &futureTime); // Safe version for MSVC / Visual Studio
-        #else
-        ltm = *localtime(&futureTime);
-        #endif
-        tm* now = &ltm;
+#ifdef _WIN32
+        localtime_s(&nowTm, &t);
+#else
+        localtime_r(&t, &nowTm);
+#endif
+        tm* now = &nowTm;
 
         int currentYear = now->tm_year + 1900;
         int currentMonth = now->tm_mon + 1;
@@ -280,7 +280,7 @@ void searchschedule(const vector<Schedule>& schedules) {
 
     string searchDate;
     cout << "\n--- Search Schedule by Date ---\n";
-    searchDate = getValidDate("Enter the date you want to search (YYYY/MM/DD): ");
+    searchDate = getValidDate("Enter the date you want to search (YYYY/MM/DD): ", true);
 
     bool found = false;
 
@@ -362,7 +362,8 @@ void updateschedule(vector<Schedule>& schedules) {
                 cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
                 string tempDate;
-                int tempStart, tempEnd;
+                int tempStart, tempEnd, tempCapacity;
+                double tempPrice;
 
                 switch (updateChoice) {
                 case '1' :
@@ -421,6 +422,27 @@ void updateschedule(vector<Schedule>& schedules) {
 
                     break;
 
+                case '5':
+                    s.trainerName = getNonEmptyString("Enter new trainer name: ");
+                    isModified = true;
+                    cout << "Trainer updated successfully!\n";
+                    break;
+
+                case '6':
+                    tempPrice = getDoubleInput("Enter new class fee (RM, e.g., 30.00): ", 0.0, 500.0);
+                    s.price = tempPrice;
+                    isModified = true;
+                    cout << "Fee updated successfully!\n";
+                    break;
+
+                case '7':
+                    tempCapacity = getIntegerInput("Enter new class capacity: ", 5, 30);
+                    s.classCapacity = tempCapacity;
+                    isModified = true;
+                    cout << "Capacity updated successfully!\n";
+                    break;
+
+
                 case '0':
 
                     if (isModified) {
@@ -434,7 +456,7 @@ void updateschedule(vector<Schedule>& schedules) {
                     break;
 
                 default:
-                    cout << "Invalid choice. Please try again.\n";
+                    cout << "No changes were made.\n";
                 }
 
             } while (updateChoice != '0');
