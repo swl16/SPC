@@ -5,6 +5,7 @@
 #include<fstream>
 #include <sstream>
 #include <ctime>
+#include <algorithm>
 
 #include"User.hpp"
 #include"ScheduleMenu.hpp"
@@ -149,8 +150,17 @@ void bookClass(Member member) {
         int timeChoice;
         cout << "\nEnter Option No. (1-" << classesForSelectedDate.size() << ") to book (or '0' to back):";
 
-        if (!(cin >> timeChoice) || timeChoice == 0) { 
+        if (!(cin >> timeChoice)) { // Input validation for non-numeric input
+            cin.clear();
+            cin.ignore(1000, '\n');
+            cout << "Invalid input. Please enter a number." << endl;
             continue;
+        }
+
+        if (timeChoice == 0) {
+            cout << "Returning to menu..." << endl;
+            // call main menu func
+            break;
         }
 
         if (timeChoice < 1 || timeChoice > static_cast<int>(classesForSelectedDate.size())) {

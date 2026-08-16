@@ -69,13 +69,19 @@ bool isValidDate(const string& date, bool allowPast) {
     }
 
     if (day > daysInMonth[month]) return false;
+    time_t now = time(nullptr);
 
     // 5. Check against the actual current date
     if (!allowPast) {
-        time_t t = time(nullptr);
-        tm nowTm;
-        localtime_s(&nowTm, &t);
-        tm* now = &nowTm;
+         time_t futureTime = now + (i * 86400); // 86400 seconds = 1 day
+        tm ltm;
+
+        #ifdef _WIN32
+        localtime_s(&ltm, &futureTime); // Safe version for MSVC / Visual Studio
+        #else
+        ltm = *localtime(&futureTime);
+        #endif
+        tm* now = &ltm;
 
         int currentYear = now->tm_year + 1900;
         int currentMonth = now->tm_mon + 1;
@@ -489,7 +495,7 @@ void cancelschedule(vector<Schedule>& schedules) {
 
     int searchID;
     cout << "\n--- Cancel Schedule ---\n";
-    searchID = getIntegerInput("Enter the Schedule ID you want to cancel: ", 100, 99999);
+    searchID = getIntegerInput("Enter the Schedule ID you want to cancel: ", 1000, 1999);
 
     bool found = false;
 

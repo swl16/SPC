@@ -8,6 +8,7 @@
 #include <sstream>
 #include <cctype>
 #include <ctime>
+#include <algorithm>
 using namespace std;
 
 struct Schedule {
@@ -31,6 +32,7 @@ struct ClassBooking {
 };
 
 int getIntegerInput(const string& message, int min, int max);
+double getDoubleInput(const string& message, double min, double max);
 string getNonEmptyString(const string& message);
 bool isValidDate(const string& date, bool allowPast);
 string getValidDate(const string& message, bool allowPast = false);
@@ -41,6 +43,7 @@ void displayschedule(const vector<Schedule>& schedules);
 void searchschedule(const vector<Schedule>& schedules);
 void updateschedule(vector<Schedule>& schedules);
 void cancelschedule(vector<Schedule>& schedules);
+void deleteSchedule(vector<Schedule>& schedules);
 bool hasConflict(const vector<Schedule>& schedules, string date, int startTime, int endTime, int excludeID = -1);
 void loadSchedulesFromFile(vector<Schedule>& schedules);
 void saveSchedulesToFile(const vector<Schedule>& schedules);
