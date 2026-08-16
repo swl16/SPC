@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 #include <fstream>
+
+#include "User.hpp"
 using namespace std;
 
 // --- DUMMY DATA FOR TESTING ---

@@ -1,7 +1,6 @@
 #pragma once
 #include<iostream>
 #include<vector>
-#include "FitnessTracking.hpp"
 
 using namespace std;
 
@@ -51,52 +50,76 @@ struct MembershipPlanRecord {
 	string benefits;
 };
 
-// user login
+// user login file
 void registerUser(Member* members);
 int loginUser(Member* members);
 void resetPassword(Member* members);
 void logoutUser();
-
+void displaymenu();
 void loadUser(Member* members);
 void saveUser(Member* members);
-
 void userLogin();
+void clearScreen();
 
-// user menu
-void userMenu(Member* members);
 
-// profile
+// user menu file
+void displayUserMenu();
+int loggedInMember(Member members[]);
 void viewProfile(Member* members);
 void editProfile(Member* members);
+void userMenu(Member* members);
+void pauseScreen();
 
-// membership
-void viewMembershipPlan(Member member);
-void membershipPlan(Member member);
+
+// membership file
 vector<MembershipPlanRecord> loadMembershipPlans(const string& filename);
+string getCurrentDate();
+bool hasActiveMembership(const string& username);
+void viewMembershipPlan(Member member);
+void registerMembershipPlan(Member member);
+void renewMembership(Member member);
+void membershipPlan(Member member);
 
-// booking
+// booking file
+int generateBookingID(const string& filename);
 void bookClass(Member member);
 void viewBooking(Member member);
-void cancelBooking();
+void cancelBooking(Member member);
 
-// payment
+// payment file
+string getCurrentDateTime();
+string generatePaymentID();
+void saveMembership(string username, int planID, string planName, string startDate, string endDate, string status);
+void savePayment(string paymentID, string username, int planID, string planName, double amount, string paymentDate, string paymentMethod);
+void generateMemberReceipt(string paymentID, string username, MembershipPlanRecord plan, string paymentDate, string paymentMethod,
+	string startDate, string endDate);
+void membershipPayment(Member* members);
 
-// attendance
+// attendance file
+
+
+
+// fitness file
+//void fitnessMenu(Member& member);
+
+// admin file
+void adminLogin();
+void displayadminMenu();
+void displayMembershipPlanMenu();
+void displayClassMenu();
 void displayAttendanceMenu();
 void displayReportsMenu();
-
-// fitness
-void fitnessMenu(Member& member);
-
-// admin
-void adminLogin();
+void viewAllMembers();
+void addMembershipPlan();
+void viewMembershipPlans();
+void updateMembershipPlan();
+void deleteMembershipPlan();
 void adminMenu(Member* members, int userCount);
 
-void displaymenu();
-void displayadminMenu();
-void displayClassMenu();
-void displayMembershipPlanMenu();
 
-void pauseScreen();
-void clearScreen();
+
+
+
+
+
 

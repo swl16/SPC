@@ -196,6 +196,7 @@ void userMenu(Member* members) {
 			break;
 
 		case '3':
+			membershipPlan(members[loggedInMember(members)]);
 			break;
 
 		case '4':

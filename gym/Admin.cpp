@@ -479,16 +479,16 @@ void deleteMembershipPlan() {
 
 
 
-void checkClassCapacity(){
-
-}
-
-void viewTodayAttendance(){}
-void viewWeeklyAttandance(){}
-
-void membershipReport() {}
-void classPopularReport() {}
-void monthlyReport() {}
+//void checkClassCapacity(){
+//
+//}
+//
+//void viewTodayAttendance(){}
+//void viewWeeklyAttandance(){}
+//
+//void membershipReport() {}
+//void classPopularReport() {}
+//void monthlyReport() {}
 
 
 void adminMenu(Member* members,int userCount) {

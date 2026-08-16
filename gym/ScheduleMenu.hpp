@@ -34,6 +34,7 @@ struct ClassBooking {
 int getIntegerInput(const string& message, int min, int max);
 double getDoubleInput(const string& message, double min, double max);
 string getNonEmptyString(const string& message);
+double getPositiveDouble(const string& message);
 bool isValidDate(const string& date, bool allowPast);
 string getValidDate(const string& message, bool allowPast = false);
 void pauseScreen();
@@ -47,3 +48,6 @@ void deleteSchedule(vector<Schedule>& schedules);
 bool hasConflict(const vector<Schedule>& schedules, string date, int startTime, int endTime, int excludeID = -1);
 void loadSchedulesFromFile(vector<Schedule>& schedules);
 void saveSchedulesToFile(const vector<Schedule>& schedules);
+
+int generatePlanID(const string& filename);
+void saveMembershipPlans(const string& filename, const vector<MembershipPlanRecord>& plans);
