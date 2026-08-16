@@ -73,7 +73,7 @@ void adminLogin() {
 
 	string adminUsername, adminPassword;
 
-	cout << "=================================" << endl;
+	cout << "\n=================================" << endl;
 	cout << "           ADMIN LOGIN           " << endl;
 	cout << "=================================" << endl;
 	cout << "Enter Username: ";
@@ -491,7 +491,7 @@ void classPopularReport() {}
 void monthlyReport() {}
 
 
-void adminMenu(Member* members, int userCount) {
+void adminMenu(Member* members,int userCount) {
 
 	char choice, choose;
 	vector<Schedule> schedules;
@@ -502,18 +502,6 @@ void adminMenu(Member* members, int userCount) {
 		displayadminMenu();
 		cout << "Enter your choice: ";
 		cin >> choice;
-
-		if (cin.fail()) {
-			if (cin.eof()) {
-				cout << "\nInput closed. Exiting admin menu." << endl;
-				break;
-			}
-			cin.clear();
-			cin.ignore(numeric_limits<streamsize>::max(), '\n');
-			cout << "Invalid input. Please try again." << endl;
-			continue;
-		}
-
 
 		switch (choice) {
 		case '1': // View All Members

@@ -21,20 +21,6 @@ int main() {
 		cout << "Enter your choice: ";
 		cin >> choice;
 
-		if (!(cin >> choice)) {
-
-			cin.clear();
-
-			cin.ignore(
-				numeric_limits<streamsize>::max(),
-				'\n'
-			);
-
-			cout << "Invalid input. Please enter 0-2.\n";
-
-			continue;
-		}
-
 		switch (choice) {
 
 		case '1':
