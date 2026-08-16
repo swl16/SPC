@@ -1,2 +1,0 @@
-1 Basic 1 20.00 Use the gym
-2 Premium 3 60.00 use the gym; locker

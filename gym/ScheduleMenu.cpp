@@ -73,7 +73,9 @@ bool isValidDate(const string& date, bool allowPast) {
     // 5. Check against the actual current date
     if (!allowPast) {
         time_t t = time(nullptr);
-        tm* now = localtime(&t);
+        tm nowTm;
+        localtime_s(&nowTm, &t);
+        tm* now = &nowTm;
 
         int currentYear = now->tm_year + 1900;
         int currentMonth = now->tm_mon + 1;
@@ -91,7 +93,7 @@ bool isValidDate(const string& date, bool allowPast) {
     return true;
 }
 
-string getValidDate(const string& message, bool allowPast = false) {
+string getValidDate(const string& message, bool allowPast) {
     string date;
     while (true) {
         cout << message;

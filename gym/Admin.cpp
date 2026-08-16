@@ -6,6 +6,7 @@
 #include <string>
 #include <limits>
 #include <cstdio>
+#include <algorithm>
 
 #include "User.hpp"
 #include "ScheduleMenu.hpp"
@@ -72,7 +73,7 @@ void adminLogin() {
 
 	string adminUsername, adminPassword;
 
-	cout << "=================================" << endl;
+	cout << "\n=================================" << endl;
 	cout << "           ADMIN LOGIN           " << endl;
 	cout << "=================================" << endl;
 	cout << "Enter Username: ";
@@ -239,7 +240,7 @@ void addMembershipPlan() {
 		cin.ignore(numeric_limits<streamsize>::max(), '\n');
 		cout << "Invalid price. Please enter a valid amount." << endl;
 	} while (true);
-	cin.ignore(numeric_limits<streamsize>::max()0, '\n');
+	cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
 	cout << "\nEnter Plan Benefits separated by semicolons ';'" << endl;
 	cout << "Example: Free locker access; Unlimited gym entrance" << endl;
@@ -490,7 +491,7 @@ void classPopularReport() {}
 void monthlyReport() {}
 
 
-void adminMenu(Member* members, int userCount) {
+void adminMenu(Member* members,int userCount) {
 
 	char choice, choose;
 	vector<Schedule> schedules;
@@ -501,18 +502,6 @@ void adminMenu(Member* members, int userCount) {
 		displayadminMenu();
 		cout << "Enter your choice: ";
 		cin >> choice;
-
-		if (cin.fail()) {
-			if (cin.eof()) {
-				cout << "\nInput closed. Exiting admin menu." << endl;
-				break;
-			}
-			cin.clear();
-			cin.ignore(numeric_limits<streamsize>::max(), '\n');
-			cout << "Invalid input. Please try again." << endl;
-			continue;
-		}
-
 
 		switch (choice) {
 		case '1': // View All Members
@@ -569,7 +558,7 @@ void adminMenu(Member* members, int userCount) {
 				case '3': //update class
 					break;
 				default:
-					
+					break;
 				}
 
 			} while (choose != '0');

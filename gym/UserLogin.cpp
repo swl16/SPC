@@ -5,6 +5,8 @@
 #include<fstream>
 #include<sstream>
 #include<regex>
+#include <cctype>
+#include <limits>
 
 #include"User.hpp"
 
@@ -24,7 +26,7 @@ void registerUser(Member* members) {   // user registration
 	cout << "================================\n";
 
 	while (true) {
-		cout << "Enter a new username (without space): ";
+		cout << "Enter Username (without space): ";
 		cin >> username;
 
 		bool usernameExists = false;
@@ -43,7 +45,7 @@ void registerUser(Member* members) {   // user registration
 		cin.ignore(numeric_limits<streamsize>::max(), '\n');    // Proper buffer clearing
 		cin.get();
 	}
-	cout << "Enter a new password: ";
+	cout << "Enter Password: ";
 	cin >> password;
 
 	newMember.loginInfo.usernames = username;
@@ -54,14 +56,14 @@ void registerUser(Member* members) {   // user registration
 
 	cout << "Enter Full Name: ";
 	getline(cin, newMember.name);
-	if (!newMember.name.empty()) {
+	if (newMember.name.empty()) {
 		cout << "Name cannot be empty.\n";
 		return;
 	}
 
 	cout << "Enter Age: ";
 	cin >> newMember.age;
-	if (cin >> newMember.age && newMember.age > 0 && newMember.age < 120) {
+	if (!(cin >> newMember.age && newMember.age > 0 && newMember.age < 120)) {
 		cout << "Invalid age. Please enter a whole number between 1 and 119.\n";
 		return;
 	}
@@ -79,30 +81,37 @@ void registerUser(Member* members) {   // user registration
 	}
 
 	while (true) {
-		cout << "Enter Phone Number (without -): ";
+		cout << "Enter Phone Number (without - ): ";
 		cin >> newMember.phNo;
-		bool allDigits = !newMember.phNo.empty();
-		for (char c : newMember.phNo) {
-			if (!isdigit(static_cast<unsigned char>(c))) { allDigits = false; break; }
+
+		// Check whether every character is a digit
+		if (regex_match(newMember.phNo, regex("[0-9]{10,11}"))) {
+			break;
 		}
-		if (allDigits && newMember.phNo.length() >= 12) break;
-		cout << "Invalid phone number. Digits only, at least 7 characters.\n";
+
+		cout << "Invalid phone number!\n";
+		cout << "Phone number must contain 10-11 digits only.\n";
+		cout << "Do not use '-' , spaces, or alphabets.\n";
 	}
 
 	while (true) {
 		cout << "Enter Email Address: ";
 		cin >> newMember.email;
-		// Minimal sanity check: must contain '@' and a '.' after it
-		size_t at = newMember.email.find('@');
-		size_t dot = newMember.email.find('.', at == string::npos ? 0 : at);
-		if (at != string::npos && at > 0 && dot != string::npos && dot < newMember.email.length() - 1) {
+
+		regex emailPattern("[a-z0-9]+@gmail\\.com");
+
+		if (regex_match(newMember.email, emailPattern)) {
 			break;
 		}
-		cout << "Invalid email address. Please try again.\n";
+
+		cout << "Invalid email address!\n";
+		cout << "Please enter a valid email such as example@gmail.com\n";
 	}
 
 	members[userCount] = newMember;
 	userCount++;
+
+	saveUser(members);
 
 	cout << "Registration successful!\n";
 
@@ -219,6 +228,9 @@ void resetPassword(Member*members) {   // user reset password
 		cout << "Enter your new password: ";
 		cin >> newPassword;
 		members[userIndex].loginInfo.passwords = newPassword;
+
+		saveUser(members);
+
 		cout << "Password for user '" << username << "' has been reset successfully.\n";
 	}
 	else {
@@ -271,7 +283,6 @@ void userLogin() {
 
 	char loginChoice;
 	Member members[MAX_USERS];
-	string enteredUsername, enteredPassword;
 	loadUser(members);
 
 
@@ -284,7 +295,6 @@ void userLogin() {
 
 		case '1':
 			registerUser(members);
-			saveUser(members);
 			break;
 
 		case '2':
@@ -299,7 +309,6 @@ void userLogin() {
 
 		case '3':
 			resetPassword(members);
-			saveUser(members);
 			break;
 
 		case '4':

@@ -1,11 +1,19 @@
-#include <iostream>
-#include <string>
 #include "User.hpp"
-#include <iomanip>
 #include "FitnessTracking.hpp"
-using namespace std;
+
+
+
+
+// need to add back function for every submenu
+
+
+
 
 double calculateBMI(double weight, double height) {
+
+	if (height <= 0 || weight <= 0)
+		return 0;
+
 	return weight / (height * height);
 }
 
@@ -14,9 +22,16 @@ void setFitnessGoal(Member& members) {
 
 	int targetMins;
 
-	cout << "Enter weekly workout goal (? minutes/week) : ";
-	while (!(cin >> targetMins) || targetMins <= 0) {
-		cout << "Invalid input. Please enter a positive whole number : ";
+	while (true) {
+
+		cout << "Enter weekly workout goal (? minutes/week): ";
+
+		if (cin >> targetMins && targetMins > 0) {
+			break;
+		}
+
+		cout << "Invalid input. Please enter a positive number.\n";
+
 		cin.clear();
 		cin.ignore(numeric_limits<streamsize>::max(), '\n');
 	}
@@ -27,53 +42,76 @@ void setFitnessGoal(Member& members) {
 }
 
 void updateFitnessMetrics(Member& members) {
+
 	double newWeight, newHeight;
+
 	cout << "\n----- UPDATE WEIGHT & HEIGHT -----\n";
-	cout << "Enter current weight (kg) : ";
-	while (!(cin >> newWeight) || newWeight <= 0) {
-		cout << "Invalid weight. Please enter a positive number : ";
+
+	while (true) {
+
+		cout << "Enter weight (kg): ";
+
+		if (cin >> newWeight && 0 < newWeight < 300) {
+			break;
+		}
+
+		cout << "Invalid weight. Weight cannot be less than 0 or more than 300kg\n";
+
 		cin.clear();
 		cin.ignore(numeric_limits<streamsize>::max(), '\n');
 	}
 
-	cout << "Enter current height (m) : ";
-	while (!(cin >> newHeight) || newHeight <= 0) {
-		cout << "Invalid height. Please enter a positive number : ";
+
+	while (true) {
+
+		cout << "Enter height (m): ";
+
+		if (cin >> newHeight && 0 < newHeight < 2.8) {
+			break;
+		}
+
+		cout << "Invalid height. Height cannot be less than 0 or more than 2.8m\n";
+
 		cin.clear();
 		cin.ignore(numeric_limits<streamsize>::max(), '\n');
 	}
 
 	members.fitness.weight = newWeight;
 	members.fitness.height = newHeight;
+
 	members.fitness.bmi = calculateBMI(newWeight, newHeight);
 
-	cout << "\n[SUCCESS] Physical metrics updated.\n";
 	cout << fixed << setprecision(2);
-	cout << "Calculated BMI : " << members.fitness.bmi << " (";
+
+	cout << "\nBMI : " << members.fitness.bmi << endl;
 
 	if (members.fitness.bmi < 18.5) {
-		cout << "Underweight)\n";
+		cout << "Category: Underweight)\n";
 	} else if (members.fitness.bmi < 25.0) {
-		cout << "Normal weight)\n";
+		cout << "Category: Normal Weight)\n";
 	} else if (members.fitness.bmi < 30.0) {
-		cout << "Overweight)\n";
+		cout << "Category: Overweight)\n";
 	} else {
-		cout << "Obese)\n";
+		cout << "Categpry: Obese)\n";
 	}
 }
 
 void logWorkoutSession(Member& members) {
+
 	char choice;
+	int minutes;
+	int intensity;
 	cout << "\n----- LOG WORKOUT SESSION -----\n";
 
 	do {
-		int minutes;
 		cout << "Enter workout duration (minutes) : ";
+
 		while (!(cin >> minutes) || minutes <= 0) {
-			cout << "Invalid duration! Please enter a positive whole number: ";
+			cout << "Invalid duration! Please enter a positive whole number";
 			cin.clear();
 			cin.ignore(numeric_limits<streamsize>::max(), '\n');
 		}
+
 		members.fitness.workoutDuration += minutes;
 
 		cout << "Select Workout Intensity Level :\n";
@@ -81,10 +119,10 @@ void logWorkoutSession(Member& members) {
 		cout << "2. Moderate (Weightlifting / Cycling) [~8 kcal/min]\n";
 		cout << "3. High Intensity (HIIT / Running) [~12 kcal/min]\n";
 
-		int intensity;
+
 		cout << "Choice (1-3) : ";
 		while (!(cin >> intensity) || intensity < 1 || intensity > 3) {
-			cout << "Invalid selection. Choice must be 1, 2 or 3 : ";
+			cout << "Invalid selection. Choice must be 1, 2 or 3 ";
 			cin.clear();
 			cin.ignore(numeric_limits<streamsize>::max(), '\n');
 		}
@@ -106,8 +144,10 @@ void logWorkoutSession(Member& members) {
 
 		cout << fixed << setprecision(1);
 		cout << "-> Logged : " << minutes << " minutes | Estimate Calories Burned : " << estCalories << " kcal\n";
+
 		cout << "\nDo you want to log another workout session for today? (Y/N) : ";
 		cin >> choice;
+
 	} while (choice == 'Y' || choice == 'y');
 
 	cout << "\n[SUCCESS] Session logged! Total workout time : " << members.fitness.workoutDuration << "minutes.\n";
@@ -138,9 +178,9 @@ void generateFitnessReport(const Member& members) {
 	cout << "-----------------------------------\n";
 
 	cout << fixed << setprecision(2);
-	cout << left << setw(20) << "Current Weight" << ": " << members.fitness.weight << " kg\n";
-	cout << left << setw(20) << "Current Height" << ": " << members.fitness.height << " m\n";
-	cout << left << setw(20) << "BMI Score" << ": " << members.fitness.bmi << "\n";
+	cout << left << setw(20) << "Weight :"  << members.fitness.weight << " kg\n";
+	cout << left << setw(20) << "Height :"  << members.fitness.height << " m\n";
+	cout << left << setw(20) << "BMI    :"  << members.fitness.bmi << "\n";
 	cout << "----------------------------------------\n";
 	cout << left << setw(20) << "Logged Workout Time" << ": " << members.fitness.workoutDuration << " mins\n";
 
@@ -166,18 +206,18 @@ void generateFitnessReport(const Member& members) {
 }
 
 void fitnessMenu(Member& members) {
-	int choice = 0;
+	int choice;
 
 	do {
 		cout << "===========================================\n";
 		cout << "     FITNESS TRACKER MODULE MENU\n";
 		cout << "===========================================\n";
-		cout << "1. Set Weekly Workout Goal(mins / week)\n";
-		cout << "2. Update Body Metrics (Weight / Height)\n";
+		cout << "1. Set Weekly Workout Goal\n";
+		cout << "2. Update Body Metrics\n";
 		cout << "3. Log Workout Session\n";
 		cout << "4. Reset Fitness Metrics\n";
 		cout << "5. Generate Fitness Progress Report\n";
-		cout << "6. Exit Fitness Module\n";
+		cout << "6. Back to User Menu\n";
 		cout << "===========================================\n";
 		cout << "Enter your choice (1-6) : ";
 
