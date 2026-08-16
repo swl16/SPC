@@ -183,7 +183,7 @@ void saveSchedulesToFile(const vector<Schedule>& schedules) {
 void addschedule(vector<Schedule>& schedules) {
     Schedule newClass;
 
-    newClass.scheduleID = schedules.empty() ? 100 : schedules.back().scheduleID + 1;
+    newClass.scheduleID = schedules.empty() ? 1000 : schedules.back().scheduleID + 1;
     newClass.isCanceled = false;
 
 
@@ -515,7 +515,46 @@ void cancelschedule(vector<Schedule>& schedules) {
 }
 
 void deleteSchedule(vector<Schedule>& schedules) {
+    if (schedules.empty()) {
+        cout << "No schedules available to delete.\n";
+        pauseScreen();
+        return;
+    }
 
+    displayschedule(schedules);
+
+    int targetID = getIntegerInput("\nEnter Schedule ID to delete (or 0 to cancel): ", 0, 1999);
+    if (targetID == 0) {
+        cout << "Deletion cancelled.\n";
+        pauseScreen();
+        return;
+    }
+
+    auto it = find_if(schedules.begin(), schedules.end(), [&](const Schedule& s) {
+        return s.scheduleID == targetID;
+        });
+
+    // 2. If found, confirm and erase
+    if (it != schedules.end()) {
+        char confirm;
+        cout << "Are you sure you want to permanently delete Schedule ID " << targetID << "? (Y/N): ";
+        cin >> confirm;
+
+        if (confirm == 'Y' || confirm == 'y') {
+            schedules.erase(it); // Erase single element safely
+            saveSchedulesToFile(schedules); // Rewrite Schedules.txt
+            cout << "\nSchedule ID " << targetID << " deleted successfully!\n";
+        }
+        else {
+            cout << "Deletion cancelled.\n";
+        }
+    }
+    else {
+        cout << "\n[ERROR] Schedule ID " << targetID << " not found!\n";
+    }
+
+    pauseScreen();
+    
 }
 
 bool hasConflict(const vector<Schedule>& schedules, string date, int startTime, int endTime, int excludeID) {
