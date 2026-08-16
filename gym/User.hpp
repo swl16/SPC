@@ -75,9 +75,10 @@ void membershipPlan(Member member);
 vector<MembershipPlanRecord> loadMembershipPlans(const string& filename);
 
 // booking
+int generateBookingID(const string& filename);
 void bookClass(Member member);
 void viewBooking(Member member);
-void cancelBooking();
+void cancelBooking(Member member);
 
 // payment
 
