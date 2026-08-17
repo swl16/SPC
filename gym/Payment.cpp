@@ -6,6 +6,7 @@
 #include <vector>
 #include <ctime>
 #include <limits>
+#include <regex>
 
 #include "User.hpp"
 
@@ -29,6 +30,29 @@ string getCurrentDateTime() {
 
     return ss.str();
 }
+
+string addMonths(int months) {
+
+    time_t now = time(nullptr);
+    tm date{};
+
+#ifdef _WIN32
+    localtime_s(&date, &now);
+#else
+    date = *localtime(&now);
+#endif
+
+    date.tm_mon += months;
+
+    mktime(&date);
+
+    stringstream ss;
+
+    ss << put_time(&date, "%d/%m/%Y");
+
+    return ss.str();
+}
+
 
 string generatePaymentID() {
 
@@ -72,7 +96,7 @@ string generatePaymentID() {
     return result.str();
 }
 
-void saveMembership(string username, int planID, string planName, string startDate, string endDate, string status) {
+void saveMembership(string username, string planName, string startDate, string endDate, string status) {
 
     ofstream file("UserMembership.txt");
 
@@ -82,7 +106,6 @@ void saveMembership(string username, int planID, string planName, string startDa
     }
 
     file << username << ","
-        << planID << ","
         << planName << ","
         << startDate << ","
         << endDate << ","
@@ -91,7 +114,7 @@ void saveMembership(string username, int planID, string planName, string startDa
     file.close();
 }
 
-void savePayment(string paymentID, string username, int planID, string planName, double amount, string paymentDate, string paymentMethod) {
+void savePayment(string paymentID, string username, string planName, double amount, string paymentDate, string paymentMethod) {
     
     ofstream file("paymentMembership.txt"); 
 
@@ -102,7 +125,6 @@ void savePayment(string paymentID, string username, int planID, string planName,
 
         file << paymentID << ","
             << username << ","
-            << planID << ","
             << planName << ","
             << fixed << setprecision(2) << amount << ","
             << paymentDate << ","
@@ -148,14 +170,119 @@ void generateMemberReceipt(string paymentID, string username, MembershipPlanReco
 
 
 
+void membershipPaymentProcess(Member members, MembershipPlanRecord selectedPlan) {
 
 
+	cout << "                  \nPAYMENT			         " << endl;
+	cout << "------------------------------------------------" << endl;
+    cout << "Amount : RM " << fixed << setprecision(2) << selectedPlan.price << endl;
 
+    char methodChoice;
+    string paymentMethod;
 
-void membershipPayment(Member* members) {
+    bool paymentCompleted = false;
+    string cardName, cardNumber, expDate, ccv;
+    string phoneNo, pin;
 
-	cout << "=====================================" << endl;
-	cout << "               PAYMENT			      " << endl;
-	cout << "=====================================" << endl;
+    do {
+
+        cout << "Payment Method" << endl;
+        cout << "1. Credit / Debit Card" << endl;
+        cout << "2. E-Wallet" << endl;
+        cout << "0. Cancel" << endl;
+        cout << "Enter payment method: ";
+
+        switch (methodChoice) {
+
+        case '1':
+            paymentMethod = "Credit / Debit Card";
+            cout << "\n--- " << paymentMethod << " Details ---\n";
+            cin.ignore();
+
+            while (true) {
+                cout << "Enter Cardholder Name: ";
+                getline(cin, cardName);
+                if (!cardName.empty() && regex_match(cardName, regex("^[A-Za-z\\s]+$"))) {
+                    break;
+                }
+                cout << "Invalid name. Please use alphabetic characters only.\n";
+            }
+
+            while (true) {
+                cout << "Enter 12-digit Card Number: ";
+                cin >> cardNumber;
+                if (regex_match(cardNumber, regex("^[0-9]{12}$"))) {
+                    break;
+                }
+                cout << "Invalid card number. Must be exactly 12 digits.\n";
+            }
+
+            while (true) {
+                cout << "Enter Expiry Date (MM/YY): ";
+                cin >> expDate;
+                if (regex_match(expDate, regex("^(0[1-9]|1[0-2])/[0-9]{2}$"))) {
+                    break;
+                }
+                cout << "Invalid format. Please enter in MM/YY format (e.g., 04/27).\n";
+            }
+
+            while (true) {
+                cout << "Enter CCV: ";
+                cin >> ccv;
+                if (regex_match(ccv, regex("^[0-9]{3}$"))) {
+                    break;
+                }
+                cout << "Invalid CCV. Must be exactly 3 digits.\n";
+            }
+
+            paymentCompleted = true;
+
+            break;
+        case '2':
+            paymentMethod = "E-Wallet";
+            cout << "\n--- " << paymentMethod << " Details ---\n";
+
+            while (true) {
+                cout << "Enter Phone Number (10-11 digits without '-'): ";
+                cin >> phoneNo;
+                if (regex_match(phoneNo, regex("^[0-9]{10,11}$"))) {
+                    break;
+                }
+                cout << "Invalid phone number. Must be 10 or 11 digits.\n";
+            }
+
+            while (true) {
+                cout << "Enter 6-digit PIN: ";
+                cin >> pin;
+                if (regex_match(pin, regex("^[0-9]{6}$"))) {
+                    break;
+                }
+                cout << "Invalid PIN. Must be exactly 6 digits.\n";
+            }
+
+            paymentCompleted = true;
+            
+            break;
+        case '0':
+            cout << "Payment Cancelled. Returning to previous menu...\n";
+            return;
+
+        default:
+            cout << "Invalid payment method. Please try again\n";
+        }
+    } while (!paymentCompleted && methodChoice != '0');
+
+    cout << "\nProcessing payment...\nPayment successful!\n" << endl;
+
+    string paymentID = generatePaymentID();
+    string paymentDate = getCurrentDateTime();
+    string startDate = addMonths(0);
+    string endDate = addMonths(selectedPlan.duration);
+
+    savePayment(paymentID, members.loginInfo.usernames, selectedPlan.planName, selectedPlan.price, paymentDate, paymentMethod);
+
+    saveMembership(members.loginInfo.usernames, selectedPlan.planName, startDate, endDate, "Active");
+
+    generateMemberReceipt(paymentID, members.loginInfo.usernames, selectedPlan, paymentDate, paymentMethod, startDate, endDate);
 
 }

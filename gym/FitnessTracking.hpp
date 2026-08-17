@@ -7,6 +7,15 @@ using namespace std;
 
 struct Member;
 
+struct FitnessRecord {
+	double weight;
+	double height;
+	double bmi = 0.0;
+	int workoutDuration = 0;
+	int targetWorkoutMins = 0;
+	double caloriesBurned = 0.0;
+};
+
 
 double calculateBMI(double weight, double height);
 void setFitnessGoal(Member& members);

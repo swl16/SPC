@@ -2,6 +2,8 @@
 #include<iostream>
 #include<vector>
 
+#include "FitnessTracking.hpp"
+#include <chrono>
 using namespace std;
 
 const int MAX_USERS = 1000;
@@ -10,16 +12,6 @@ const int MAX_USERS = 1000;
 struct User {
 	string usernames;
 	string passwords;
-};
-
-//fitness information
-struct FitnessRecord {
-	double weight;
-	double height;
-	double bmi = 0.0;
-	int workoutDuration = 0;
-	int targetWorkoutMins = 0;
-	double caloriesBurned = 0.0;
 };
 
 // member information
@@ -36,7 +28,7 @@ struct Member {
 // payment
 struct Payment {
 	string paymentID;
-	Member member;
+	string username;
 	double amount;
 	string paymentDate;
 	string paymentMethod;
@@ -88,12 +80,13 @@ void cancelBooking(Member member);
 
 // payment file
 string getCurrentDateTime();
+string addMonths(int months);
 string generatePaymentID();
-void saveMembership(string username, int planID, string planName, string startDate, string endDate, string status);
-void savePayment(string paymentID, string username, int planID, string planName, double amount, string paymentDate, string paymentMethod);
+void saveMembership(string username, string planName, string startDate, string endDate, string status);
+void savePayment(string paymentID, string username, string planName, double amount, string paymentDate, string paymentMethod);
 void generateMemberReceipt(string paymentID, string username, MembershipPlanRecord plan, string paymentDate, string paymentMethod,
 	string startDate, string endDate);
-void membershipPayment(Member* members);
+void membershipPaymentProcess(Member members, MembershipPlanRecord selectedPlan);
 
 // attendance file
 

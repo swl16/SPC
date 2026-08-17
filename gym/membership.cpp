@@ -303,7 +303,9 @@ void registerMembershipPlan(Member member) {
 
 			if (confirm == 'Y' || confirm == 'y') {
 				//process to payment
-				return;
+				membershipPaymentProcess(member, membership[selectedIndex]);
+				break;
+
 
 				//string currentDate = getCurrentDate();
 
@@ -441,6 +443,7 @@ void renewMembership(Member member) {
 
 		if (confirm == 'Y' || confirm == 'y') {
 			// process to payment
+			membershipPaymentProcess(member, plan);
 			return;
 		}
 		else {
