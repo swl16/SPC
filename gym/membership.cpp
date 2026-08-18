@@ -304,30 +304,16 @@ void registerMembershipPlan(Member member) {
 			if (confirm == 'Y' || confirm == 'y') {
 				//process to payment
 				membershipPaymentProcess(member, membership[selectedIndex]);
-				break;
-
-
-				//string currentDate = getCurrentDate();
-
-				//// Append new subscription to UserMembership.txt
-				//ofstream userMemFile("UserMembership.txt", ios::app);
-				//if (userMemFile.is_open()) {
-				//	userMemFile << member.loginInfo.usernames << " "
-				//		<< planIDs[selectedIndex] << " "
-				//		<< currentDate << "\n";
-				//	userMemFile.close();
-
-				//	cout << "\nRegistration successful! Subscription saved." << endl;
-				//	cout << "Subscribed on: " << currentDate << endl;
-				//}
-				//else {
-				//	cerr << "Error: Could not save subscription to file." << endl;
-				//}
-				//break; // Exit loop after successful registration
+				
 			}
 			else {
 				cout << "Subscription cancelled." << endl;
 			}
+
+			cout << "\nPress Enter to return to the User Menu...";
+			cin.ignore(1000, '\n');
+			cin.get();
+			return;
 		}
 		else {
 			cout << "Invalid Plan No. Please try again." << endl;
@@ -444,12 +430,16 @@ void renewMembership(Member member) {
 		if (confirm == 'Y' || confirm == 'y') {
 			// process to payment
 			membershipPaymentProcess(member, plan);
-			return;
+
 		}
 		else {
 			cout << "Renewal cancelled." << endl;
-			return;
 		}
+
+		cout << "\nPress Enter to return to the User Menu...";
+		cin.ignore(1000, '\n');
+		cin.get();
+		return;
 	}
 	
 }

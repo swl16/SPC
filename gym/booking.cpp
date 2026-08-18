@@ -232,11 +232,18 @@ void bookClass(Member member) {
 
         if (confirm == 'Y' || confirm == 'y') { 
             //process to payment
-            break;
+
+            classPaymentProcess(member, selectedClass, newBookingID);
+
         }
         else {
             cout << "Booking cancelled." << endl;
         }
+
+        cout << "\nPress Enter to return to the User Menu...";
+        cin.ignore(1000, '\n');
+        cin.get();
+        return;
    
     } while (true);
 }

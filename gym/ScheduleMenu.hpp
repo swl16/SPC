@@ -9,7 +9,11 @@
 #include <cctype>
 #include <ctime>
 #include <algorithm>
+
+#include "User.hpp"
 using namespace std;
+
+struct MembershipPlanRecord;
 
 struct Schedule {
     int scheduleID;
@@ -41,6 +45,7 @@ void pauseScreen();
 
 void addschedule(vector<Schedule>& schedules);
 void displayschedule(const vector<Schedule>& schedules);
+void checkClassCapacity(const vector<Schedule>& schedules);
 void searchschedule(const vector<Schedule>& schedules);
 void updateschedule(vector<Schedule>& schedules);
 void cancelschedule(vector<Schedule>& schedules);

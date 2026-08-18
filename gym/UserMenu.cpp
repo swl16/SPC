@@ -49,6 +49,41 @@ void viewProfile(Member* members) {
 		cout << "Error: No user is currently logged in.\n";
 		return;
 	}
+
+	string planName = "-", startDate = "-", endDate = "-", status = "-";
+
+	ifstream memFile("UserMembership.txt");
+
+	string line;
+
+	if (memFile.is_open()) {
+		while (getline(memFile, line)) {
+
+			if (line.empty()) continue;
+
+			stringstream ss(line);
+			string uName, pName, sDate, eDate, stat;
+
+			getline(ss, uName, ',');
+			getline(ss, pName, ',');
+			getline(ss, sDate, ',');
+			getline(ss, eDate, ',');
+			getline(ss, stat, ',');
+
+			// If it matches the current user, update the details
+			// (It will keep reading to the end, ensuring it grabs the latest record)
+			if (uName == members[i].loginInfo.usernames) {
+				planName = pName;
+				startDate = sDate;
+				endDate = eDate;
+				status = stat;
+			}
+		}
+		memFile.close();
+	}
+
+
+
 	cout << "================================\n";
 	cout << "         USER PROFILE           \n";
 	cout << "================================\n";
@@ -58,6 +93,18 @@ void viewProfile(Member* members) {
 	cout << "Gender      : " << members[i].gender << endl;
 	cout << "Phone Number: " << members[i].phNo << endl;
 	cout << "Email       : " << members[i].email << endl;
+
+	cout << "--------------------------------\n";
+	cout << "       MEMBERSHIP DETAILS       \n";
+	cout << "--------------------------------\n";
+	cout << "Plan Name   : " << planName << endl;
+	cout << "Start Date  : " << startDate << endl;
+	cout << "End Date    : " << endDate << endl;
+	cout << "Status      : " << status << endl;
+	cout << "================================\n";
+
+	cout << "\nPress Enter to return to the User Menu...";
+	cin.get();
 }
 
 void editProfile(Member* members) {
@@ -175,6 +222,72 @@ void editProfile(Member* members) {
 	cout << "Profile updated & saved successfully.\n";
 }
 
+void viewPaymentHistory(Member* members) {
+
+	int i = loggedInMember(members);
+
+	if (i == -1) {
+		cout << "Error: No user is currently logged in.\n";
+		return;
+	}
+
+
+	ifstream file("UserPayment.txt");
+	if (!file.is_open()) {
+		cout << "No payment history found.\n";
+		cout << "\nPress Enter to return to the User Menu...";
+		cin.get();
+		return;
+	}
+
+	cout << "\n===============================================================\n";
+	cout << "                      PAYMENT HISTORY                           \n";
+	cout << "================================================================\n";
+
+	string line;
+	bool hasHistory = false;
+
+	while (getline(file, line)) {
+
+		if (line.empty()) continue;
+
+		stringstream ss(line);
+
+		string pID, uName, pName, amt, pDate, pMethod;
+
+		getline(ss, pID, ',');
+		getline(ss, uName, ',');
+		getline(ss, pName, ',');
+		getline(ss, amt, ',');
+		getline(ss, pDate, ',');
+		getline(ss, pMethod, ',');
+
+		if (uName == members[i].loginInfo.usernames) {
+			hasHistory = true;
+
+			cout << "Payment ID     : " << pID << endl;
+			cout << "Description    : " << pName << endl;
+			cout << "Amount         : RM " << amt << endl;
+			cout << "Date and Time  : " << pDate << endl;
+			cout << "Payment Method : " << pMethod << endl;
+			cout << "-----------------------------------------\n";
+		}
+	}
+
+	file.close();
+
+	if (!hasHistory) {
+		cout << "No transaction records for this account.\n";
+	}
+
+	cout << "================================================================\n";
+
+	// Pause before returning to the menu
+	cout << "\nPress Enter to return to the User Menu...";
+	cin.get();
+
+}
+
 
 void userMenu(Member* members) {
 
@@ -186,6 +299,12 @@ void userMenu(Member* members) {
 		cout << "Enter your choice : ";
 		cin >> choice;
 
+		int memberIndex = loggedInMember(members);
+		Member currentMember;
+		if (memberIndex != -1) {
+			currentMember = members[memberIndex];
+		}
+
 		switch (choice) {
 		case '1':
 			viewProfile(members);
@@ -196,16 +315,17 @@ void userMenu(Member* members) {
 			break;
 
 		case '3':
-			membershipPlan(members[loggedInMember(members)]);
+			membershipPlan(currentMember);
 			break;
 
-		case '4':
+		case '4':	//book/view class
 			break;
 
-		case '5':
+		case '5':	//view/cancel bookings
 			break;
 
 		case '6':
+			viewPaymentHistory(members);
 			break;
 
 		case '7':

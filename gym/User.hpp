@@ -1,9 +1,10 @@
 #pragma once
 #include<iostream>
 #include<vector>
-
-#include "FitnessTracking.hpp"
 #include <chrono>
+#include "FitnessTracking.hpp"
+#include "ScheduleMenu.hpp"
+
 using namespace std;
 
 const int MAX_USERS = 1000;
@@ -60,6 +61,7 @@ int loggedInMember(Member members[]);
 void viewProfile(Member* members);
 void editProfile(Member* members);
 void userMenu(Member* members);
+void viewPaymentHistory(Member* members);
 void pauseScreen();
 
 
@@ -87,6 +89,7 @@ void savePayment(string paymentID, string username, string planName, double amou
 void generateMemberReceipt(string paymentID, string username, MembershipPlanRecord plan, string paymentDate, string paymentMethod,
 	string startDate, string endDate);
 void membershipPaymentProcess(Member members, MembershipPlanRecord selectedPlan);
+void classPaymentProcess(Member member, Schedule selectedClass, int newBookingID);
 
 // attendance file
 

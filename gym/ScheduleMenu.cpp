@@ -553,44 +553,6 @@ void updateschedule(vector<Schedule>& schedules) {
     }
 }
 
-//void assigntrainer(vector<Schedule>& schedules) {
-//    if (schedules.empty()) {
-//        cout << "No schedules available to assign a trainer to.\n";
-//        return;
-//    }
-//
-//    int searchID;
-//    cout << "\n--- Assign Trainer ---\n";
-//    searchID = getIntegerInput("Enter the Schedule ID to assign a trainer: ", 100, 9999);
-//
-//
-//    bool found = false;
-//
-//    for (Schedule& s : schedules) {
-//        if (s.scheduleID == searchID) {
-//            found = true;
-//
-//            if (s.isCanceled) {
-//                cout << "Error: Cannot assign a trainer to a canceled schedule.\n";
-//            }
-//            else {
-//                cout << "Current Trainer: " << (s.trainerName.empty() ? "None" : s.trainerName) << "\n";
-//
-//                s.trainerName = getNonEmptyString("Enter new trainer name: ");
-//
-//                cout << "Trainer assigned successfully to Schedule ID " << searchID << "!\n";
-//
-//                // --- NEW: Save changes ---
-//                saveSchedulesToFile(schedules);
-//            }
-//            break;
-//        }
-//    }
-//
-//    if (!found) {
-//        cout << "Error: Schedule ID " << searchID << " not found.\n";
-//    }
-//}
 
 void cancelschedule(vector<Schedule>& schedules) {
     if (schedules.empty()) {
