@@ -272,6 +272,89 @@ void displayschedule(const vector<Schedule>& schedules) {
     }
 }
 
+void checkClassCapacity(const vector<Schedule>& schedules) {
+    if (schedules.empty()) {
+        cout << "No schedules available to check capacity.\n";
+        return;
+    }
+
+    vector<int> bookedScheduleIDs;
+    ifstream inFile("classBookings.txt");
+    if (inFile.is_open()) {
+        string line;
+        while (getline(inFile, line)) {
+            if (line.empty()) continue;
+            stringstream ss(line);
+            string bID, username, cID, bookingDate;
+            getline(ss, bID, ',');
+            getline(ss, username, ',');
+            getline(ss, cID, ',');
+            getline(ss, bookingDate, ',');
+            if (!cID.empty()) {
+                bookedScheduleIDs.push_back(stoi(cID));
+            }
+        }
+        inFile.close();
+    }
+
+    cout << "\n====================================================================================================\n";
+    cout << "                                     CLASS CAPACITY REPORT                                          \n";
+    cout << "====================================================================================================\n";
+    cout << left << setw(6) << "ID"
+        << setw(13) << "Date"
+        << setw(16) << "Class Name"
+        << setw(10) << "Booked"
+        << setw(10) << "Capacity"
+        << setw(10) << "Open"
+        << left << setw(14) << "Status\n";
+    cout << "----------------------------------------------------------------------------------------------------\n";
+
+    bool anyActive = false;
+
+    for (const Schedule& s : schedules) {
+        if (s.isCanceled) {
+            continue;
+        }
+        anyActive = true;
+
+        int bookedCount = 0;
+        for (int scheduleID : bookedScheduleIDs) {
+            if (scheduleID == s.scheduleID) {
+                bookedCount++;
+            }
+        }
+
+        int openSeats = s.classCapacity - bookedCount;
+        if (openSeats < 0) openSeats = 0; // guard in case of a data inconsistency
+
+        string status;
+        if (bookedCount >= s.classCapacity) {
+            status = "FULL";
+        }
+        else if (s.classCapacity > 0 && bookedCount * 100 >= s.classCapacity * 80) {
+            status = "NEARLY FULL"; // 80%+ booked
+        }
+        else {
+            status = "OPEN";
+        }
+
+        cout << left << setw(6) << s.scheduleID
+            << setw(13) << s.date
+            << setw(16) << s.className
+            << setw(10) << bookedCount
+            << setw(10) << s.classCapacity
+            << setw(10) << openSeats
+            << left << setw(14) << status << "\n";
+    }
+
+    if (!anyActive) {
+        cout << "No active schedules available to check.\n";
+    }
+
+    cout << "====================================================================================================\n";
+}
+
+
 void searchschedule(const vector<Schedule>& schedules) {
     if (schedules.empty()) {
         cout << "No schedules available to search.\n";
