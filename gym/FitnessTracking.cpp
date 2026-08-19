@@ -19,21 +19,27 @@ double calculateBMI(double weight, double height) {
 
 void setFitnessGoal(Member& members) {
 	cout << "\n-----SET WEEKLY WORKOUT GOAL-----\n";
+	cout << "Current Goal: " << members.fitness.targetWorkoutMins << "\n";
 
 	int targetMins;
 
 	while (true) {
 
-		cout << "Enter weekly workout goal (? minutes/week): ";
+		cout << "Enter weekly workout goal (? minutes/week) (or '0' to return to menu) : ";
 
-		if (cin >> targetMins && targetMins > 0) {
+		if (cin >> targetMins && targetMins >= 0) {
 			break;
 		}
 
-		cout << "Invalid input. Please enter a positive number.\n";
+		cout << "Invalid input. Please enter a positive number or '0' to return to menu.\n";
 
 		cin.clear();
 		cin.ignore(numeric_limits<streamsize>::max(), '\n');
+	}
+
+	if (targetMins == 0) {
+		cout << "[CANCELLED] Returning to previous menu...\n";
+		return;
 	}
 
 	members.fitness.targetWorkoutMins = targetMins;
@@ -49,9 +55,9 @@ void updateFitnessMetrics(Member& members) {
 
 	while (true) {
 
-		cout << "Enter weight (kg): ";
+		cout << "Enter weight (kg) (or '0' to return to menu) : ";
 
-		if (cin >> newWeight && 0 < newWeight < 300) {
+		if (cin >> newWeight && (newWeight == 0 || (newWeight > 0 && newWeight < 300))) {
 			break;
 		}
 
@@ -61,12 +67,17 @@ void updateFitnessMetrics(Member& members) {
 		cin.ignore(numeric_limits<streamsize>::max(), '\n');
 	}
 
+	if (newWeight == 0) {
+		cout << "[CANCELLED] Returning to previous menu...\n";
+		return;
+	}
+
 
 	while (true) {
 
-		cout << "Enter height (m): ";
+		cout << "Enter height (m) (or '0' to return to menu): ";
 
-		if (cin >> newHeight && 0 < newHeight < 2.8) {
+		if (cin >> newHeight && (newHeight == 0 || (newHeight > 0 && newHeight < 2.8))) {
 			break;
 		}
 
@@ -74,6 +85,11 @@ void updateFitnessMetrics(Member& members) {
 
 		cin.clear();
 		cin.ignore(numeric_limits<streamsize>::max(), '\n');
+	}
+
+	if (newHeight == 0) {
+		cout << "[CANCELLED] Returning to previous menu...\n";
+		return;
 	}
 
 	members.fitness.weight = newWeight;
@@ -92,7 +108,7 @@ void updateFitnessMetrics(Member& members) {
 	} else if (members.fitness.bmi < 30.0) {
 		cout << "Category: Overweight)\n";
 	} else {
-		cout << "Categpry: Obese)\n";
+		cout << "Category: Obese)\n";
 	}
 }
 
@@ -104,12 +120,17 @@ void logWorkoutSession(Member& members) {
 	cout << "\n----- LOG WORKOUT SESSION -----\n";
 
 	do {
-		cout << "Enter workout duration (minutes) : ";
+		cout << "Enter workout duration (minutes) (or '0' to return to menu) : ";
 
 		while (!(cin >> minutes) || minutes <= 0) {
-			cout << "Invalid duration! Please enter a positive whole number";
+			cout << "Invalid duration! Please enter a positive whole number (or '0' to return to menu).";
 			cin.clear();
 			cin.ignore(numeric_limits<streamsize>::max(), '\n');
+		}
+
+		if (minutes == 0) {
+			cout << "[CANCELLED] Returning to previous menu...\n";
+			return;
 		}
 
 		members.fitness.workoutDuration += minutes;
@@ -166,7 +187,7 @@ void resetFitnessMetrics(Member& member) {
         member.fitness.caloriesBurned = 0.0;
         cout << "[SUCCESS] Accumulated workout logs have been reset to zero.\n";
     } else {
-        cout << "[CANCELLED] Reset action aborted.\n";
+        cout << "[CANCELLED] Reset action aborted. Returning to previous menu...\n";
     }
 }
 
@@ -213,16 +234,16 @@ void fitnessMenu(Member& members) {
 		cout << "          FITNESS TRACKER MENU\n";
 		cout << "===========================================\n";
 		cout << "1. Set Weekly Workout Goal\n";
-		cout << "2. Update Body Metrics\n";
+		cout << "2. Update Body Metrics (Recalculate BMI)\n";
 		cout << "3. Log Workout Session\n";
 		cout << "4. Reset Fitness Metrics\n";
 		cout << "5. Generate Fitness Progress Report\n";
-		cout << "6. Back to User Menu\n";
+		cout << "0. Back to User Menu\n";
 		cout << "===========================================\n";
-		cout << "Enter your choice (1-6) : ";
+		cout << "Enter your choice (1-5) or '0' to return to user menu : ";
 
 		if (!(cin >> choice)) {
-			cout << "Invalid input. Please enter a number between 1 and 6.\n";
+			cout << "Invalid input. Please enter a number between 1 and 5 or '0' to return to user menu \n";
 			cin.clear();
 			cin.ignore(numeric_limits<streamsize>::max(), '\n');
 			continue;
@@ -244,13 +265,12 @@ void fitnessMenu(Member& members) {
 		case 5:
 			generateFitnessReport(members);
 			break;
-		case 6:
+		case 0:
 			cout << "\nExiting Fitness Module.\n";
 			break;
 		default:
-			cout << "Invalid choice. Please select 1-6.\n";
+			cout << "Invalid choice. Please select 0-5.\n";
 		}
 
-	} while (choice != 6);
+	} while (choice != 0);
 }
-
