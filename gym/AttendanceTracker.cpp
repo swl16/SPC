@@ -213,3 +213,141 @@ void attendanceMenu(Member member) {
 
     } while (choice != 0);
 }
+
+
+//ADMIN FEATURES
+
+void calculateDailyAttendance() {
+    string targetDate;
+    cout << "\n==================================================\n";
+    cout << "             DAILY ATTENDANCE REPORT              \n";
+    cout << "==================================================\n";
+    cout << "Enter date (YYYY/MM/DD) or type 'today': ";
+    cin >> targetDate;
+
+    // Make it easy for the admin by allowing the word 'today'
+    if (targetDate == "today" || targetDate == "Today") {
+        targetDate = getCurrentDate();
+    }
+
+    int dailyCount = 0;
+    cout << "\n==================================================\n";
+    cout << "         MEMBERS PRESENT ON " << targetDate << "\n";
+    cout << "==================================================\n";
+    cout << left << setw(15) << "Username"
+        << left << setw(15) << "Check-In"
+        << left << setw(15) << "Check-Out" << endl;
+    cout << "--------------------------------------------------\n";
+
+    ifstream inFile("AttendanceHistory.txt");
+    if (inFile.is_open()) {
+        string line;
+        while (getline(inFile, line)) {
+            if (line.empty()) continue;
+            stringstream ss(line);
+            string dateStr, uName, inTimeStr, outTimeStr;
+
+            getline(ss, dateStr, ',');
+            getline(ss, uName, ',');
+            getline(ss, inTimeStr, ',');
+            getline(ss, outTimeStr, ',');
+
+            if (dateStr == targetDate) {
+                if (outTimeStr == "-1") outTimeStr = "Still Inside";
+
+                cout << left << setw(15) << uName
+                    << left << setw(15) << inTimeStr
+                    << left << setw(15) << outTimeStr << endl;
+                dailyCount++;
+            }
+        }
+        inFile.close();
+    }
+    else {
+        cout << "[Error] Could not open AttendanceHistory.txt.\n";
+        return;
+    }
+
+    if (dailyCount == 0) {
+        cout << "No attendance recorded for this date.\n";
+    }
+    else {
+        cout << "--------------------------------------------------\n";
+        cout << "Total daily attendance: " << dailyCount << " member(s).\n";
+    }
+    cout << "==================================================\n";
+}
+
+void identifyPeakHours() {
+    ifstream inFile("AttendanceHistory.txt");
+    if (!inFile.is_open()) {
+        cout << "\n[Error] No historical records found.\n";
+        return;
+    }
+
+    int hourCounts[24] = { 0 };
+    string line;
+    bool dataFound = false;
+    int totalCheckIns = 0;
+
+    // Loop through historical file and extract the check-in hour
+    while (getline(inFile, line)) {
+        if (line.empty()) continue;
+        stringstream ss(line);
+        string dateStr, uName, inTimeStr, outTimeStr;
+
+        getline(ss, dateStr, ',');
+        getline(ss, uName, ',');
+        getline(ss, inTimeStr, ',');
+        getline(ss, outTimeStr, ',');
+
+        if (!inTimeStr.empty() && inTimeStr.length() >= 3) {
+            try {
+                // Convert string "1430" to integer 1430
+                int inTime = stoi(inTimeStr);
+                int hour = inTime / 100; // 1430 / 100 = 14 (extracts just the hour)
+
+                if (hour >= 0 && hour < 24) {
+                    hourCounts[hour]++;
+                    totalCheckIns++;
+                    dataFound = true;
+                }
+            }
+            catch (...) {
+                // Ignore any corrupted time strings
+            }
+        }
+    }
+    inFile.close();
+
+    if (!dataFound) {
+        cout << "\nNot enough valid data to determine peak hours.\n";
+        return;
+    }
+
+    // Find the hour with the highest count
+    int peakHour = 0;
+    int maxCount = 0;
+
+    for (int i = 0; i < 24; i++) {
+        if (hourCounts[i] > maxCount) {
+            maxCount = hourCounts[i];
+            peakHour = i;
+        }
+    }
+
+    cout << "\n==================================================\n";
+    cout << "            HISTORICAL PEAK HOUR ANALYSIS         \n";
+    cout << "==================================================\n";
+    cout << "Based on " << totalCheckIns << " total historical check-ins:\n\n";
+
+    cout << "Busiest Time of Day : ";
+    if (peakHour < 10) cout << "0";
+    cout << peakHour << ":00 to ";
+
+    if (peakHour + 1 < 10) cout << "0";
+    cout << (peakHour + 1 == 24 ? 0 : peakHour + 1) << ":00\n";
+
+    cout << "Total Check-ins     : " << maxCount << " member(s)\n";
+    cout << "==================================================\n";
+}

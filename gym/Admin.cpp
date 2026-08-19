@@ -10,6 +10,7 @@
 
 #include "User.hpp"
 #include "ScheduleMenu.hpp"
+#include "AttendanceTracker.hpp"
 
 using namespace std;
 
@@ -147,8 +148,8 @@ void displayAttendanceMenu() {
 	cout << "======================================" << endl;
 	cout << "              ATTENDANCE			   " << endl;
 	cout << "======================================" << endl;
-	cout << "1. View Today's Attendance Records\n";
-	cout << "2. View Weekly Attendance\n";
+	cout << "1. Calculate Daily Attendance\n";
+	cout << "2. Identify Peak Hours\n";
 	cout << "0. Back to Admin Menu\n";
 	cout << "--------------------------------------" << endl;
 }
@@ -564,15 +565,40 @@ void adminMenu(Member* members,int userCount) {
 			} while (choose != '0');
 			break;
 
-		case '4':
+		case '4': //payment 
 		
 			break;
 
 		case '5':
+			do{
+				clearScreen();
+				displayAttendanceMenu();
+				cout << "Enter your choice: ";
+				cin >> choose;
+
+				switch (choose) {
+				case '1':
+					calculateDailyAttendance();
+					pauseScreen(); // Pause so admin can read the report
+					break;
+
+				case '2':
+					identifyPeakHours();
+					pauseScreen(); // Pause so admin can read the report
+					break;
+
+				case '0':
+					cout << "Returning to Admin Menu...\n";
+					break;
+				default:
+					cout << "Invalid choice.Please try again." << endl;
+				}
+
+			} while (choose != '0');
 			
 			break;
 
-		case '6': // Attendance Management
+		case '6': //report
 
 			break;
 

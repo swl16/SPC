@@ -22,3 +22,7 @@ void attendanceMenu(Member member);
 void checkInMember(Member member);
 void checkOutMember(Member member);
 void viewMyAttendance(Member member);
+
+//admin features
+void calculateDailyAttendance();
+void identifyPeakHours();
