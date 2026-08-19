@@ -114,6 +114,9 @@ void addMembershipPlan();
 void viewMembershipPlans();
 void updateMembershipPlan();
 void deleteMembershipPlan();
+void membershipReport();
+void classPopularReport();
+void monthlyReport();
 void adminMenu(Member* members, int userCount);
 
 

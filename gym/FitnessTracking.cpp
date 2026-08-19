@@ -3,12 +3,6 @@
 
 
 
-
-// need to add "back" function for every submenu
-
-
-
-
 double calculateBMI(double weight, double height) {
 
 	if (height <= 0 || weight <= 0)

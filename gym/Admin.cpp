@@ -7,6 +7,7 @@
 #include <limits>
 #include <cstdio>
 #include <algorithm>
+#include <map>
 
 #include "User.hpp"
 #include "ScheduleMenu.hpp"
@@ -109,7 +110,7 @@ void displayadminMenu(){
 	cout << "3. Classes & Schedule\n";
 	cout << "4. View Payment Records\n";
 	cout << "5. Attendance";
-	cout << "6. Reports and Analytics\n";
+	cout << "6. Reports\n";
 	cout << "0. Logout\n";
 	cout << "--------------------------------------------------" << endl;
 
@@ -158,7 +159,7 @@ void displayAttendanceMenu() {
 
 void displayReportsMenu() {
 	cout << "==================================================" << endl;
-	cout << "            REPORTS AND ANALYTICS				   " << endl;
+	cout << "                    REPORTS 			   " << endl;
 	cout << "==================================================" << endl;
 	cout << "1. Membership Summary Report\n";
 	cout << "2. Class Popularity Report\n";
@@ -479,17 +480,177 @@ void deleteMembershipPlan() {
 }
 
 
+void membershipReport() {
 
-//void checkClassCapacity(){
-//
-//}
-//
-//void viewTodayAttendance(){}
-//void viewWeeklyAttandance(){}
-//
-//void membershipReport() {}
-//void classPopularReport() {}
-//void monthlyReport() {}
+	cout << "\n==================================================\n";
+	cout << "            MEMBERSHIP SUMMARY REPORT             \n";
+	cout << "==================================================\n";
+
+	ifstream file("UserMembership.txt");
+	if (!file.is_open()) {
+		cout << "[Error] Could not open UserMembership.txt\n";
+		return;
+	}
+
+	map<string, int> planCounts;
+	int totalActive = 0;
+	string line;
+
+	while (getline(file, line)) {
+		if (line.empty()) continue;
+		stringstream ss(line);
+		string uName, pName, sDate, eDate, status;
+
+		getline(ss, uName, ',');
+		getline(ss, pName, ',');
+		getline(ss, sDate, ',');
+		getline(ss, eDate, ',');
+		getline(ss, status, ',');
+
+		if (status == "Active") {
+			planCounts[pName]++;
+			totalActive++;
+		}
+	}
+	file.close();
+
+	cout << left << setw(25) << "Plan Name" << "Total Active Members" << endl;
+	cout << "--------------------------------------------------\n";
+
+	if (planCounts.empty()) {
+		cout << "No active memberships found.\n";
+	}
+	else {
+		for (const auto& pair : planCounts) {
+			cout << left << setw(25) << pair.first << pair.second << endl;
+		}
+	}
+	cout << "--------------------------------------------------\n";
+	cout << "Total Active Members Across All Plans: " << totalActive << endl;
+	cout << "==================================================\n";
+
+}
+
+
+void classPopularReport() {
+
+	cout << "\n==================================================\n";
+	cout << "             CLASS POPULARITY REPORT              \n";
+	cout << "==================================================\n";
+
+	vector<Schedule> schedules;
+	loadSchedulesFromFile(schedules);
+
+	ifstream file("classBookings.txt");
+	if (!file.is_open()) {
+		cout << "[Error] Could not open classBookings.txt\n";
+		return;
+	}
+
+	map<int, int> bookingCounts;
+	string line;
+	int totalBookings = 0;
+
+	while (getline(file, line)) {
+		if (line.empty()) continue;
+		stringstream ss(line);
+		string bID, uName, cIDStr, dateB;
+
+		getline(ss, bID, ',');
+		getline(ss, uName, ',');
+		getline(ss, cIDStr, ',');
+		getline(ss, dateB, ',');
+
+		try {
+			int scheduleID = stoi(cIDStr);
+			bookingCounts[scheduleID]++;
+			totalBookings++;
+		}
+		catch (...) {}
+	}
+	file.close();
+
+	cout << left << setw(25) << "Class Name" << "Total Bookings" << endl;
+	cout << "--------------------------------------------------\n";
+
+	if (bookingCounts.empty()) {
+		cout << "No class bookings found.\n";
+	}
+	else {
+		for (const auto& pair : bookingCounts) {
+			string className = "Unknown Class (ID: " + to_string(pair.first) + ")";
+			// Find the class name from the schedules vector
+			for (const auto& s : schedules) {
+				if (s.scheduleID == pair.first) {
+					className = s.className;
+					break;
+				}
+			}
+			cout << left << setw(25) << className << pair.second << endl;
+		}
+	}
+	cout << "--------------------------------------------------\n";
+	cout << "Total Bookings Across All Classes: " << totalBookings << endl;
+	cout << "==================================================\n";
+
+}
+
+void monthlyReport() {
+
+	cout << "\n==================================================\n";
+	cout << "              MONTHLY REVENUE REPORT              \n";
+	cout << "==================================================\n";
+
+	ifstream file("UserPayment.txt");
+	if (!file.is_open()) {
+		cout << "[Error] Could not open UserPayment.txt\n";
+		return;
+	}
+
+	map<string, double> monthlyRevenue;
+	double totalRevenue = 0.0;
+	string line;
+
+	while (getline(file, line)) {
+		if (line.empty()) continue;
+		stringstream ss(line);
+		string pID, uName, targetID, desc, amtStr, datetime, method;
+
+		getline(ss, pID, ',');
+		getline(ss, uName, ',');
+		getline(ss, targetID, ',');
+		getline(ss, desc, ',');
+		getline(ss, amtStr, ',');
+		getline(ss, datetime, ',');
+		getline(ss, method, ',');
+
+		try {
+			double amt = stod(amtStr);
+			// Extract just the "YYYY/MM" part from "YYYY/MM/DD HH:MM:SS"
+			string monthStr = datetime.substr(0, 7);
+
+			monthlyRevenue[monthStr] += amt;
+			totalRevenue += amt;
+		}
+		catch (...) {}
+	}
+	file.close();
+
+	cout << left << setw(20) << "Month (YYYY/MM)" << "Revenue (RM)" << endl;
+	cout << "--------------------------------------------------\n";
+	if (monthlyRevenue.empty()) {
+		cout << "No revenue data found.\n";
+	}
+	else {
+		for (const auto& pair : monthlyRevenue) {
+			cout << left << setw(20) << pair.first
+				<< "RM " << fixed << setprecision(2) << pair.second << endl;
+		}
+	}
+	cout << "--------------------------------------------------\n";
+	cout << "Total Revenue: RM " << fixed << setprecision(2) << totalRevenue << endl;
+	cout << "==================================================\n";
+}
 
 
 void adminMenu(Member* members,int userCount) {
@@ -599,6 +760,37 @@ void adminMenu(Member* members,int userCount) {
 			break;
 
 		case '6': //report
+
+			do {
+
+				clearScreen();
+				displayReportsMenu();
+				cout << "Enter your choice: ";
+				cin >> choose;
+
+				switch (choose) {
+				case '1':
+					membershipReport();
+					pauseScreen();
+					break;
+				case '2':
+					classPopularReport();
+					pauseScreen();
+					break;
+				case '3':
+					monthlyReport();
+					pauseScreen();
+					break;
+				case '0':
+					cout << "Returning to Admin Menu...\n";
+					break;
+				default:
+					cout << "Invalid choice. Please try again." << endl;
+					pauseScreen();
+					break;
+				}
+
+			} while (choose != '0');
 
 			break;
 
