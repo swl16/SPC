@@ -8,6 +8,7 @@
 
 #include "User.hpp"
 #include "FitnessTracking.hpp"
+#include "AttendanceTracker.hpp"
 
 using namespace std;
 
@@ -25,7 +26,7 @@ void displayUserMenu() {
 	cout << "5. View / Cancel Bookings\n";
 	cout << "6. Payment History\n";
 	cout << "7. Gym Attendance\n";
-	cout << "8. Fitness Progress\n";
+	cout << "8. Fitness Tracker\n";
 	cout << "9. Delete Account\n";
 	cout << "0. Logout\n";
 	cout << "--------------------------------------------------" << endl;
@@ -444,9 +445,11 @@ void userMenu(Member* members) {
 			break;
 
 		case '7':
+			attendanceMenu(currentMember);
 			break;
 
 		case '8':
+			fitnessMenu(currentMember);
 			break;
 
 		case '9':

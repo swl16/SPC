@@ -210,7 +210,7 @@ void fitnessMenu(Member& members) {
 
 	do {
 		cout << "===========================================\n";
-		cout << "     FITNESS TRACKER MODULE MENU\n";
+		cout << "          FITNESS TRACKER MENU\n";
 		cout << "===========================================\n";
 		cout << "1. Set Weekly Workout Goal\n";
 		cout << "2. Update Body Metrics\n";
