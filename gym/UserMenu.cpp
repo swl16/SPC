@@ -288,6 +288,119 @@ void viewPaymentHistory(Member* members) {
 
 }
 
+bool deleteAccount(Member* members) {
+	int i = loggedInMember(members);
+
+	if (i == -1) {
+		cout << "Error: No user is currently logged in.\n";
+		return false;
+	}
+
+	char confirm;
+
+	cout << "\n==================================================\n";
+	cout << "               DELETE ACCOUNT WARNING             \n";
+	cout << "==================================================\n";
+	cout << "Are you sure you want to permanently delete your account?\n";
+	cout << "This action CANNOT be undone.\n";
+	cout << "Enter 'Y' to confirm, 'N' to cancel: ";
+	cin >> confirm;
+
+	if (confirm == 'Y' || confirm == 'y') {
+		string deletedUsername = members[i].loginInfo.usernames;
+
+		for (int j = i; j < userCount; j++) {
+			members[j] = members[j + 1];
+		}
+		userCount--;
+		saveUser(members);
+
+		string line;
+
+		vector<string> memLines;
+		ifstream memFileIn("UserMembership.txt");
+		string line;
+		if (memFileIn.is_open()) {
+			while (getline(memFileIn, line)) {
+				if (line.empty()) continue;
+				stringstream ss(line);
+				string uName;
+				getline(ss, uName, ','); // Read username up to the comma
+
+				if (uName != deletedUsername) {
+					memLines.push_back(line);
+				}
+			}
+			memFileIn.close();
+
+			ofstream memFileOut("UserMembership.txt");
+			for (const auto& l : memLines) memFileOut << l << "\n";
+			memFileOut.close();
+		}
+
+		vector<string> bookLines;
+		ifstream bookFileIn("classBookings.txt");
+		if (bookFileIn.is_open()) {
+			while (getline(bookFileIn, line)) {
+				if (line.empty()) continue;
+				stringstream ss(line);
+				string bID, uName;
+				getline(ss, bID, ',');
+				getline(ss, uName, ',');
+
+				if (uName != deletedUsername) {
+					bookLines.push_back(line);
+				}
+			}
+			bookFileIn.close();
+
+			ofstream bookFileOut("classBookings.txt");
+			for (const auto& l : bookLines) bookFileOut << l << "\n";
+			bookFileOut.close();
+		}
+
+		vector<string> loginLines;
+		ifstream loginFileIn("user.txt");
+
+		if (loginFileIn.is_open()) {
+			while (getline(loginFileIn, line)) {
+				if (line.empty()) continue;
+				stringstream ss(line);
+				string uName;
+				getline(ss, uName, ',');
+
+				// Keep everyone EXCEPT the deleted user
+				if (uName != deletedUsername) {
+					loginLines.push_back(line);
+				}
+			}
+
+			loginFileIn.close();
+
+			ofstream loginFileOut("user.txt");
+			for (const auto& l : loginLines) loginFileOut << l << "\n";
+			loginFileOut.close();
+		}
+
+		cout << "\nAccount successfully deleted. We are sad to see you go!\n";
+		cout << "Press Enter to return to the Main Menu...";
+		cin.ignore(1000, '\n');
+		cin.get();
+
+		logoutUser(); // Logs the user out securely
+		return true;
+
+	}
+	else {
+		cout << "\nAccount deletion cancelled.\n";
+		cout << "Press Enter to return to the User Menu...";
+		cin.ignore(1000, '\n');
+		cin.get();
+		return false;
+	}
+
+}
+
 
 void userMenu(Member* members) {
 
@@ -319,9 +432,11 @@ void userMenu(Member* members) {
 			break;
 
 		case '4':	//book/view class
+			bookingClass(currentMember);
 			break;
 
 		case '5':	//view/cancel bookings
+			viewingBooking(currentMember);
 			break;
 
 		case '6':
@@ -335,6 +450,7 @@ void userMenu(Member* members) {
 			break;
 
 		case '9':
+			deleteAccount(members);
 			break;
 
 		case '0':

@@ -485,3 +485,90 @@ void cancelBooking(Member member) {
         }
     }
 }
+
+
+void bookingClass(Member member) {
+    clearScreen();
+
+    int choice;
+
+    cout << "1. Book Class" << endl;
+    cout << "2. View Class Schedule" << endl;
+    cout << "0. Return to Main Menu" << endl;
+    cout << "-------------------------" << endl;
+
+    do {
+        cout << "Enter choice: ";
+        if (!(cin >> choice)) { // Input validation for non-numeric input
+            cin.clear();
+            cin.ignore(1000, '\n');
+            cout << "Invalid input. Please enter a number." << endl;
+            continue;
+        }
+
+        switch (choice) {
+        case 1:
+            bookClass(member);
+            break;
+
+        case 2:
+            
+            break;
+
+        case 0:
+            cout << "Returning to menu..." << endl;
+            return;
+            // call main menu func
+            break;
+
+        default:
+            cout << "Invalid Input. Please try again." << endl;
+        }
+
+
+    } while (true);
+    
+}
+
+
+void viewingBooking(Member member) {
+    clearScreen();
+
+    int choice;
+
+    cout << "1. View Bookings" << endl;
+    cout << "2. Cancel Booking" << endl;
+    cout << "0. Return to Main Menu" << endl;
+    cout << "------------------------" << endl;
+
+    do {
+
+        cout << "Enter choice: ";
+        if (!(cin >> choice)) { // Input validation for non-numeric input
+            cin.clear();
+            cin.ignore(1000, '\n');
+            cout << "Invalid input. Please enter a number." << endl;
+            continue;
+        }
+
+        switch (choice) {
+        case 1:
+            viewBooking(member);
+            break;
+
+        case 2:
+            cancelBooking(member);
+            break;
+
+        case 0:
+            cout << "Returning to menu..." << endl;
+            return;
+            // call main menu func
+            break;
+
+        default:
+            cout << "Invalid Input. Please try again." << endl;
+        }
+
+    } while (true);
+}

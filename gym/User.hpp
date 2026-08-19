@@ -63,6 +63,7 @@ void editProfile(Member* members);
 void userMenu(Member* members);
 void viewPaymentHistory(Member* members);
 void pauseScreen();
+bool deleteAccount(Member* members);
 
 
 // membership file
@@ -79,6 +80,9 @@ int generateBookingID(const string& filename);
 void bookClass(Member member);
 void viewBooking(Member member);
 void cancelBooking(Member member);
+void bookingClass(Member member);
+void viewingBooking(Member member);
+
 
 // payment file
 string getCurrentDateTime();
