@@ -30,6 +30,124 @@ int generateBookingID(const string& filename) {
     return lastID + 1;
 }
 
+int getBookedCount(int scheduleID) {
+    ifstream file("classBookings.txt");
+    if (!file.is_open()) return 0;
+
+    int count = 0;
+    string line;
+
+    while (getline(file, line)) {
+        if (line.empty()) continue;
+        stringstream ss(line);
+        string bID, uName, sIDStr, bDate;
+
+        getline(ss, bID, ',');
+        getline(ss, uName, ',');
+        getline(ss, sIDStr, ',');
+        getline(ss, bDate, ',');
+
+        try {
+            if (!sIDStr.empty() && stoi(sIDStr) == scheduleID) {
+                count++;
+            }
+        }
+        catch (...) {
+            continue;
+        }
+    }
+    file.close();
+    return count;
+}
+
+void viewClassSchedule() {
+    vector<Schedule> allSchedules;
+    loadSchedulesFromFile(allSchedules);
+
+    if (allSchedules.empty()) {
+        cout << "\nNo gym schedules available at the moment." << endl;
+        pauseScreen();
+        return;
+    }
+
+    time_t now = time(nullptr);
+    tm ltm;
+#ifdef _WIN32
+    localtime_s(&ltm, &now);
+#else
+    ltm = *localtime(&now);
+#endif
+
+    char buffer[20];
+    strftime(buffer, sizeof(buffer), "%Y/%m/%d", &ltm);
+    string todayDate = string(buffer);
+
+    vector<Schedule> upcomingSchedules;
+
+    for (const auto& s : allSchedules) {
+        if (s.date < todayDate) {
+            continue;
+        }
+        else {
+            upcomingSchedules.push_back(s);
+        }
+    }
+
+    cout << "\n================================================" << endl;
+    cout << "               GYM CLASS TIMETABLE              " << endl;
+    cout << "================================================" << endl;
+    cout << "Today's Date: " << todayDate << endl;
+
+    // 3. Display Upcoming / Today's Active Classes
+    cout << "\n-------- [ UPCOMING & TODAY'S CLASSES ] --------" << endl;
+    cout << left << setw(6) << "ID"
+        << left << setw(13) << "Date"
+        << left << setw(16) << "Class Name"
+        << left << setw(14) << "Time"
+        << left << setw(15) << "Trainer"
+        << left << setw(12) << "Seats Left"
+        << right << setw(10) << "Fee (RM)"
+        << "   " << left << setw(15) << "Status" << endl;
+    cout << "------------------------------------------------" << endl;
+    cout << fixed << setprecision(2);
+
+    if (upcomingSchedules.empty()) {
+        cout << "No upcoming classes scheduled at the moment." << endl;
+    }
+    else {
+        for (const auto& s : upcomingSchedules) {
+            string timeRange = to_string(s.startTime) + " - " + to_string(s.endTime);
+            int bookedSeats = getBookedCount(s.scheduleID);
+            int remainingSeats = s.classCapacity - bookedSeats;
+            if (remainingSeats < 0) remainingSeats = 0;
+
+            string seatsStr = to_string(remainingSeats) + "/" + to_string(s.classCapacity);
+            string statusStr;
+
+            if (s.isCanceled) {
+                statusStr = "CANCELED";
+            }
+            else if (remainingSeats == 0) {
+                statusStr = "FULL";
+            }
+            else {
+                statusStr = "AVAILABLE";
+            }
+
+            cout << left << setw(6) << s.scheduleID
+                << left << setw(13) << s.date
+                << left << setw(16) << s.className
+                << left << setw(14) << timeRange
+                << left << setw(15) << (s.trainerName.empty() ? "None" : s.trainerName)
+                << left << setw(12) << seatsStr
+                << right << setw(10) << s.price
+                << "   " << left << setw(15) << statusStr << endl;
+        }
+    }
+    cout << "================================================" << endl;
+    pauseScreen();
+}
+
 void bookClass(Member member) {
     vector<Schedule> allSchedules;
     loadSchedulesFromFile(allSchedules);
