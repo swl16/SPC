@@ -1,7 +1,7 @@
 #include "User.hpp"
 #include "FitnessTracking.hpp"
 
-
+using namespace std;
 
 double calculateBMI(double weight, double height) {
 
