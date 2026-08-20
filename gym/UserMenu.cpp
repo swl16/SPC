@@ -16,11 +16,11 @@ extern string loggedInUser;
 extern int userCount;
 
 void displayUserMenu() {
-	cout << "            -------           --------            ";
-	cout << "            |     |---------- |      |            ";
-	cout << "            |                        |            ";
-	cout << "            |     |---------- |      |            ";
-	cout << "            -------           --------            ";
+	cout << "            -------           --------            \n";
+	cout << "            |     |---------- |      |            \n";
+	cout << "            |                        |            \n";
+	cout << "            |     |---------- |      |            \n";
+	cout << "            -------           --------            \n";
 
 	cout << "==================================================" << endl;
 	cout << "                FITNESS MEMBER PORTAL			   " << endl;

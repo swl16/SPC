@@ -7,11 +7,11 @@ using namespace std;
 int main() {
 
 	char choice;
-	cout << "   -------           --------";
-	cout << "   |     |---------- |      |";
-	cout << "   |                        |";
-	cout << "   |     |---------- |      |";
-	cout << "   -------           --------";
+	cout << "   -------           --------\n";
+	cout << "   |     |---------- |      |\n";
+	cout << "   |                        |\n";
+	cout << "   |     |---------- |      |\n";
+	cout << "   -------           --------\n";
 
 	cout << "================================" << endl;
 	cout << "    WELCOME TO FITNESS GYM!!" << endl;
