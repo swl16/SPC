@@ -109,7 +109,7 @@ void displayadminMenu(){
 	cout << "2. Membership Plans\n";
 	cout << "3. Classes & Schedule\n";
 	cout << "4. View Payment Records\n";
-	cout << "5. Attendance";
+	cout << "5. Attendance\n";
 	cout << "6. Reports\n";
 	cout << "0. Logout\n";
 	cout << "--------------------------------------------------" << endl;
