@@ -85,6 +85,7 @@ void viewBooking(Member member);
 void cancelBooking(Member member);
 void bookingClass(Member member);
 void viewingBooking(Member member);
+void viewClassSchedule();
 
 
 // payment file
@@ -98,12 +99,6 @@ void generateMemberReceipt(string paymentID, string username, MembershipPlanReco
 void membershipPaymentProcess(Member members, MembershipPlanRecord selectedPlan);
 void classPaymentProcess(Member member, Schedule selectedClass, int newBookingID);
 
-// attendance file
-
-
-
-// fitness file
-//void fitnessMenu(Member& member);
 
 // admin file
 void adminLogin();

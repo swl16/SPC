@@ -630,7 +630,7 @@ void bookingClass(Member member) {
             break;
 
         case 2:
-            
+            viewClassSchedule();
             break;
 
         case 0:
