@@ -323,7 +323,7 @@ void userLogin() {
 			cout << "================================\n";
 
 			if (loginUser(members, currentMember)) {
-				userMenu(currentMember);
+				userMenu(members);
 			}
 			break;
 
