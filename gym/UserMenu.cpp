@@ -110,8 +110,6 @@ void viewProfile(Member* members) {
 	cout << "Status      : " << status << endl;
 	cout << "================================\n";
 
-	cout << "\nPress Enter to return to the User Menu...";
-	cin.get();
 }
 
 void editProfile(Member* members) {
@@ -154,15 +152,18 @@ void editProfile(Member* members) {
 			break;
 
 		case'2':
-			cout << "Enter new age: ";
-			cin >> members[i].age;
-			if (!(cin >> members[i].age && members[i].age > 0 && members[i].age < 120)) {
+			while (true) {
+				cout << "Enter New Age : ";
+
+				if (cin >> members[i].age && members[i].age > 0 && members[i].age < 120) {
+					cout << "Age updated successfully.\n";
+					break;
+				}
+
 				cout << "Invalid age. Please enter a whole number between 1 and 119.\n";
 				return;
 			}
-
-			cout << "Age updated successfully.\n";
-			break;
+			
 
 		case '3':
 
@@ -427,10 +428,12 @@ void userMenu(Member* members) {
 		switch (choice) {
 		case '1':
 			viewProfile(members);
+			pauseScreen();
 			break;
 
 		case '2':
 			editProfile(members);
+			pauseScreen();
 			break;
 
 		case '3':
