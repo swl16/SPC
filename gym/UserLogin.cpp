@@ -15,142 +15,9 @@ using namespace std;
 int userCount = 0;
 string loggedInUser = "";
 
-void registerUser(Member* members) {   // user registration 
-
-	Member newMember;
-
-	string username, password;
-
-	cout << "================================\n";
-	cout << "            Register            \n";
-	cout << "================================\n";
-
-	while (true) {
-		cout << "Enter Username (without space): ";
-		cin >> username;
-
-		bool usernameExists = false;
-		for (int i = 0; i < userCount; i++) {
-			if (members[i].loginInfo.usernames == username) {
-				cout << "Username already exists. Please try again.\n";
-				usernameExists = true;
-				break;
-			}
-		}
-
-		if (!usernameExists) {
-			break; // Valid username found
-		}
-		cout << "\nPress ENTER to continue.";
-		cin.ignore(numeric_limits<streamsize>::max(), '\n');    // Proper buffer clearing
-		cin.get();
-	}
-	cout << "Enter Password: ";
-	cin >> password;
-
-	newMember.loginInfo.usernames = username;
-	newMember.loginInfo.passwords = password;
-
-	cout << "\n--- Personal Information ---\n";
-	cin.ignore(); // Clear the input buffer before getline
-
-	cout << "Enter Full Name: ";
-	getline(cin, newMember.name);
-	if (newMember.name.empty()) {
-		cout << "Name cannot be empty.\n";
-		return;
-	}
-
-	cout << "Enter Age: ";
-	cin >> newMember.age;
-	if (!(cin >> newMember.age && newMember.age > 0 && newMember.age < 120)) {
-		cout << "Invalid age. Please enter a whole number between 1 and 119.\n";
-		return;
-	}
-
-	while (true) {
-		char g;
-		cout << "Enter Gender (M/F): ";
-		cin >> g;
-		g = toupper(g);
-		if (g == 'M' || g == 'F') {
-			newMember.gender = g;
-			break;
-		}
-		cout << "Invalid gender. Please enter M or F.\n";
-	}
-
-	while (true) {
-		cout << "Enter Phone Number (without - ): ";
-		cin >> newMember.phNo;
-
-		// Check whether every character is a digit
-		if (regex_match(newMember.phNo, regex("[0-9]{10,11}"))) {
-			break;
-		}
-
-		cout << "Invalid phone number!\n";
-		cout << "Phone number must contain 10-11 digits only.\n";
-		cout << "Do not use '-' , spaces, or alphabets.\n";
-	}
-
-	while (true) {
-		cout << "Enter Email Address: ";
-		cin >> newMember.email;
-
-		regex emailPattern("[a-z0-9]+@gmail\\.com");
-
-		if (regex_match(newMember.email, emailPattern)) {
-			break;
-		}
-
-		cout << "Invalid email address!\n";
-		cout << "Please enter a valid email such as example@gmail.com\n";
-	}
-
-	members[userCount] = newMember;
-	userCount++;
-
-	saveUser(members);
-
-	cout << "Registration successful!\n";
-
-}
-
-int loginUser(Member* members) {    // user login
-
-	if (!loggedInUser.empty()) {
-		cout << "You are already logged in as " << loggedInUser << ". Please log out first.\n";
-		return 1;
-	}
-
-	string username, password;
-	cout << "Enter username: ";
-	cin >> username;
-	cout << "Enter password: ";
-	cin >> password;
-
-	bool found = false;
-	for (int i = 0; i < userCount; ++i) {
-		if (members[i].loginInfo.usernames == username && members[i].loginInfo.passwords == password) {
-			loggedInUser = username;
-			found = true;
-			break;
-		}
-	}
-
-	if (found) {
-		cout << "Login successful. Welcome, " << loggedInUser << "!\n";
-		cin.ignore();
-		cout << "\nPress enter to continue.\n";
-		cin.get();
-		return 1;
-	}
-	else {
-		cout << "Invalid username or password. Please try again.\n\n";
-		return 0;
-	}
-	return 0;
+void clearInputBuffer() {
+	cin.clear();
+	cin.ignore(numeric_limits<streamsize>::max(), '\n');
 }
 
 void loadUser(Member * members) {
@@ -180,11 +47,19 @@ void loadUser(Member * members) {
 		getline(ss, userInfo.phNo, ',');
 		getline(ss, userInfo.email, ',');
 
-		userInfo.age = stoi(ageStr);
-		userInfo.gender = genderStr[0];
+		if (userInfo.loginInfo.usernames.empty() || ageStr.empty() || genderStr.empty()) {
+			continue; // Skip malformed lines
+		}
 
-		members[userCount] = userInfo;
-		userCount++;
+		try {
+			userInfo.age = stoi(ageStr);
+			userInfo.gender = genderStr[0];
+			members[userCount] = userInfo;
+			userCount++;
+		}
+		catch (...) {
+			continue;
+		}
 	}
 
 	file.close();
@@ -199,16 +74,159 @@ void saveUser(Member*members) {
 	}
 
 	for (int i = 0; i < userCount; i++) {
-		file << members[i].loginInfo.usernames << "," << members[i].loginInfo.passwords
-			<< "," << members[i].name << "," << members[i].age << "," << members[i].gender
-			<< "," << members[i].phNo << "," << members[i].email << endl;
+		file << members[i].loginInfo.usernames << "," 
+			<< members[i].loginInfo.passwords<< "," 
+			<< members[i].name << "," 
+			<< members[i].age << "," 
+			<< members[i].gender << "," 
+			<< members[i].phNo << "," 
+			<< members[i].email << endl;
 	}
 
 	file.close();
 
 }
 
-void resetPassword(Member*members) {   // user reset password
+void registerUser(Member* members) {   // user registration 
+
+	Member newMember;
+
+	string username, password;
+
+	cout << "================================\n";
+	cout << "            Register            \n";
+	cout << "================================\n";
+
+	while (true) {
+		cout << "Enter Username (without space): ";
+		cin >> username;
+
+		bool usernameExists = false;
+		for (int i = 0; i < userCount; i++) {
+			if (members[i].loginInfo.usernames == username) {
+				cout << "Username already exists. Please try again.\n";
+				usernameExists = true;
+				break;
+			}
+		}
+
+		if (!usernameExists) {
+			break; // Valid username found
+		}
+	}
+
+	cout << "Enter Password: ";
+	cin >> password;
+
+	newMember.loginInfo.usernames = username;
+	newMember.loginInfo.passwords = password;
+
+	cout << "\n--- Personal Information ---\n";
+	cin.ignore(); // Clear the input buffer before getline
+
+	cout << "Enter Full Name: ";
+	getline(cin >> ws, newMember.name);
+	if (newMember.name.empty()) {
+		cout << "Name cannot be empty.\n";
+		return;
+	}
+
+	while (true) {
+		cout << "Enter Age : ";
+		if (cin >> newMember.age && newMember.age > 0 && newMember.age < 120) {
+			break;
+		}
+		cout << "Invalid age. Please enter a whole number between 1 and 119.\n";
+		clearInputBuffer();
+	}
+
+	while (true) {
+		char g;
+		cout << "Enter Gender (M/F): ";
+		cin >> g;
+		g = toupper(g);
+		if (g == 'M' || g == 'F') {
+			newMember.gender = g;
+			break;
+		}
+		cout << "Invalid gender. Please enter M or F.\n";
+	}
+
+	while (true) {
+		cout << "Enter Phone Number (without - ): ";
+		cin >> newMember.phNo;
+
+		// Check whether every character is a digit
+		if (regex_match(newMember.phNo, regex("[0-9]{10,11}"))) {
+			break;
+		}
+
+		cout << "Invalid phone number! Must contain 10-11 digits only.\n";
+		cout << "Do not use '-' , spaces, or alphabets.\n";
+	}
+
+	while (true) {
+		cout << "Enter Email Address: ";
+		cin >> newMember.email;
+
+		regex emailPattern("[a-z0-9]+@gmail\\.com");
+
+		if (regex_match(newMember.email, emailPattern)) {
+			break;
+		}
+
+		cout << "Invalid email address!\n";
+		cout << "Please enter a valid email such as example@gmail.com\n";
+	}
+
+	members[userCount] = newMember;
+	userCount++;
+
+	saveUser(members);
+
+	cout << "Registration successful!\n";
+
+}
+
+int loginUser(Member* members, Member& activeMember) {    // user login
+
+	if (!loggedInUser.empty()) {
+		cout << "You are already logged in as " << loggedInUser << ". Please log out first.\n";
+		return 1;
+	}
+
+	string username, password;
+	cout << "Enter username: ";
+	cin >> username;
+	cout << "Enter password: ";
+	cin >> password;
+
+	bool found = false;
+	for (int i = 0; i < userCount; ++i) {
+		if (members[i].loginInfo.usernames == username && members[i].loginInfo.passwords == password) {
+			loggedInUser = username;
+			activeMember = members[i];
+			found = true;
+			break;
+		}
+	}
+
+	if (found) {
+		cout << "Login successful. Welcome, " << loggedInUser << "!\n";
+		cout << "\nPress enter to continue.\n";
+		clearInputBuffer();
+		cin.get();
+		return 1;
+	}
+	else {
+		cout << "Invalid username or password. Please try again.\n\n";
+		return 0;
+	}
+}
+
+
+
+void resetPassword(Member* members) {   // user reset password
 	cout << "\n--- Password Reset ---\n";
 
 	string username;
@@ -291,6 +309,8 @@ void userLogin() {
 		cout << "Enter choice : ";
 		cin >> loginChoice;
 
+		Member currentMember;
+
 		switch (loginChoice) {
 
 		case '1':
@@ -302,8 +322,8 @@ void userLogin() {
 			cout << "             Login              \n";
 			cout << "================================\n";
 
-			if (loginUser(members)) {
-				userMenu(members);
+			if (loginUser(members, currentMember)) {
+				userMenu(currentMember);
 			}
 			break;
 
