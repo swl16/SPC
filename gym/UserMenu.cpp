@@ -320,7 +320,6 @@ bool deleteAccount(Member* members) {
 
 		vector<string> memLines;
 		ifstream memFileIn("UserMembership.txt");
-		string line;
 		if (memFileIn.is_open()) {
 			while (getline(memFileIn, line)) {
 				if (line.empty()) continue;

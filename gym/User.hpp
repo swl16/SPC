@@ -9,6 +9,9 @@ using namespace std;
 
 const int MAX_USERS = 1000;
 
+struct Schedule;
+struct FitnessRecord;
+
 // login information
 struct User {
 	string usernames;

@@ -192,6 +192,7 @@ void membershipPaymentProcess(Member members, MembershipPlanRecord selectedPlan)
         cout << "2. E-Wallet" << endl;
         cout << "0. Cancel" << endl;
         cout << "Enter payment method: ";
+        cin >> methodChoice;
 
         switch (methodChoice) {
 
@@ -310,6 +311,7 @@ void classPaymentProcess(Member member, Schedule selectedClass, int newBookingID
         cout << "2. E-Wallet" << endl;
         cout << "0. Cancel" << endl;
         cout << "Enter payment method: ";
+        cin >> methodChoice;
 
         switch (methodChoice) {
 
