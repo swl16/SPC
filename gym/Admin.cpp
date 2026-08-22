@@ -479,6 +479,77 @@ void deleteMembershipPlan() {
 	pauseScreen();
 }
 
+void viewPaymentRecords() {
+
+	ifstream file("UserPayment.txt");
+
+	cout << "\n==========================================================================================\n";
+	cout << "                                  ALL PAYMENT RECORDS                                     \n";
+	cout << "==========================================================================================\n";
+
+	if (!file.is_open()) {
+		cout << "No payment records found in the system.\n";
+		cout << "==========================================================================================\n";
+		pauseScreen();
+		return;
+	}
+
+	cout << left << setw(12) << "Payment ID"
+		<< left << setw(15) << "Username"
+		<< left << setw(22) << "Description"
+		<< left << setw(12) << "Amount"
+		<< left << setw(22) << "Date & Time"
+		<< left << setw(15) << "Method" << endl;
+	cout << "------------------------------------------------------------------------------------------\n";
+
+	string line;
+	double totalRevenue = 0.0;
+	bool hasRecords = false;
+
+	while (getline(file, line)) {
+		if (line.empty()) continue;
+		stringstream ss(line);
+		string pID, uName, refID, desc, amtStr, pDate, pMethod;
+
+		// Extract data separated by commas
+		getline(ss, pID, ',');
+		getline(ss, uName, ',');
+		getline(ss, refID, ',');
+		getline(ss, desc, ',');
+		getline(ss, amtStr, ',');
+		getline(ss, pDate, ',');
+		getline(ss, pMethod, ',');
+
+		hasRecords = true;
+
+		// Safely add to total revenue
+		try {
+			totalRevenue += stod(amtStr);
+		}
+		catch (...) {}
+
+		// Print the row neatly (truncate long descriptions so they don't break the table)
+		cout << left << setw(12) << pID
+			<< left << setw(15) << uName
+			<< left << setw(22) << (desc.length() > 20 ? desc.substr(0, 19) + "." : desc)
+			<< "RM " << left << setw(9) << amtStr
+			<< left << setw(22) << pDate
+			<< left << setw(15) << pMethod << endl;
+	}
+	file.close();
+
+	if (!hasRecords) {
+		cout << "No transaction records found.\n";
+	}
+
+	cout << "------------------------------------------------------------------------------------------\n";
+	cout << "Total Revenue: RM " << fixed << setprecision(2) << totalRevenue << endl;
+	cout << "==========================================================================================\n";
+
+	pauseScreen();
+
+}
+
 
 void membershipReport() {
 
@@ -667,6 +738,7 @@ void adminMenu(Member* members,int userCount) {
 
 		switch (choice) {
 		case '1': // View All Members
+			clearScreen();
 			viewAllMembers();
 			break;
 
@@ -714,12 +786,34 @@ void adminMenu(Member* members,int userCount) {
 
 				switch (choose) {
 				case '1': // add class
+					addschedule(schedules);
 					break;
 				case '2':   //view class schedule
+					displayschedule(schedules);
 					break;
 				case '3': //update class
+					updateschedule(schedules);
 					break;
+				case '4': //search
+					searchschedule(schedules);
+					break;
+				case '5': //cancel
+					cancelschedule(schedules);
+					break;
+
+				case '6': //delete
+					deleteSchedule(schedules);
+					break;
+				case '7': //check capacity
+					checkClassCapacity(schedules);
+					break;
+
+				case '0':
+					cout << "Returning to Admin Menu...\n";
+					break;
+
 				default:
+					cout << "Invalid choice. Please try again." << endl;
 					break;
 				}
 
@@ -727,7 +821,7 @@ void adminMenu(Member* members,int userCount) {
 			break;
 
 		case '4': //payment 
-		
+			viewPaymentRecords();
 			break;
 
 		case '5':

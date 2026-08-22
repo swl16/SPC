@@ -16,6 +16,8 @@ extern string loggedInUser;
 extern int userCount;
 
 void displayUserMenu() {
+
+	clearScreen();
 	cout << "            -------           --------            \n";
 	cout << "            |     |---------- |      |            \n";
 	cout << "            |                        |            \n";
