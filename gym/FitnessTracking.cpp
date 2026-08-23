@@ -11,20 +11,20 @@ using namespace std;
 
 const string DATA_FILE = "fitness_data.txt";
 
-// Checks if file exists; creates an empty file if missing
+// Step 1: Check file - create if missing, else do nothing
 void ensureFileExists(const string& filename) {
     ifstream checkFile(filename);
     if (!checkFile.is_open()) {
-        ofstream createFile(filename);
+        ofstream createFile(filename); // Creates empty file
         createFile.close();
     }
     else {
-        checkFile.close();
+        checkFile.close(); // File exists, do nothing
     }
 }
 
 void loadFitnessData(vector<Member>& members, const string& filename) {
-    ensureFileExists(filename); // Guarantees file existence before reading
+    ensureFileExists(filename);
 
     members.clear();
     ifstream inFile(filename);
@@ -32,11 +32,14 @@ void loadFitnessData(vector<Member>& members, const string& filename) {
 
     string line;
     while (getline(inFile, line)) {
+        if (!line.empty() && line.back() == '\r') {
+            line.pop_back(); // Remove carriage return if on Windows
+        }
         if (line.empty()) continue;
+
         stringstream ss(line);
         Member m;
 
-        // username|weight|height|bmi|workoutDuration|targetWorkoutMins|caloriesBurned
         string weightStr, heightStr, bmiStr, durationStr, targetStr, caloriesStr;
 
         getline(ss, m.name, '|');
@@ -58,7 +61,7 @@ void loadFitnessData(vector<Member>& members, const string& filename) {
             m.fitness.caloriesBurned = caloriesStr.empty() ? 0.0 : stod(caloriesStr);
         }
         catch (...) {
-            continue; // Skip corrupted record safely
+            continue;
         }
 
         members.push_back(m);
@@ -98,11 +101,9 @@ void saveMember(const Member& currentUser, const string& filename) {
     }
 
     if (!found) {
-        // Append brand-new user directly using ios::app
         saveFitnessData(currentUser, filename);
     }
     else {
-        // Rewrite entire vector safely to avoid duplicate username entries
         ofstream outFile(filename, ios::trunc);
         if (!outFile.is_open()) return;
 
@@ -119,15 +120,23 @@ void saveMember(const Member& currentUser, const string& filename) {
     }
 }
 
+// Step 2: Load user data - if name not inside, create a record immediately
 void loadUserData(Member& currentUser, const string& filename) {
     vector<Member> members;
     loadFitnessData(members, filename);
 
+    bool found = false;
     for (const auto& m : members) {
         if (m.name == currentUser.name) {
-            currentUser.fitness = m.fitness;
+            currentUser.fitness = m.fitness; // Load existing data
+            found = true;
             break;
         }
+    }
+
+    // Name not inside? Create a new record right away in the file
+    if (!found) {
+        saveFitnessData(currentUser, filename);
     }
 }
 
@@ -145,25 +154,24 @@ void setFitnessGoal(Member& members) {
     int targetMins;
 
     while (true) {
-        cout << "Enter weekly workout goal (minutes/week) (or '0' to return to menu): ";
+        cout << "Enter weekly workout goal (minutes/week) (or '-1' to cancel): ";
 
-        if (cin >> targetMins && targetMins >= 0) {
+        if (cin >> targetMins && targetMins >= -1) {
             break;
         }
 
-        cout << "Invalid input. Please enter a non-negative number.\n";
+        cout << "Invalid input. Please enter a positive number or -1 to cancel.\n";
 
         cin.clear();
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
     }
 
-    if (targetMins == 0) {
+    if (targetMins == -1) {
         cout << "[CANCELLED] Returning to previous menu...\n";
         return;
     }
 
     members.fitness.targetWorkoutMins = targetMins;
-
     cout << "\n[SUCCESS] Weekly target set to : " << members.fitness.targetWorkoutMins << " mins/week.\n";
 }
 
@@ -210,11 +218,9 @@ void updateFitnessMetrics(Member& members) {
 
     members.fitness.weight = newWeight;
     members.fitness.height = newHeight;
-
     members.fitness.bmi = calculateBMI(newWeight, newHeight);
 
     cout << fixed << setprecision(2);
-
     cout << "\nBMI : " << members.fitness.bmi << endl;
 
     if (members.fitness.bmi < 18.5) {
@@ -252,9 +258,9 @@ void logWorkoutSession(Member& members) {
         }
 
         cout << "Select Workout Intensity Level:\n";
-        cout << "1. Light (Cardio / Yoga [~5 kcal/min])\n";
-        cout << "2. Moderate (Weightlifting / Cycling [~8 kcal/min])\n";
-        cout << "3. High Intensity (HIIT / Running [~12 kcal/min])\n";
+        cout << "1. Light\n";
+        cout << "2. Moderate\n";
+        cout << "3. High Intensity\n";
 
         cout << "Choice (1-3): ";
         while (!(cin >> intensity) || intensity < 1 || intensity > 3) {
@@ -339,7 +345,10 @@ void generateFitnessReport(const Member& members) {
 }
 
 void fitnessMenu(Member& currentUser) {
+    // 1. Checks file existence (creates if missing, else does nothing)
     ensureFileExists(DATA_FILE);
+
+    // 2. Loads data; creates new entry if username isn't found
     loadUserData(currentUser, DATA_FILE);
 
     int choice;
