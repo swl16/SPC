@@ -839,6 +839,7 @@ void adminMenu(Member* members,int userCount) {
 		case '4': //payment 
 			clearScreen();
 			viewPaymentRecords();
+			pauseScreen();
 			break;
 
 		case '5':
