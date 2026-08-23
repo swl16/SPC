@@ -271,10 +271,10 @@ void logoutUser() {    //user logout
 
 void displaymenu() {
 	if (loggedInUser.empty()) {
-		cout << "Status: Not Logged In\n";
+		cout << "\nStatus: Not Logged In\n";
 	}
 	else {
-		cout << "Status: Logged in as " << loggedInUser << "\n";
+		cout << "\nStatus: Logged in as " << loggedInUser << "\n";
 	}
 
 	cout << "=================================" << endl;
@@ -305,6 +305,7 @@ void userLogin() {
 
 
 	do {
+		clearScreen();
 		displaymenu();
 		cout << "Enter choice : ";
 		cin >> loginChoice;

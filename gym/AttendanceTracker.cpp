@@ -190,12 +190,15 @@ void attendanceMenu(Member member) {
 
         switch (choice) {
         case 1:
+            clearScreen();
             checkInMember(member);
             break;
         case 2:
+            clearScreen();
             checkOutMember(member);
             break;
         case 3:
+            clearScreen();
             viewMyAttendance(member);
             break;
         case 0:
