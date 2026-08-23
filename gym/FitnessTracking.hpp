@@ -26,6 +26,6 @@ void resetFitnessMetrics(Member& members);
 void generateFitnessReport(const Member& members);
 void fitnessMenu(Member& currentUser);
 void loadFitnessData(vector <Member>& members, const string& filename = "fitnessData.txt");
-void saveFitnessData(const vector <Member>& members, const string& filename = "fitnessData.txt");
-void updateRecord(std::vector<Member>& members, const Member& currentUser);
+void saveFitnessData(const Member& member, const string& filename = "fitnessData.txt");
+void saveMember(const Member& currentUser, const string& filename = "fitnessData.txt");
 void loadUserData(Member& currentUser, const std::string& filename = "fitness_data.txt");
