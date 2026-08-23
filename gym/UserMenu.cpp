@@ -36,7 +36,7 @@ void displayUserMenu() {
 	cout << "7. Gym Attendance\n";
 	cout << "8. Fitness Tracker\n";
 	cout << "9. Delete Account\n";
-	cout << "0. Logout\n";
+	cout << "0. Return to Login Page\n";
 	cout << "--------------------------------------------------" << endl;
 }
 
@@ -150,6 +150,7 @@ void editProfile(Member* members) {
 				cout << "Name cannot be empty.\n";
 				return;
 			}
+			saveUser(members); // Save the updated profile to the file
 			cout << "Name updated successfully.\n";
 			break;
 
@@ -158,6 +159,7 @@ void editProfile(Member* members) {
 				cout << "Enter New Age : ";
 
 				if (cin >> members[i].age && members[i].age > 0 && members[i].age < 120) {
+					saveUser(members); // Save the updated profile to the file
 					cout << "Age updated successfully.\n";
 					break;
 				}
@@ -165,7 +167,7 @@ void editProfile(Member* members) {
 				cout << "Invalid age. Please enter a whole number between 1 and 119.\n";
 				return;
 			}
-			
+			break;
 
 		case '3':
 
@@ -181,6 +183,7 @@ void editProfile(Member* members) {
 				cout << "Invalid gender. Please enter M or F.\n";
 			}
 
+			saveUser(members); // Save the updated profile to the file
 			cout << "Gender updated successfully.\n";
 			break;
 
@@ -199,6 +202,7 @@ void editProfile(Member* members) {
 				cout << "Do not use '-' , spaces, or alphabets.\n";
 			}
 
+			saveUser(members); // Save the updated profile to the file
 			cout << "Phone number updated successfully.\n";
 			break;
 
@@ -217,8 +221,12 @@ void editProfile(Member* members) {
 				cout << "Invalid email address!\n";
 				cout << "Please enter a valid email such as example@gmail.com\n";
 			}
-
+			saveUser(members); // Save the updated profile to the file
 			cout << "Email updated successfully.\n";
+			break;
+
+		case '0':
+			cout << "Returning Main Menu ....";
 			break;
 
 		default:
@@ -228,8 +236,6 @@ void editProfile(Member* members) {
 
 	}while(choice != '0');
 
-	saveUser(members); // Save the updated profile to the file
-	cout << "Profile updated & saved successfully.\n";
 }
 
 void viewPaymentHistory(Member* members) {
@@ -294,6 +300,7 @@ void viewPaymentHistory(Member* members) {
 
 	// Pause before returning to the menu
 	cout << "\nPress Enter to return to the User Menu...";
+	cin.ignore(1000, '\n');
 	cin.get();
 
 }
@@ -429,11 +436,13 @@ void userMenu(Member* members) {
 
 		switch (choice) {
 		case '1':
+			clearScreen();
 			viewProfile(members);
 			pauseScreen();
 			break;
 
 		case '2':
+			clearScreen();
 			editProfile(members);
 			pauseScreen();
 			break;
@@ -451,14 +460,17 @@ void userMenu(Member* members) {
 			break;
 
 		case '6':
+			clearScreen();
 			viewPaymentHistory(members);
 			break;
 
 		case '7':
+			clearScreen();
 			attendanceMenu(currentMember);
 			break;
 
 		case '8':
+			clearScreen();
 			fitnessMenu(currentMember);
 			break;
 
@@ -467,7 +479,7 @@ void userMenu(Member* members) {
 			break;
 
 		case '0':
-			logoutUser();
+			userLogin();
 			break;
 
 		default:
