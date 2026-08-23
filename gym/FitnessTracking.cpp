@@ -11,15 +11,14 @@ using namespace std;
 
 const string DATA_FILE = "fitness_data.txt";
 
-// Step 1: Check file - create if missing, else do nothing
 void ensureFileExists(const string& filename) {
     ifstream checkFile(filename);
     if (!checkFile.is_open()) {
-        ofstream createFile(filename); // Creates empty file
+        ofstream createFile(filename); 
         createFile.close();
     }
     else {
-        checkFile.close(); // File exists, do nothing
+        checkFile.close(); 
     }
 }
 
@@ -33,7 +32,7 @@ void loadFitnessData(vector<Member>& members, const string& filename) {
     string line;
     while (getline(inFile, line)) {
         if (!line.empty() && line.back() == '\r') {
-            line.pop_back(); // Remove carriage return if on Windows
+            line.pop_back(); 
         }
         if (line.empty()) continue;
 
@@ -120,7 +119,6 @@ void saveMember(const Member& currentUser, const string& filename) {
     }
 }
 
-// Step 2: Load user data - if name not inside, create a record immediately
 void loadUserData(Member& currentUser, const string& filename) {
     vector<Member> members;
     loadFitnessData(members, filename);
@@ -128,13 +126,12 @@ void loadUserData(Member& currentUser, const string& filename) {
     bool found = false;
     for (const auto& m : members) {
         if (m.name == currentUser.name) {
-            currentUser.fitness = m.fitness; // Load existing data
+            currentUser.fitness = m.fitness; 
             found = true;
             break;
         }
     }
 
-    // Name not inside? Create a new record right away in the file
     if (!found) {
         saveFitnessData(currentUser, filename);
     }
@@ -345,10 +342,7 @@ void generateFitnessReport(const Member& members) {
 }
 
 void fitnessMenu(Member& currentUser) {
-    // 1. Checks file existence (creates if missing, else does nothing)
     ensureFileExists(DATA_FILE);
-
-    // 2. Loads data; creates new entry if username isn't found
     loadUserData(currentUser, DATA_FILE);
 
     int choice;
