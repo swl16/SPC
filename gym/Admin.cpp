@@ -913,6 +913,7 @@ void adminMenu(Member* members,int userCount) {
 
 		case '0':
 			cout << "Logging out..." << endl;
+			pauseScreen();
 			exit(0);
 			break;
 		default:
