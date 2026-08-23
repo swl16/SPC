@@ -7,7 +7,7 @@
 #include<regex>
 #include <cctype>
 #include <limits>
-
+#include <cstdlib>
 #include"User.hpp"
 
 using namespace std;
@@ -338,6 +338,7 @@ void userLogin() {
 
 		case '0':
 			cout << "Thank you for using Fitness Gym System.\n";
+			exit(0);
 			break;
 
 

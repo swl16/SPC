@@ -74,6 +74,7 @@ double getPositiveDouble(const string& message) {
 void adminLogin() {
 
 	string adminUsername, adminPassword;
+	clearScreen();
 
 	cout << "\n=================================" << endl;
 	cout << "           ADMIN LOGIN           " << endl;
@@ -96,6 +97,8 @@ void adminLogin() {
 	}
 	else {
 		cout << "Invalid credentials. Access denied." << endl;
+
+		pauseScreen();
 		return;
 	}
 }
@@ -744,24 +747,29 @@ void adminMenu(Member* members,int userCount) {
 
 		case '2': // Membership Plan Management
 			do {
+				clearScreen();
 				displayMembershipPlanMenu();
 				cout << "Enter your choice: ";
 				cin >> choose;
 
 				switch (choose){
 				case '1': // Call function to add membership plan
+					clearScreen();
 					addMembershipPlan();
 					break;
 
 				case '2': // Call function to view membership plans
+					clearScreen();
 					viewMembershipPlans();
 					break;
 
 				case '3': // Call function to update membership plan
+					clearScreen();
 					updateMembershipPlan();
 					break;
 
 				case '4': // Call function to delete membership plan
+					clearScreen();
 					deleteMembershipPlan();
 					break;
 
@@ -780,31 +788,39 @@ void adminMenu(Member* members,int userCount) {
 
 		case '3': // Class Management
 			do {
+				clearScreen();
 				displayClassMenu();
 				cout << "Enter your choice: ";
 				cin >> choose;
 
 				switch (choose) {
 				case '1': // add class
+					clearScreen();
 					addschedule(schedules);
 					break;
 				case '2':   //view class schedule
+					clearScreen();
 					displayschedule(schedules);
 					break;
 				case '3': //update class
+					clearScreen();
 					updateschedule(schedules);
 					break;
 				case '4': //search
+					clearScreen();
 					searchschedule(schedules);
 					break;
 				case '5': //cancel
+					clearScreen();
 					cancelschedule(schedules);
 					break;
 
 				case '6': //delete
+					clearScreen();
 					deleteSchedule(schedules);
 					break;
 				case '7': //check capacity
+					clearScreen();
 					checkClassCapacity(schedules);
 					break;
 
@@ -821,6 +837,7 @@ void adminMenu(Member* members,int userCount) {
 			break;
 
 		case '4': //payment 
+			clearScreen();
 			viewPaymentRecords();
 			break;
 
@@ -833,11 +850,13 @@ void adminMenu(Member* members,int userCount) {
 
 				switch (choose) {
 				case '1':
+					clearScreen();
 					calculateDailyAttendance();
 					pauseScreen(); // Pause so admin can read the report
 					break;
 
 				case '2':
+					clearScreen();
 					identifyPeakHours();
 					pauseScreen(); // Pause so admin can read the report
 					break;
@@ -864,14 +883,17 @@ void adminMenu(Member* members,int userCount) {
 
 				switch (choose) {
 				case '1':
+					clearScreen();
 					membershipReport();
 					pauseScreen();
 					break;
 				case '2':
+					clearScreen();
 					classPopularReport();
 					pauseScreen();
 					break;
 				case '3':
+					clearScreen();
 					monthlyReport();
 					pauseScreen();
 					break;
@@ -890,6 +912,7 @@ void adminMenu(Member* members,int userCount) {
 
 		case '0':
 			cout << "Logging out..." << endl;
+			exit(0);
 			break;
 		default:
 			cout << "Invalid choice. Please try again." << endl;
