@@ -1,6 +1,14 @@
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <iomanip>
+#include <limits>
+#include <vector>
 #include "User.hpp"
 #include "FitnessTracking.hpp"
-
+//do u want to log another - error handling
+// report - press enter to continue
+//report - ugly(donwan space)
 using namespace std;
 
 double calculateBMI(double weight, double height) {
@@ -25,7 +33,7 @@ void setFitnessGoal(Member& members) {
 			break;
 		}
 
-		cout << "Invalid input. Please enter a positive number or '0' to return to menu.\n";
+		cout << "Invalid input. Please enter a positive number.\n";
 
 		cin.clear();
 		cin.ignore(numeric_limits<streamsize>::max(), '\n');
@@ -96,13 +104,13 @@ void updateFitnessMetrics(Member& members) {
 	cout << "\nBMI : " << members.fitness.bmi << endl;
 
 	if (members.fitness.bmi < 18.5) {
-		cout << "Category: Underweight)\n";
+		cout << "Category: Underweight\n";
 	} else if (members.fitness.bmi < 25.0) {
-		cout << "Category: Normal Weight)\n";
+		cout << "Category: Normal\n";
 	} else if (members.fitness.bmi < 30.0) {
-		cout << "Category: Overweight)\n";
+		cout << "Category: Overweight\n";
 	} else {
-		cout << "Category: Obese)\n";
+		cout << "Category: Obese\n";
 	}
 }
 
@@ -165,7 +173,7 @@ void logWorkoutSession(Member& members) {
 
 	} while (choice == 'Y' || choice == 'y');
 
-	cout << "\n[SUCCESS] Session logged! Total workout time : " << members.fitness.workoutDuration << "minutes.\n";
+	cout << "\n[SUCCESS] Session logged! Total workout time : " << members.fitness.workoutDuration << " minutes.\n";
 	if (members.fitness.targetWorkoutMins > 0 && members.fitness.workoutDuration >= members.fitness.targetWorkoutMins) {
 		cout << "Great job! You reached your weekly workout target!\n";
 	}
@@ -220,7 +228,91 @@ void generateFitnessReport(const Member& members) {
 	cout << "-----------------------------------\n";
 }
 
-void fitnessMenu(Member& members) {
+const string DATA_FILE = "fitness_data.txt";
+
+void loadFitnessData(vector<Member>& members, const string& filename) {
+	members.clear();
+	ifstream inFile(filename);
+	if (!inFile.is_open()) return; 
+
+	string line;
+	while (getline(inFile, line)) {
+		if (line.empty()) continue;
+		stringstream ss(line);
+		Member m;
+
+		// username|weight|height|bmi|targetWorkoutMins|workoutDuration|caloriesBurned
+		string weightStr, heightStr, bmiStr, targetStr, durationStr, caloriesStr;
+
+		getline(ss, m.name, '|');
+		getline(ss, weightStr, '|');
+		getline(ss, heightStr, '|');
+		getline(ss, bmiStr, '|');
+		getline(ss, targetStr, '|');
+		getline(ss, durationStr, '|');
+		getline(ss, caloriesStr, '|');
+
+		m.fitness.weight = weightStr.empty() ? 0.0 : stod(weightStr);
+		m.fitness.height = heightStr.empty() ? 0.0 : stod(heightStr);
+		m.fitness.bmi = bmiStr.empty() ? 0.0 : stod(bmiStr);
+		m.fitness.targetWorkoutMins = targetStr.empty() ? 0 : stoi(targetStr);
+		m.fitness.workoutDuration = durationStr.empty() ? 0 : stoi(durationStr);
+		m.fitness.caloriesBurned = caloriesStr.empty() ? 0.0 : stod(caloriesStr);
+
+		members.push_back(m);
+	}
+	inFile.close();
+}
+
+void saveFitnessData(const vector<Member>& members, const string& filename) {
+	ofstream outFile(filename, ios::trunc); 
+	if (!outFile.is_open()) {
+		cout << "[ERROR] Could not open file to save data.\n";
+		return;
+	}
+
+	for (const auto& m : members) {
+		outFile << m.name << "|"
+			<< m.fitness.weight << "|"
+			<< m.fitness.height << "|"
+			<< m.fitness.bmi << "|"
+			<< m.fitness.workoutDuration << "|"
+			<< m.fitness.targetWorkoutMins << "|"
+			<< m.fitness.caloriesBurned << "\n";
+	}
+	outFile.close();
+}
+
+void updateRecord(vector<Member>& members, const Member& currentUser) {
+	bool found = false;
+	for (auto& m : members) {
+		if (m.name == currentUser.name) 
+			m = currentUser;
+			found = true;
+			break;
+		}
+}
+
+
+void loadUserData(Member& currentUser, const string& filename) {
+	vector<Member> members;
+	loadFitnessData(members, filename);
+
+	for (const auto& m : members) {
+		if (m.name == currentUser.name) {
+			currentUser.fitness = m.fitness;
+			break;
+		}
+	}
+}
+
+void fitnessMenu(Member& currentUser) {
+
+	vector<Member> memberList;
+	loadFitnessData(memberList, DATA_FILE);
+
+	loadUserData(currentUser, DATA_FILE);
+
 	int choice;
 
 	do {
@@ -245,19 +337,19 @@ void fitnessMenu(Member& members) {
 
 		switch (choice) {
 		case 1:
-			setFitnessGoal(members);
+			setFitnessGoal(currentUser);
 			break;
 		case 2:
-			updateFitnessMetrics(members);
+			updateFitnessMetrics(currentUser);
 			break;
 		case 3:
-			logWorkoutSession(members);
+			logWorkoutSession(currentUser);
 			break;
 		case 4:
-			resetFitnessMetrics(members);
+			resetFitnessMetrics(currentUser);
 			break;
 		case 5:
-			generateFitnessReport(members);
+			generateFitnessReport(currentUser);
 			break;
 		case 0:
 			cout << "\nExiting Fitness Module.\n";

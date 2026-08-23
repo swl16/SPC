@@ -1,2 +1,3 @@
 sixuan,12345,Tang Si Xuan,19,M,1234567890,tang2@gmail.com
 weili,12345,Sim Wei Li,19,F,0123456789,weilisim@gmail.com
+wenxuan,123456,Hiew Wen Xuan,19,F,0123456789,wx07@gmail.com
