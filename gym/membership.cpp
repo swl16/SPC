@@ -147,11 +147,19 @@ void viewMembershipPlan(Member member) {
 		getline(ss, planID, ',');
 		getline(ss, datePurchase, ',');
 	
-		targetPlanId = stoi(planID);
+		if (planID.empty()) continue;
 
-		if (username == member.loginInfo.usernames) {
-			hasSubscription = true;
-			break; // Found active subscription!
+		try {
+			int parsedId = stoi(planID);
+
+			if (username == member.loginInfo.usernames) {
+				targetPlanId = parsedId;
+				hasSubscription = true;
+				break; // Found active subscription
+			}
+		}
+		catch (const invalid_argument&) {
+			continue; // Skip malformed lines safely without crashing
 		}
 	}
 
