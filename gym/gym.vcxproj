@@ -129,7 +129,6 @@
     <ClCompile Include="FitnessTracking.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="membership.cpp" />
-    <ClCompile Include="membershipPlan.txt" />
     <ClCompile Include="Payment.cpp" />
     <ClCompile Include="ScheduleMenu.cpp" />
     <ClCompile Include="UserLogin.cpp" />
@@ -144,6 +143,7 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="classBookings.txt" />
+    <Text Include="membershipPlan.txt" />
     <Text Include="user.txt" />
     <Text Include="UserMembership.txt" />
   </ItemGroup>

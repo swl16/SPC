@@ -27,9 +27,6 @@
     <ClCompile Include="membership.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="membershipPlan.txt">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ScheduleMenu.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -70,5 +67,6 @@
     <Text Include="classBookings.txt" />
     <Text Include="user.txt" />
     <Text Include="UserMembership.txt" />
+    <Text Include="membershipPlan.txt" />
   </ItemGroup>
 </Project>

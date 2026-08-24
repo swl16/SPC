@@ -6,6 +6,7 @@
 #include <sstream>
 #include <ctime>
 #include <algorithm>
+#include <cctype>
 
 #include"User.hpp"
 #include"ScheduleMenu.hpp"
@@ -520,6 +521,13 @@ void viewBooking(Member member) {
 
 }
 
+//static inline void trim(string& s) {
+//    s.erase(s.begin(), find_if(s.begin(), s.end(),
+//        [](unsigned char ch) { return !isspace(ch); }));
+//    s.erase(find_if(s.rbegin(), s.rend(),
+//        [](unsigned char ch) { return !isspace(ch); }).base(), s.end());
+//}
+
 void cancelBooking(Member member) {
     ifstream classFile("classBookings.txt");
     if (!classFile.is_open()) {
@@ -532,6 +540,7 @@ void cancelBooking(Member member) {
     string line;
 
     while (getline(classFile, line)) {
+ /*       trim(line);*/
         if (line.empty()) continue;
         stringstream ss(line);
         ClassBooking book;
