@@ -165,11 +165,11 @@ void bookClass(Member member) {
         time_t futureTime = now + (i * 86400); // 86400 seconds = 1 day
         tm ltm;
 
-        #ifdef _WIN32
+#ifdef _WIN32
         localtime_s(&ltm, &futureTime); // Safe version for MSVC / Visual Studio
-        #else
+#else
         ltm = *localtime(&futureTime);
-        #endif
+#endif
 
         char buffer[20];
         strftime(buffer, sizeof(buffer), "%Y/%m/%d", &ltm);
@@ -179,7 +179,7 @@ void bookClass(Member member) {
     vector<Schedule> availableClasses;
 
     for (const auto& s : allSchedules) {
-        if (s.isCanceled) continue; 
+        if (s.isCanceled) continue;
 
         for (const string& d : validDates) {
             if (s.date == d) {
@@ -188,7 +188,7 @@ void bookClass(Member member) {
             }
         }
     }
-    
+
     if (availableClasses.empty()) {
         cout << "No classes available for the next 3 days." << endl;
         return;
@@ -231,7 +231,7 @@ void bookClass(Member member) {
         }
 
         string selectedDate = validDates[dateChoice - 1];
-        
+
         vector<Schedule> classesForSelectedDate;
         for (const auto& item : availableClasses) {
             if (item.date == selectedDate) {
@@ -248,13 +248,13 @@ void bookClass(Member member) {
         cout << "STEP 2 :" << endl;
         cout << "Select Start Time" << endl;
         cout << "------------------------------------------------" << endl;
-        
+
         cout << left << setw(5) << "No."
             << left << setw(8) << "ID"
             << left << setw(18) << "Class Name"
             << left << setw(15) << "Trainer"
             << left << setw(12) << "Time Slot" << endl;
-            
+
         cout << "------------------------------------------------" << endl;
         for (size_t idx = 0; idx < classesForSelectedDate.size(); ++idx) {
             string timeRange = to_string(classesForSelectedDate[idx].startTime) + "-" + to_string(classesForSelectedDate[idx].endTime);
@@ -265,7 +265,7 @@ void bookClass(Member member) {
                 << left << setw(12) << timeRange << endl;
         }
         cout << "------------------------------------------------" << endl;
-       
+
         int timeChoice;
         cout << "\nEnter Option No. (1-" << classesForSelectedDate.size() << ") to book (or '0' to back):";
 
@@ -310,7 +310,7 @@ void bookClass(Member member) {
                 classBooked.scheduleID = stoi(cID);
                 if (classBooked.scheduleID == selectedClass.scheduleID) {
                     currentCapacityCount++;
-                    
+
                     if (classBooked.username == member.loginInfo.usernames) {
                         alreadyBooked = true;
                     }
@@ -331,8 +331,8 @@ void bookClass(Member member) {
         }
 
         int newBookingID = generateBookingID("classBookings.txt");
-       
-        
+
+
         cout << "\n================================================" << endl;
         cout << "           CLASS BOOKING CONFIRMATION           " << endl;
         cout << "================================================" << endl;
@@ -344,12 +344,12 @@ void bookClass(Member member) {
         cout << "Time Slot   : " << selectedClass.startTime << " - " << selectedClass.endTime << endl;
         cout << "Fee Status  : " << fixed << setprecision(2) << selectedClass.price << endl;
         cout << "================================================" << endl;
-        
+
         char confirm;
         cout << "\nConfirm booking? (Y/N): ";
         cin >> confirm;
 
-        if (confirm == 'Y' || confirm == 'y') { 
+        if (confirm == 'Y' || confirm == 'y') {
             //process to payment
 
             classPaymentProcess(member, selectedClass, newBookingID);
@@ -363,7 +363,7 @@ void bookClass(Member member) {
         cin.ignore(1000, '\n');
         cin.get();
         return;
-   
+
     } while (true);
 }
 
@@ -408,18 +408,18 @@ void viewBooking(Member member) {
     ClassBooking classBooked;
 
     while (getline(classFile, line)) {
-            if (line.empty()) continue;
-            stringstream ss(line);
-            string bID, cID;
+        if (line.empty()) continue;
+        stringstream ss(line);
+        string bID, cID;
 
-            getline(ss, bID, ',');
-            getline(ss, classBooked.username, ',');
-            getline(ss, cID, ',');
-            getline(ss, classBooked.bookingDate, ',');
+        getline(ss, bID, ',');
+        getline(ss, classBooked.username, ',');
+        getline(ss, cID, ',');
+        getline(ss, classBooked.bookingDate, ',');
 
-            classBooked.bookingID = stoi(bID);
-            classBooked.scheduleID = stoi(cID);
-       
+        classBooked.bookingID = stoi(bID);
+        classBooked.scheduleID = stoi(cID);
+
         if (classBooked.username == member.loginInfo.usernames) {
             Schedule matchedSchedule;
             bool scheduleFound = false;
@@ -470,7 +470,7 @@ void viewBooking(Member member) {
         << left << setw(15) << "Trainer"
         << left << setw(12) << "Date"
         << left << setw(12) << "Time Slot"
-        << left << setw(18) << "Status" 
+        << left << setw(18) << "Status"
         << left << setw(12) << "Date Booked" << endl;
     cout << "-----------------------------------------------------------------------------------" << endl;
 
@@ -485,7 +485,7 @@ void viewBooking(Member member) {
                 << left << setw(15) << b.trainerName
                 << left << setw(12) << b.date
                 << left << setw(12) << b.timeStr
-                << left << setw(18) << b.status 
+                << left << setw(18) << b.status
                 << left << setw(12) << b.dateBooked << endl;
         }
     }
@@ -498,7 +498,7 @@ void viewBooking(Member member) {
         << left << setw(15) << "Trainer"
         << left << setw(12) << "Date"
         << left << setw(12) << "Time Slot"
-        << left << setw(18) << "Status" 
+        << left << setw(18) << "Status"
         << left << setw(12) << "Date Booked" << endl;
     cout << "-----------------------------------------------------------------------------------" << endl;
 
@@ -513,7 +513,7 @@ void viewBooking(Member member) {
                 << left << setw(15) << b.trainerName
                 << left << setw(12) << b.date
                 << left << setw(12) << b.timeStr
-                << left << setw(18) << b.status 
+                << left << setw(18) << b.status
                 << left << setw(12) << b.dateBooked << endl;
         }
     }
@@ -521,12 +521,6 @@ void viewBooking(Member member) {
 
 }
 
-//static inline void trim(string& s) {
-//    s.erase(s.begin(), find_if(s.begin(), s.end(),
-//        [](unsigned char ch) { return !isspace(ch); }));
-//    s.erase(find_if(s.rbegin(), s.rend(),
-//        [](unsigned char ch) { return !isspace(ch); }).base(), s.end());
-//}
 
 void cancelBooking(Member member) {
     ifstream classFile("classBookings.txt");
@@ -540,7 +534,6 @@ void cancelBooking(Member member) {
     string line;
 
     while (getline(classFile, line)) {
- /*       trim(line);*/
         if (line.empty()) continue;
         stringstream ss(line);
         ClassBooking book;
@@ -615,16 +608,16 @@ void cancelBooking(Member member) {
 
 
 void bookingClass(Member member) {
-    clearScreen();
 
     int choice;
 
-    cout << "1. Book Class" << endl;
-    cout << "2. View Class Schedule" << endl;
-    cout << "0. Return to Main Menu" << endl;
-    cout << "-------------------------" << endl;
 
     do {
+        clearScreen();
+        cout << "1. Book Class" << endl;
+        cout << "2. View Class Schedule" << endl;
+        cout << "0. Return to Main Menu" << endl;
+        cout << "-------------------------" << endl;
         cout << "Enter choice: ";
         if (!(cin >> choice)) { // Input validation for non-numeric input
             cin.clear();
@@ -654,22 +647,22 @@ void bookingClass(Member member) {
 
 
     } while (true);
-    
+
 }
 
 
 void viewingBooking(Member member) {
-    clearScreen();
 
     int choice;
 
-    cout << "1. View Bookings" << endl;
-    cout << "2. Cancel Booking" << endl;
-    cout << "0. Return to Main Menu" << endl;
-    cout << "------------------------" << endl;
+
 
     do {
-
+        clearScreen();
+        cout << "1. View Bookings" << endl;
+        cout << "2. Cancel Booking" << endl;
+        cout << "0. Return to Main Menu" << endl;
+        cout << "------------------------" << endl;
         cout << "Enter choice: ";
         if (!(cin >> choice)) { // Input validation for non-numeric input
             cin.clear();
@@ -681,10 +674,12 @@ void viewingBooking(Member member) {
         switch (choice) {
         case 1:
             viewBooking(member);
+            pauseScreen();
             break;
 
         case 2:
             cancelBooking(member);
+            pauseScreen();
             break;
 
         case 0:

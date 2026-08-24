@@ -20,7 +20,7 @@ void clearInputBuffer() {
 	cin.ignore(numeric_limits<streamsize>::max(), '\n');
 }
 
-void loadUser(Member * members) {
+void loadUser(Member* members) {
 	ifstream file("user.txt");
 
 	if (!file) {
@@ -65,7 +65,7 @@ void loadUser(Member * members) {
 	file.close();
 }
 
-void saveUser(Member*members) {
+void saveUser(Member* members) {
 	ofstream file("user.txt");
 
 	if (!file) {
@@ -74,12 +74,12 @@ void saveUser(Member*members) {
 	}
 
 	for (int i = 0; i < userCount; i++) {
-		file << members[i].loginInfo.usernames << "," 
-			<< members[i].loginInfo.passwords<< "," 
-			<< members[i].name << "," 
-			<< members[i].age << "," 
-			<< members[i].gender << "," 
-			<< members[i].phNo << "," 
+		file << members[i].loginInfo.usernames << ","
+			<< members[i].loginInfo.passwords << ","
+			<< members[i].name << ","
+			<< members[i].age << ","
+			<< members[i].gender << ","
+			<< members[i].phNo << ","
 			<< members[i].email << endl;
 	}
 
@@ -220,6 +220,7 @@ int loginUser(Member* members, Member& activeMember) {    // user login
 	}
 	else {
 		cout << "Invalid username or password. Please try again.\n\n";
+		pauseScreen();
 		return 0;
 	}
 }
@@ -330,11 +331,13 @@ void userLogin() {
 
 		case '3':
 			resetPassword(members);
+			pauseScreen();
 			break;
 
 		case '4':
 
 			logoutUser();
+			pauseScreen();
 			break;
 
 		case '0':

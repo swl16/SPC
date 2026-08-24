@@ -243,16 +243,14 @@ void displayschedule(const vector<Schedule>& schedules) {
         << setw(10) << "Capacity"
         << right << setw(10) << "Fee (RM)"
         << "   " << left << setw(8) << "Status\n";
-    cout << "-------------------------------------------------------------------------------\n";
+    cout << "----------------------------------------------------------------------------------------------------\n";
 
     bool activeFound = false;
 
     cout << fixed << setprecision(2);
 
     for (const Schedule& s : schedules) {
-        if (s.isCanceled) {
-            continue;
-        }
+        string status = s.isCanceled ? "Canceled" : "Active";
 
         cout << left << setw(6) << s.scheduleID
             << setw(13) << s.date
@@ -262,13 +260,13 @@ void displayschedule(const vector<Schedule>& schedules) {
             << setw(16) << (s.trainerName.empty() ? "None" : s.trainerName)
             << setw(10) << s.classCapacity
             << right << setw(10) << s.price
-            << "   " << left << setw(8) << "Active\n";
+            << "   " << left << setw(8) << status << "\n";
 
         activeFound = true;
     }
 
     if (!activeFound) {
-        cout << "No active schedules available to display.\n";
+        cout << "No schedules available to display.\n";
     }
 }
 
@@ -306,7 +304,7 @@ void checkClassCapacity(const vector<Schedule>& schedules) {
         << setw(10) << "Booked"
         << setw(10) << "Capacity"
         << setw(10) << "Open"
-        << left << setw(14) << "Status\n";
+        << setw(14) << "Status\n";
     cout << "----------------------------------------------------------------------------------------------------\n";
 
     bool anyActive = false;
@@ -417,7 +415,7 @@ void updateschedule(vector<Schedule>& schedules) {
 
     int searchID;
     cout << "\n--- Update Schedule ---\n";
-	searchID = getIntegerInput("Enter the Schedule ID you want to update: ", 1000, 9999);
+    searchID = getIntegerInput("Enter the Schedule ID you want to update: ", 1000, 9999);
 
     bool found = false;
 
@@ -449,7 +447,7 @@ void updateschedule(vector<Schedule>& schedules) {
                 double tempPrice;
 
                 switch (updateChoice) {
-                case '1' :
+                case '1':
                     s.className = getNonEmptyString("Enter new schedule name: ");
                     isModified = true;
                     cout << "Class name updated successfully!\n";
@@ -536,6 +534,7 @@ void updateschedule(vector<Schedule>& schedules) {
                         cout << "\nNo changes were made.\n";
                     }
 
+
                     break;
 
                 default:
@@ -562,9 +561,14 @@ void cancelschedule(vector<Schedule>& schedules) {
 
     int searchID;
     cout << "\n--- Cancel Schedule ---\n";
-    searchID = getIntegerInput("Enter the Schedule ID you want to cancel: ", 1000, 1999);
+    searchID = getIntegerInput("Enter the Schedule ID you want to cancel (or 0 return to menu): ", 0, 1999);
 
     bool found = false;
+
+    if (searchID == 0) {
+        cout << "Operation cancelled. Returning to menu...\n";
+        return;
+    }
 
     for (Schedule& s : schedules) {
         if (s.scheduleID == searchID) {
@@ -612,6 +616,15 @@ void deleteSchedule(vector<Schedule>& schedules) {
     // 2. If found, confirm and erase
     if (it != schedules.end()) {
         char confirm;
+
+        if (!it->isCanceled) {
+            cout << "\n[ERROR] Schedule ID " << targetID << " is currently ACTIVE.\n";
+            cout << "You can only delete canceled schedules. Please cancel it first.\n";
+            pauseScreen();
+            return;
+        }
+
+
         cout << "Are you sure you want to permanently delete Schedule ID " << targetID << "? (Y/N): ";
         cin >> confirm;
 
@@ -629,7 +642,7 @@ void deleteSchedule(vector<Schedule>& schedules) {
     }
 
     pauseScreen();
-    
+
 }
 
 bool hasConflict(const vector<Schedule>& schedules, string date, int startTime, int endTime, int excludeID) {

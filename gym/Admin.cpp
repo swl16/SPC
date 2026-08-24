@@ -86,7 +86,7 @@ void adminLogin() {
 
 	if (adminUsername == "gymAdmin" && adminPassword == "gymAdmin123") {
 		cout << "Login successful! Welcome, Admin." << endl;
-		
+
 		pauseScreen();
 
 		Member* members = new Member[MAX_USERS];
@@ -99,11 +99,10 @@ void adminLogin() {
 		cout << "Invalid credentials. Access denied." << endl;
 
 		pauseScreen();
-		return;
 	}
 }
 
-void displayadminMenu(){
+void displayadminMenu() {
 
 	cout << "==================================================" << endl;
 	cout << "                FITNESS ADMIN PORTAL			   " << endl;
@@ -191,7 +190,7 @@ void viewAllMembers() {
 
 	cout << left << setw(15) << "Username" << setw(20) << "Name" << setw(6) << "Age"
 		<< setw(8) << "Gender" << setw(15) << "Phone" << "Email" << endl;
-	cout << "--------------------------------------------------------------------------\n";
+	cout << "----------------------------------------------------------------------------------\n";
 
 	for (int i = 0; i < userCount; i++) {
 		cout << left << setw(15) << members[i].loginInfo.usernames
@@ -203,14 +202,14 @@ void viewAllMembers() {
 
 	}
 
-	cout << "--------------------------------------------------" << endl;
+	cout << "----------------------------------------------------------------------------------" << endl;
 
 	cout << "Total Members : " << userCount << endl;
 
 	cout << "\nPress ENTER back to Admin Menu.\n";
 	cin.ignore(numeric_limits<streamsize>::max(), '\n');
 	cin.get();
-	
+
 }
 
 void addMembershipPlan() {
@@ -276,7 +275,8 @@ void addMembershipPlan() {
 		saveMembershipPlans(filename, plans);
 
 		cout << "The new membership is successfully added." << endl;
-	} else {
+	}
+	else {
 		cout << "\nOperation cancelled. Plan was not saved." << endl;
 	}
 
@@ -727,7 +727,7 @@ void monthlyReport() {
 }
 
 
-void adminMenu(Member* members,int userCount) {
+void adminMenu(Member* members, int userCount) {
 
 	char choice, choose;
 	vector<Schedule> schedules;
@@ -752,7 +752,7 @@ void adminMenu(Member* members,int userCount) {
 				cout << "Enter your choice: ";
 				cin >> choose;
 
-				switch (choose){
+				switch (choose) {
 				case '1': // Call function to add membership plan
 					clearScreen();
 					addMembershipPlan();
@@ -797,18 +797,22 @@ void adminMenu(Member* members,int userCount) {
 				case '1': // add class
 					clearScreen();
 					addschedule(schedules);
+					pauseScreen();
 					break;
 				case '2':   //view class schedule
 					clearScreen();
 					displayschedule(schedules);
+					pauseScreen();
 					break;
 				case '3': //update class
 					clearScreen();
 					updateschedule(schedules);
+					pauseScreen();
 					break;
 				case '4': //search
 					clearScreen();
 					searchschedule(schedules);
+					pauseScreen();
 					break;
 				case '5': //cancel
 					clearScreen();
@@ -822,6 +826,7 @@ void adminMenu(Member* members,int userCount) {
 				case '7': //check capacity
 					clearScreen();
 					checkClassCapacity(schedules);
+					pauseScreen();
 					break;
 
 				case '0':
@@ -839,11 +844,10 @@ void adminMenu(Member* members,int userCount) {
 		case '4': //payment 
 			clearScreen();
 			viewPaymentRecords();
-			pauseScreen();
 			break;
 
 		case '5':
-			do{
+			do {
 				clearScreen();
 				displayAttendanceMenu();
 				cout << "Enter your choice: ";
@@ -870,7 +874,7 @@ void adminMenu(Member* members,int userCount) {
 				}
 
 			} while (choose != '0');
-			
+
 			break;
 
 		case '6': //report
@@ -913,7 +917,6 @@ void adminMenu(Member* members,int userCount) {
 
 		case '0':
 			cout << "Logging out..." << endl;
-			pauseScreen();
 			exit(0);
 			break;
 		default:
