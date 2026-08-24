@@ -29,4 +29,4 @@ void ensureFileExists(const string& filename = "fitness_data.txt");
 void loadFitnessData(vector <Member>& members, const string& filename = "fitness_data.txt");
 void saveFitnessData(const Member& member, const string& filename = "fitness_data.txt");
 void saveMember(const Member& currentUser, const string& filename = "fitness_data.txt");
-void loadUserData(Member& currentUser, const std::string& filename = "fitness_data.txt");
+void loadUserData(Member& currentUser, const string& filename = "fitness_data.txt");
