@@ -230,6 +230,7 @@ void registerMembershipPlan(Member member) {
 		cout << "[NOTICE] You already have an ACTIVE membership!" << endl;
 		cout << "Please select Option 2 (Renew) to extend it or wait for the plan expired to register a new membership." << endl;
 		cout << "=================================================" << endl;
+		pauseScreen();
 		return;
 	}
 
