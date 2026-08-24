@@ -566,29 +566,61 @@ void membershipReport() {
 		return;
 	}
 
+	vector<MembershipPlanRecord> plans = loadMembershipPlans("membershipPlan.txt");
+	map<int, string> planNameMap;
+	for (const auto& p : plans) {
+		planNameMap[p.id] = p.planName;
+	}
+
 	map<string, int> planCounts;
 	int totalActive = 0;
 	string line;
+	time_t now = time(nullptr);
 
 	while (getline(file, line)) {
 		if (line.empty()) continue;
 		stringstream ss(line);
-		string uName, pName, sDate, eDate, status;
+		string uName, pIDStr, sDate, eDate;
 
 		getline(ss, uName, ',');
-		getline(ss, pName, ',');
+		getline(ss, pIDStr, ',');
 		getline(ss, sDate, ',');
 		getline(ss, eDate, ',');
-		getline(ss, status, ',');
 
-		if (status == "Active") {
-			planCounts[pName]++;
-			totalActive++;
+		if (pIDStr.empty() || eDate.empty()) continue;
+
+		try {
+			int pID = stoi(pIDStr);
+
+			// Parse expiration date
+			tm expTm = { 0 };
+			int year, month, day;
+			char sep1, sep2;
+			stringstream dStream(eDate);
+
+			if (dStream >> year >> sep1 >> month >> sep2 >> day) {
+				expTm.tm_year = year - 1900;
+				expTm.tm_mon = month - 1;
+				expTm.tm_mday = day;
+				expTm.tm_isdst = -1;
+
+				time_t expireTime = mktime(&expTm);
+
+				// Active if expire date is in the future
+				if (difftime(expireTime, now) > 0) {
+					string pName = planNameMap.count(pID) ? planNameMap[pID] : ("Plan " + to_string(pID));
+					planCounts[pName]++;
+					totalActive++;
+				}
+			}
+		}
+		catch (...) {
+			continue;
 		}
 	}
 	file.close();
 
-	cout << left << setw(25) << "Plan Name" << "Total Active Members" << endl;
+	cout << left << setw(28) << "Plan Name" << "Total Active Members" << endl;
 	cout << "--------------------------------------------------\n";
 
 	if (planCounts.empty()) {
@@ -596,13 +628,12 @@ void membershipReport() {
 	}
 	else {
 		for (const auto& pair : planCounts) {
-			cout << left << setw(25) << pair.first << pair.second << endl;
+			cout << left << setw(28) << pair.first << pair.second << endl;
 		}
 	}
 	cout << "--------------------------------------------------\n";
 	cout << "Total Active Members Across All Plans: " << totalActive << endl;
 	cout << "==================================================\n";
-
 }
 
 

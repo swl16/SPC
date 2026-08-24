@@ -59,7 +59,8 @@ void viewProfile(Member* members) {
 		return;
 	}
 
-	string planName = "-", startDate = "-", endDate = "-", status = "-";
+	string planName = "-", startDate = "-", endDate = "-", status = "Inactive";
+	int targetPlanId = -1;
 
 	ifstream memFile("UserMembership.txt");
 
@@ -71,27 +72,62 @@ void viewProfile(Member* members) {
 			if (line.empty()) continue;
 
 			stringstream ss(line);
-			string uName, pName, sDate, eDate, stat;
+			string uName, pID, sDate, eDate;
 
 			getline(ss, uName, ',');
-			getline(ss, pName, ',');
+			getline(ss, pID, ',');
 			getline(ss, sDate, ',');
 			getline(ss, eDate, ',');
-			getline(ss, stat, ',');
 
 			// If it matches the current user, update the details
 			// (It will keep reading to the end, ensuring it grabs the latest record)
-			if (uName == members[i].loginInfo.usernames) {
-				planName = pName;
-				startDate = sDate;
-				endDate = eDate;
-				status = stat;
+			if (uName == members[i].loginInfo.usernames && !pID.empty()) {
+				try {
+					targetPlanId = stoi(pID);
+					startDate = sDate;
+					endDate = eDate;
+				}
+				catch (...) {
+					continue;
+				}
 			}
 		}
 		memFile.close();
 	}
 
+	if (targetPlanId != -1) {
+		vector<MembershipPlanRecord> plans = loadMembershipPlans("membershipPlan.txt");
+		for (const auto& p : plans) {
+			if (p.id == targetPlanId) {
+				planName = p.planName;
+				break;
+			}
+		}
 
+		tm expTm = { 0 };
+		int year, month, day;
+		char sep1, sep2;
+		stringstream dStream(endDate);
+
+		if (dStream >> year >> sep1 >> month >> sep2 >> day) {
+			expTm.tm_year = year - 1900;
+			expTm.tm_mon = month - 1;
+			expTm.tm_mday = day;
+			expTm.tm_isdst = -1;
+
+			time_t expireTime = mktime(&expTm);
+			time_t now = time(nullptr);
+			double secondsLeft = difftime(expireTime, now);
+			int daysLeft = static_cast<int>(secondsLeft / 86400);
+
+			if (daysLeft >= 0) {
+				status = "Active (" + to_string(daysLeft) + " days remaining)";
+			}
+			else {
+				status = "Expired (" + to_string(abs(daysLeft)) + " days ago)";
+			}
+		}
+	}
 
 	cout << "================================\n";
 	cout << "         USER PROFILE           \n";

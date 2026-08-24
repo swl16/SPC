@@ -90,13 +90,13 @@ void viewClassSchedule();
 
 // payment file
 string getCurrentDateTime();
-string addMonths(int months);
+string addMonths(int months, const string& baseDateStr = "");
 string generatePaymentID();
-void saveMembership(string username, string planName, string startDate, string endDate, string status);
+void saveMembership(string username, int planID, string startDate, string endDate);
 void savePayment(string paymentID, string username, string planName, double amount, string paymentDate, string paymentMethod);
 void generateMemberReceipt(string paymentID, string username, MembershipPlanRecord plan, string paymentDate, string paymentMethod,
 	string startDate, string endDate);
-void membershipPaymentProcess(Member members, MembershipPlanRecord selectedPlan);
+void membershipPaymentProcess(Member members, MembershipPlanRecord selectedPlan, string startDate = "", string EndDate = "");
 void classPaymentProcess(Member member, Schedule selectedClass, int newBookingID);
 
 
