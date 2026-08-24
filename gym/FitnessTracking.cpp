@@ -348,6 +348,7 @@ void fitnessMenu(Member& currentUser) {
     int choice;
 
     do {
+        clearScreen();
         cout << "\n===========================================\n";
         cout << "           FITNESS TRACKER MENU\n";
         cout << "===========================================\n";
@@ -369,23 +370,32 @@ void fitnessMenu(Member& currentUser) {
 
         switch (choice) {
         case 1:
+            clearScreen();
             setFitnessGoal(currentUser);
             saveMember(currentUser, DATA_FILE);
+            pauseScreen();
             break;
         case 2:
+            clearScreen();
             updateFitnessMetrics(currentUser);
             saveMember(currentUser, DATA_FILE);
+            pauseScreen();
             break;
         case 3:
+            clearScreen();
             logWorkoutSession(currentUser);
             saveMember(currentUser, DATA_FILE);
+            pauseScreen();
             break;
         case 4:
             resetFitnessMetrics(currentUser);
             saveMember(currentUser, DATA_FILE);
+            pauseScreen();
             break;
         case 5:
+            clearScreen();
             generateFitnessReport(currentUser);
+            pauseScreen();
             break;
         case 0:
             cout << "\nExiting Fitness Module.\n";

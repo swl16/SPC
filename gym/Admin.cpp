@@ -517,7 +517,6 @@ void viewPaymentRecords() {
 		// Extract data separated by commas
 		getline(ss, pID, ',');
 		getline(ss, uName, ',');
-		getline(ss, refID, ',');
 		getline(ss, desc, ',');
 		getline(ss, amtStr, ',');
 		getline(ss, pDate, ',');
