@@ -250,7 +250,7 @@ void displayschedule(const vector<Schedule>& schedules) {
     cout << fixed << setprecision(2);
 
     for (const Schedule& s : schedules) {
-        string status = s.isCanceled ? "Canceled" : "Active";
+        string status = s.isCanceled ? "Cancelled" : "Active";
 
         cout << left << setw(6) << s.scheduleID
             << setw(13) << s.date
@@ -558,6 +558,8 @@ void cancelschedule(vector<Schedule>& schedules) {
         cout << "No schedules available to cancel.\n";
         return;
     }
+
+    displayschedule(schedules);
 
     int searchID;
     cout << "\n--- Cancel Schedule ---\n";

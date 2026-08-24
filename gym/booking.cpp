@@ -126,7 +126,7 @@ void viewClassSchedule() {
             string statusStr;
 
             if (s.isCanceled) {
-                statusStr = "CANCELED";
+                statusStr = "CANCELLED";
             }
             else if (remainingSeats == 0) {
                 statusStr = "FULL";
@@ -146,7 +146,6 @@ void viewClassSchedule() {
         }
     }
     cout << "================================================" << endl;
-    pauseScreen();
 }
 
 void bookClass(Member member) {
@@ -244,10 +243,10 @@ void bookClass(Member member) {
             continue;
         }
 
-        cout << "\n------------------------------------------------" << endl;
+        cout << "\n----------------------------------------------------" << endl;
         cout << "STEP 2 :" << endl;
         cout << "Select Start Time" << endl;
-        cout << "------------------------------------------------" << endl;
+        cout << "-----------------------------------------------------" << endl;
 
         cout << left << setw(5) << "No."
             << left << setw(8) << "ID"
@@ -255,7 +254,7 @@ void bookClass(Member member) {
             << left << setw(15) << "Trainer"
             << left << setw(12) << "Time Slot" << endl;
 
-        cout << "------------------------------------------------" << endl;
+        cout << "-----------------------------------------------------" << endl;
         for (size_t idx = 0; idx < classesForSelectedDate.size(); ++idx) {
             string timeRange = to_string(classesForSelectedDate[idx].startTime) + "-" + to_string(classesForSelectedDate[idx].endTime);
             cout << left << setw(5) << (idx + 1)
@@ -561,7 +560,7 @@ void cancelBooking(Member member) {
 
     viewBooking(member);
 
-    int targetBookingID = getIntegerInput("\nEnter Booking ID to cancel (or 0 to back): ", 1000, 1999);
+    int targetBookingID = getIntegerInput("\nEnter Booking ID to cancel (or 0 to back): ", 0, 1999);
     if (targetBookingID == 0) return;
 
     // Verify booking belongs to this member
