@@ -25,33 +25,39 @@ string getCurrentDateTime() {
     localTime = *localtime(&now);
 #endif
 
-    stringstream ss;
-
-    ss << put_time(&localTime, "%d/%m/%Y %H:%M:%S");
-
-    return ss.str();
+    char buffer[30];
+    strftime(buffer, sizeof(buffer), "%Y/%m/%d %H:%M:%S", &localTime);
+    return string(buffer);
 }
 
-string addMonths(int months) {
-
-    time_t now = time(nullptr);
-    tm date{};
-
+string addMonths(int months, const string& baseDateStr) {
+    tm date = {};
+    if (!baseDateStr.empty()) {
+        int year, month, day;
+        char s1, s2;
+        stringstream ss(baseDateStr);
+        if (ss >> year >> s1 >> month >> s2 >> day) {
+            date.tm_year = year - 1900;
+            date.tm_mon = month - 1;
+            date.tm_mday = day;
+            date.tm_isdst = -1;
+        }
+    }
+    else {
+        time_t now = time(nullptr);
 #ifdef _WIN32
-    localtime_s(&date, &now);
+        localtime_s(&date, &now);
 #else
-    date = *localtime(&now);
+        date = *localtime(&now);
 #endif
+    }
 
     date.tm_mon += months;
+    mktime(&date); // Normalize calendar overflow
 
-    mktime(&date);
-
-    stringstream ss;
-
-    ss << put_time(&date, "%d/%m/%Y");
-
-    return ss.str();
+    char buffer[20];
+    strftime(buffer, sizeof(buffer), "%Y/%m/%d", &date);
+    return string(buffer);
 }
 
 
@@ -97,20 +103,19 @@ string generatePaymentID() {
     return result.str();
 }
 
-void saveMembership(string username, string planName, string startDate, string endDate, string status) {
+void saveMembership(string username, int planID, string startDate, string endDate) {
 
     ofstream file("UserMembership.txt");
 
-    if (!file) {
+    if (!file.is_open()) {
         cout << "Error: Cannot open file!\n";
         return;
     }
 
     file << username << ","
-        << planName << ","
+        << planID << ","
         << startDate << ","
-        << endDate << ","
-        << status << endl;
+        << endDate << endl;
 
     file.close();
 }
@@ -171,11 +176,12 @@ void generateMemberReceipt(string paymentID, string username, MembershipPlanReco
 
 
 
-void membershipPaymentProcess(Member members, MembershipPlanRecord selectedPlan) {
+void membershipPaymentProcess(Member members, MembershipPlanRecord selectedPlan, string customStartDate, string customEndDate) {
 
-
+    cout << "------------------------------------------------" << endl;
 	cout << "                  \nPAYMENT			         " << endl;
 	cout << "------------------------------------------------" << endl;
+    cout << "Plan   : " << selectedPlan.planName << endl;
     cout << "Amount : RM " << fixed << setprecision(2) << selectedPlan.price << endl;
 
     char methodChoice;
@@ -278,12 +284,12 @@ void membershipPaymentProcess(Member members, MembershipPlanRecord selectedPlan)
 
     string paymentID = generatePaymentID();
     string paymentDate = getCurrentDateTime();
-    string startDate = addMonths(0);
-    string endDate = addMonths(selectedPlan.duration);
+    string startDate = customStartDate.empty() ? getCurrentDate() : customStartDate;
+    string endDate = customEndDate.empty() ? addMonths(selectedPlan.duration) : customEndDate;
 
     savePayment(paymentID, members.loginInfo.usernames, selectedPlan.planName, selectedPlan.price, paymentDate, paymentMethod);
 
-    saveMembership(members.loginInfo.usernames, selectedPlan.planName, startDate, endDate, "Active");
+    saveMembership(members.loginInfo.usernames, selectedPlan.id, startDate, endDate);
 
     generateMemberReceipt(paymentID, members.loginInfo.usernames, selectedPlan, paymentDate, paymentMethod, startDate, endDate);
 
