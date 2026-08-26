@@ -130,6 +130,10 @@ void registerUser(Member* members) {   // user registration
 		cout << "Name cannot be empty.\n";
 		return;
 	}
+	if (members[i].name.find_first_of("0123456789")) {
+		cout << "Invalid input! Name cannot contain numbers.\n";
+		return;
+	}
 
 	while (true) {
 		cout << "Enter Age : ";
