@@ -189,43 +189,6 @@ void saveSchedulesToFile(const vector<Schedule>& schedules) {
     }
 }
 
-void addschedule(vector<Schedule>& schedules) {
-    Schedule newClass;
-
-    newClass.scheduleID = schedules.empty() ? 1000 : schedules.back().scheduleID + 1;
-    newClass.isCanceled = false;
-
-
-    cout << "\n--- Add New Schedule ---\n";
-
-    newClass.className = getNonEmptyString("Enter schedule name: ");
-
-    newClass.date = getValidDate("Enter schedule date (YYYY/MM/DD): ");
-
-    newClass.startTime = getIntegerInput("Enter start time (eg. 1400): ", 1000, 2000);
-
-    newClass.endTime = getIntegerInput("Enter end time (eg. 1600): ", 1000, 2000);
-    newClass.trainerName = getNonEmptyString("Enter trainer name: ");
-    newClass.price = getDoubleInput("Enter class fee (RM, e.g., 30.00): ", 0.0, 500.0);
-    newClass.classCapacity = getIntegerInput("Enter the Class Capacity: ", 5, 30);
-
-    if (newClass.startTime >= newClass.endTime) {
-        cout << "Error: Start time must be before end time.\n";
-        return;
-    }
-
-    if (hasConflict(schedules, newClass.date, newClass.startTime, newClass.endTime, -1)) {
-        cout << "Error: This time slot is already taken by an active class.\n";
-    }
-    else {
-        schedules.push_back(newClass);
-        cout << "Schedule added successfully with ID: " << newClass.scheduleID << "\n";
-
-        // --- NEW: Save immediately ---
-        saveSchedulesToFile(schedules);
-    }
-}
-
 void displayschedule(const vector<Schedule>& schedules) {
     if (schedules.empty()) {
         cout << "No schedules available to display.\n";
@@ -268,6 +231,44 @@ void displayschedule(const vector<Schedule>& schedules) {
 
     if (!activeFound) {
         cout << "No schedules available to display.\n";
+    }
+}
+
+void addschedule(vector<Schedule>& schedules) {
+    Schedule newClass;
+
+    newClass.scheduleID = schedules.empty() ? 1000 : schedules.back().scheduleID + 1;
+    newClass.isCanceled = false;
+
+
+    cout << "\n--- Add New Schedule ---\n";
+    displayschedule(schedules);
+    cout << "\n";
+    newClass.className = getNonEmptyString("Enter schedule name: ");
+
+    newClass.date = getValidDate("Enter schedule date (YYYY/MM/DD): ");
+
+    newClass.startTime = getIntegerInput("Enter start time (eg. 1400): ", 0000, 2359);
+
+    newClass.endTime = getIntegerInput("Enter end time (eg. 1600): ", 1000, 2000);
+    newClass.trainerName = getNonEmptyString("Enter trainer name: ");
+    newClass.price = getDoubleInput("Enter class fee (RM, e.g., 30.00): ", 0.0, 500.0);
+    newClass.classCapacity = getIntegerInput("Enter the Class Capacity: ", 5, 30);
+
+    if (newClass.startTime >= newClass.endTime) {
+        cout << "Error: Start time must be before end time.\n";
+        return;
+    }
+
+    if (hasConflict(schedules, newClass.date, newClass.startTime, newClass.endTime, -1)) {
+        cout << "Error: This time slot is already taken by an active class.\n";
+    }
+    else {
+        schedules.push_back(newClass);
+        cout << "Schedule added successfully with ID: " << newClass.scheduleID << "\n";
+
+        // --- NEW: Save immediately ---
+        saveSchedulesToFile(schedules);
     }
 }
 
