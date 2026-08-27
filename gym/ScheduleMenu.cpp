@@ -43,6 +43,14 @@ string getNonEmptyString(const string& message) {
     }
 }
 
+// Formats an HHMM int (e.g. 900) as a zero-padded 4-digit string ("0900")
+// without touching cout's global fill/width state.
+string formatTime(int t) {
+    ostringstream oss;
+    oss << setfill('0') << setw(4) << t;
+    return oss.str();
+}
+
 bool isValidDate(const string& date, bool allowPast) {
     // 1. Check length and slash positions
     if (date.length() != 10) return false;
@@ -219,8 +227,8 @@ void displayschedule(const vector<Schedule>& schedules) {
         cout << left << setw(6) << s.scheduleID
             << setw(13) << s.date
             << setw(16) << s.className
-            << setw(8) << s.startTime
-            << setw(8) << s.endTime
+            << setw(8) << formatTime(s.startTime)
+            << setw(8) << formatTime(s.endTime)
             << setw(16) << (s.trainerName.empty() ? "None" : s.trainerName)
             << setw(10) << s.classCapacity
             << right << setw(10) << s.price
@@ -360,7 +368,7 @@ void searchschedule(const vector<Schedule>& schedules) {
         cout << "No schedules available to search.\n";
         return;
     }
-    
+
     string searchDate;
     cout << "\n--- Search Schedule by Date ---\n";
     searchDate = getValidDate("Enter the date you want to search (YYYY/MM/DD): ", true);
@@ -393,8 +401,8 @@ void searchschedule(const vector<Schedule>& schedules) {
             cout << left << setw(6) << s.scheduleID
                 << setw(13) << s.date
                 << setw(16) << s.className
-                << setw(8) << s.startTime
-                << setw(8) << s.endTime
+                << setw(8) << formatTime(s.startTime)
+                << setw(8) << formatTime(s.endTime)
                 << setw(16) << (s.trainerName.empty() ? "None" : s.trainerName)
                 << setw(10) << s.classCapacity
                 << right << setw(10) << s.price
@@ -433,8 +441,8 @@ void updateschedule(vector<Schedule>& schedules) {
                 cout << "Current Details:\n";
                 cout << "1. Class Name : " << s.className << "\n";
                 cout << "2. Date       : " << s.date << "\n";
-                cout << "3. Start Time : " << s.startTime << "\n";
-                cout << "4. End Time   : " << s.endTime << "\n";
+                cout << "3. Start Time : " << formatTime(s.startTime) << "\n";
+                cout << "4. End Time   : " << formatTime(s.endTime) << "\n";
                 cout << "5. Trainer    : " << (s.trainerName.empty() ? "None" : s.trainerName) << "\n";
                 cout << "6. Fee (RM)   : RM " << s.price << "\n";
                 cout << "7. Capacity   : " << s.classCapacity << "\n";
