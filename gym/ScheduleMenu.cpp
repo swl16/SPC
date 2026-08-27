@@ -8,6 +8,7 @@ int getIntegerInput(const string& message, int min, int max) {
     while (true) {
         cout << message;
         if (cin >> value && value >= min && value <= max) {
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
             return value;
         }
         cout << "Invalid input. Please enter a number from " << min << " to " << max << ".\n";
@@ -21,6 +22,7 @@ double getDoubleInput(const string& message, double min, double max) {
     while (true) {
         cout << message;
         if (cin >> value && value >= min && value <= max) {
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
             return value;
         }
         cout << "Invalid input. Please enter an amount from " << fixed << setprecision(2) << min << " to " << max << ".\n";
@@ -69,7 +71,6 @@ bool isValidDate(const string& date, bool allowPast) {
     }
 
     if (day > daysInMonth[month]) return false;
-    time_t now = time(nullptr);
 
     // 5. Check against the actual current date
     if (!allowPast) {
@@ -358,7 +359,7 @@ void searchschedule(const vector<Schedule>& schedules) {
         cout << "No schedules available to search.\n";
         return;
     }
-
+    
     string searchDate;
     cout << "\n--- Search Schedule by Date ---\n";
     searchDate = getValidDate("Enter the date you want to search (YYYY/MM/DD): ", true);
@@ -412,7 +413,7 @@ void updateschedule(vector<Schedule>& schedules) {
         cout << "No schedules available to update.\n";
         return;
     }
-
+    displayschedule(schedules);
     int searchID;
     cout << "\n--- Update Schedule ---\n";
     searchID = getIntegerInput("Enter the Schedule ID you want to update: ", 1000, 9999);
@@ -563,7 +564,7 @@ void cancelschedule(vector<Schedule>& schedules) {
 
     int searchID;
     cout << "\n--- Cancel Schedule ---\n";
-    searchID = getIntegerInput("Enter the Schedule ID you want to cancel (or 0 return to menu): ", 0, 1999);
+    searchID = getIntegerInput("Enter the Schedule ID you want to cancel (or 0 return to menu): ", 0, 9999);
 
     bool found = false;
 
@@ -604,7 +605,7 @@ void deleteSchedule(vector<Schedule>& schedules) {
 
     displayschedule(schedules);
 
-    int targetID = getIntegerInput("\nEnter Schedule ID to delete (or 0 to cancel): ", 0, 1999);
+    int targetID = getIntegerInput("\nEnter Schedule ID to delete (or 0 to cancel): ", 0, 9999);
     if (targetID == 0) {
         cout << "Deletion cancelled.\n";
         pauseScreen();
