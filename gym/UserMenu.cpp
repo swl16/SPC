@@ -186,6 +186,11 @@ void editProfile(Member* members) {
 				cout << "Name cannot be empty.\n";
 				return;
 			}
+			if (members[i].name.find_first_of("0123456789")) {
+				cout << "Invalid input! Name cannot contain numbers.\n";
+				return;
+			}
+
 			saveUser(members); // Save the updated profile to the file
 			cout << "Name updated successfully.\n";
 			break;

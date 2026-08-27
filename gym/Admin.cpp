@@ -177,9 +177,9 @@ void viewAllMembers() {
 
 	loadUser(members);
 
-	cout << "==================================================" << endl;
-	cout << "                VIEW ALL MEMBERS				   " << endl;
-	cout << "==================================================" << endl;
+	cout << "==================================================================================" << endl;
+	cout << "                                  VIEW ALL MEMBERS				   " << endl;
+	cout << "==================================================================================" << endl;
 
 	if (userCount == 0) {
 		cout << "No member records found.\n";
@@ -718,11 +718,10 @@ void monthlyReport() {
 	while (getline(file, line)) {
 		if (line.empty()) continue;
 		stringstream ss(line);
-		string pID, uName, targetID, desc, amtStr, datetime, method;
+		string pID, uName, desc, amtStr, datetime, method;
 
 		getline(ss, pID, ',');
 		getline(ss, uName, ',');
-		getline(ss, targetID, ',');
 		getline(ss, desc, ',');
 		getline(ss, amtStr, ',');
 		getline(ss, datetime, ',');
