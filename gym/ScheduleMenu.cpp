@@ -446,6 +446,8 @@ void updateschedule(vector<Schedule>& schedules) {
                 cout << "5. Trainer    : " << (s.trainerName.empty() ? "None" : s.trainerName) << "\n";
                 cout << "6. Fee (RM)   : RM " << s.price << "\n";
                 cout << "7. Capacity   : " << s.classCapacity << "\n";
+                cout << "8. Status     : " << (s.isCanceled ? "Cancelled" : "Active")
+                    << (s.isCanceled ? " (select 8 to reactivate)" : " (select 8 to cancel)") << "\n";
                 cout << "0. Finish & Save Changes\n";
                 cout << "--------------------------------\n";
                 cout << "Enter choice: ";
@@ -533,6 +535,27 @@ void updateschedule(vector<Schedule>& schedules) {
                     cout << "Capacity updated successfully!\n";
                     break;
 
+                case '8':
+                    if (s.isCanceled) {
+                        // Reactivating: make sure nothing else has taken this slot
+                        // while the class was cancelled.
+                        if (hasConflict(schedules, s.date, s.startTime, s.endTime, searchID)) {
+                            cout << "Error: Cannot reactivate. This time slot now conflicts "
+                                << "with another active class. Update failed.\n";
+                        }
+                        else {
+                            s.isCanceled = false;
+                            isModified = true;
+                            cout << "Schedule reactivated successfully!\n";
+                        }
+                    }
+                    else {
+                        s.isCanceled = true;
+                        isModified = true;
+                        cout << "Schedule cancelled successfully!\n";
+                    }
+                    break;
+
 
                 case '0':
 
@@ -588,6 +611,7 @@ void cancelschedule(vector<Schedule>& schedules) {
 
             if (s.isCanceled) {
                 cout << "Schedule ID " << searchID << " is already marked as canceled.\n";
+                pauseScreen();
             }
             else {
                 s.isCanceled = true;
@@ -595,6 +619,7 @@ void cancelschedule(vector<Schedule>& schedules) {
 
                 // --- NEW: Save changes ---
                 saveSchedulesToFile(schedules);
+                pauseScreen();
             }
             break;
         }
@@ -602,6 +627,7 @@ void cancelschedule(vector<Schedule>& schedules) {
 
     if (!found) {
         cout << "Error: Schedule ID " << searchID << " not found.\n";
+        pauseScreen();
     }
 }
 
