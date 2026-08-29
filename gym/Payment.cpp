@@ -63,7 +63,7 @@ string addMonths(int months, const string& baseDateStr) {
 
 string generatePaymentID() {
 
-    ifstream file("PaymentHistory.txt");
+    ifstream file("UserPayment.txt");
 
     int lastID = 0;
     string line;
