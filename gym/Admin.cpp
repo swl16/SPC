@@ -296,7 +296,7 @@ void viewMembershipPlans() {
 		return;
 	}
 
-	cout << left << setw(5) << "No."
+	cout << left << setw(5) << "ID "
 		<< left << setw(15) << "Plan Name"
 		<< left << setw(15) << "Duration"
 		<< left << setw(15) << "Price" << endl;
