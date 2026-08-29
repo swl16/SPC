@@ -185,16 +185,16 @@ void editProfile(Member* members) {
 				getline(cin, members[i].name);
 				if (members[i].name.empty()) {
 					cout << "Name cannot be empty.\n";
-					return;
+					continue;
 				}
-				if (members[i].name.find_first_of("0123456789")) {
-					cout << "Invalid input! Name cannot contain numbers.\n";
-					return;
+				if (any_of(members[i].name.begin(), members[i].name.end(), ::isdigit)) {
+					cout << "Invalid input! Name cannot contain numbers. Please try again.\n";
+					continue; // Use continue to let them retry
 				}
 
-				break;
 				saveUser(members); // Save the updated profile to the file
 				cout << "Name updated successfully.\n";
+				break;
 			}
 			break;
 
@@ -209,7 +209,8 @@ void editProfile(Member* members) {
 				}
 
 				cout << "Invalid age. Please enter a whole number between 1 and 119.\n";
-				return;
+				cin.clear();
+				cin.ignore(numeric_limits<streamsize>::max(), '\n');
 			}
 			break;
 

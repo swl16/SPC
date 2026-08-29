@@ -146,17 +146,17 @@ void generateMemberReceipt(string paymentID, string username, MembershipPlanReco
     cout << "================================================" << endl;
     cout << "               FITNESS GYM RECEIPT              " << endl;
     cout << "================================================" << endl;
-    cout << "Payment ID    :" << paymentID << endl;
+    cout << "Payment ID    : " << paymentID << endl;
     cout << "Date and Time : " << paymentDate << endl;
     cout << "Username      : " << username << endl;
     cout << "------------------------------------------------" << endl;
 
     cout << "\nMembership Information" << endl;
     cout << "------------------------------------------------" << endl;
-    cout << "Plan Name: " << plan.planName << endl;
-    cout << "Duration : " << plan.duration << (plan.duration == 1 ? " month" : " months") << endl;
-    cout << "Start Date :" << startDate << endl;
-    cout << "End Date : " << endDate << endl;
+    cout << "Plan Name  : " << plan.planName << endl;
+    cout << "Duration   : " << plan.duration << (plan.duration == 1 ? " month" : " months") << endl;
+    cout << "Start Date : " << startDate << endl;
+    cout << "End Date   : " << endDate << endl;
     cout << "------------------------------------------------" << endl;
 
     cout << "\nPayment Summary" << endl;
@@ -167,7 +167,7 @@ void generateMemberReceipt(string paymentID, string username, MembershipPlanReco
     cout << "TOTAL : RM " << fixed << setprecision(2) << plan.price << endl;
 
     cout << "\n================================================" << endl;
-    cout << "         Thank you for choosing Fitness Gym!    " << endl;
+    cout << "       Thank you for choosing Fitness Gym!    " << endl;
     cout << "================================================" << endl;
 
 
@@ -193,7 +193,7 @@ void membershipPaymentProcess(Member members, MembershipPlanRecord selectedPlan,
 
     do {
 
-        cout << "Payment Method" << endl;
+        cout << "\nPayment Method" << endl;
         cout << "1. Credit / Debit Card" << endl;
         cout << "2. E-Wallet" << endl;
         cout << "0. Cancel" << endl;
@@ -272,7 +272,7 @@ void membershipPaymentProcess(Member members, MembershipPlanRecord selectedPlan,
             
             break;
         case '0':
-            cout << "Payment Cancelled. Returning to previous menu...\n";
+            cout << "Payment Cancelled.\n";
             return;
 
         default:
@@ -312,7 +312,7 @@ void classPaymentProcess(Member member, Schedule selectedClass, int newBookingID
 
     do {
 
-        cout << "Payment Method" << endl;
+        cout << "\nPayment Method" << endl;
         cout << "1. Credit / Debit Card" << endl;
         cout << "2. E-Wallet" << endl;
         cout << "0. Cancel" << endl;
@@ -391,7 +391,7 @@ void classPaymentProcess(Member member, Schedule selectedClass, int newBookingID
 
             break;
         case '0':
-            cout << "Payment Cancelled. Returning to previous menu...\n";
+            cout << "Payment Cancelled.\n";
             return;
 
         default:
