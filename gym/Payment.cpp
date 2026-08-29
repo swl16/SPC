@@ -105,19 +105,52 @@ string generatePaymentID() {
 
 void saveMembership(string username, int planID, string startDate, string endDate) {
 
-    ofstream file("UserMembership.txt", ios::app);
+    ifstream inFile("UserMembership.txt");
+    vector<string> lines;
+    bool userFound = false;
+    string line;
 
-    if (!file.is_open()) {
-        cout << "Error: Cannot open file!\n";
-        return;
+    // 1. Read existing records into a vector
+    if (inFile.is_open()) {
+        while (getline(inFile, line)) {
+            if (line.empty()) continue;
+
+            stringstream ss(line);
+            string fileUser;
+            getline(ss, fileUser, ',');
+
+            // If this is the user's existing record, update the line
+            if (fileUser == username) {
+                string updatedLine = username + "," + to_string(planID) + "," + startDate + "," + endDate;
+                lines.push_back(updatedLine);
+                userFound = true;
+            }
+            else {
+                // Otherwise, keep the original line intact
+                lines.push_back(line);
+            }
+        }
+        inFile.close();
     }
 
-    file << username << ","
-        << planID << ","
-        << startDate << ","
-        << endDate << endl;
+    // 2. If the user didn't exist yet (new registration), append them to the list
+    if (!userFound) {
+        string newLine = username + "," + to_string(planID) + "," + startDate + "," + endDate;
+        lines.push_back(newLine);
+    }
 
-    file.close();
+    // 3. Overwrite the file with the updated list
+    ofstream file("UserMembership.txt", ios::trunc);
+
+    if (!file.is_open()) {
+        for (const string& l : lines) {
+            file << l << "\n";
+        }
+        file.close();
+    }
+    else {
+        cout << "Error: Cannot open UserMembership.txt for writing!\n";
+    }
 }
 
 void savePayment(string paymentID, string username, string planName, double amount, string paymentDate, string paymentMethod) {
