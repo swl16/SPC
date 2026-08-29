@@ -214,7 +214,7 @@ void displayschedule(const vector<Schedule>& schedules) {
         << setw(16) << "Trainer"
         << setw(10) << "Capacity"
         << right << setw(10) << "Fee (RM)"
-        << "   " << left << setw(8) << "Status\n";
+        << "   " << setw(8) << "Status\n";
     cout << "----------------------------------------------------------------------------------------------------\n";
 
     bool activeFound = false;
@@ -393,7 +393,7 @@ void searchschedule(const vector<Schedule>& schedules) {
                     << setw(16) << "Trainer"
                     << setw(10) << "Capacity"
                     << right << setw(10) << "Fee (RM)"
-                    << "   " << left << setw(8) << "Status\n";
+                    << "   " << setw(8) << "Status\n";
                 cout << "----------------------------------------------------------------------------------------------------\n";
             }
 
