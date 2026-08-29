@@ -8,6 +8,7 @@ int getIntegerInput(const string& message, int min, int max) {
     while (true) {
         cout << message;
         if (cin >> value && value >= min && value <= max) {
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
             return value;
         }
         cout << "Invalid input. Please enter a number from " << min << " to " << max << ".\n";
@@ -21,6 +22,7 @@ double getDoubleInput(const string& message, double min, double max) {
     while (true) {
         cout << message;
         if (cin >> value && value >= min && value <= max) {
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
             return value;
         }
         cout << "Invalid input. Please enter an amount from " << fixed << setprecision(2) << min << " to " << max << ".\n";
@@ -39,6 +41,14 @@ string getNonEmptyString(const string& message) {
         }
         cout << "Input cannot be empty. Please try again.\n";
     }
+}
+
+// Formats an HHMM int (e.g. 900) as a zero-padded 4-digit string ("0900")
+// without touching cout's global fill/width state.
+string formatTime(int t) {
+    ostringstream oss;
+    oss << setfill('0') << setw(4) << t;
+    return oss.str();
 }
 
 bool isValidDate(const string& date, bool allowPast) {
@@ -69,7 +79,6 @@ bool isValidDate(const string& date, bool allowPast) {
     }
 
     if (day > daysInMonth[month]) return false;
-    time_t now = time(nullptr);
 
     // 5. Check against the actual current date
     if (!allowPast) {
@@ -188,6 +197,51 @@ void saveSchedulesToFile(const vector<Schedule>& schedules) {
     }
 }
 
+void displayschedule(const vector<Schedule>& schedules) {
+    if (schedules.empty()) {
+        cout << "No schedules available to display.\n";
+        return;
+    }
+
+    cout << "\n====================================================================================================\n";
+    cout << "                                         ALL GYM SCHEDULES                                          \n";
+    cout << "====================================================================================================\n";
+    cout << left << setw(6) << "ID"
+        << setw(13) << "Date"
+        << setw(16) << "Class Name"
+        << setw(8) << "Start"
+        << setw(8) << "End"
+        << setw(16) << "Trainer"
+        << setw(10) << "Capacity"
+        << right << setw(10) << "Fee (RM)"
+        << "   " << setw(8) << "Status\n";
+    cout << "----------------------------------------------------------------------------------------------------\n";
+
+    bool activeFound = false;
+
+    cout << fixed << setprecision(2);
+
+    for (const Schedule& s : schedules) {
+        string status = s.isCanceled ? "Cancelled" : "Active";
+
+        cout << left << setw(6) << s.scheduleID
+            << setw(13) << s.date
+            << setw(16) << s.className
+            << setw(8) << formatTime(s.startTime)
+            << setw(8) << formatTime(s.endTime)
+            << setw(16) << (s.trainerName.empty() ? "None" : s.trainerName)
+            << setw(10) << s.classCapacity
+            << right << setw(10) << s.price
+            << "   " << left << setw(8) << status << "\n";
+
+        activeFound = true;
+    }
+
+    if (!activeFound) {
+        cout << "No schedules available to display.\n";
+    }
+}
+
 void addschedule(vector<Schedule>& schedules) {
     Schedule newClass;
 
@@ -196,12 +250,13 @@ void addschedule(vector<Schedule>& schedules) {
 
 
     cout << "\n--- Add New Schedule ---\n";
-
+    displayschedule(schedules);
+    cout << "\n";
     newClass.className = getNonEmptyString("Enter schedule name: ");
 
     newClass.date = getValidDate("Enter schedule date (YYYY/MM/DD): ");
 
-    newClass.startTime = getIntegerInput("Enter start time (eg. 1400): ", 1000, 2000);
+    newClass.startTime = getIntegerInput("Enter start time (eg. 1400): ", 0000, 2359);
 
     newClass.endTime = getIntegerInput("Enter end time (eg. 1600): ", 1000, 2000);
     newClass.trainerName = getNonEmptyString("Enter trainer name: ");
@@ -222,51 +277,6 @@ void addschedule(vector<Schedule>& schedules) {
 
         // --- NEW: Save immediately ---
         saveSchedulesToFile(schedules);
-    }
-}
-
-void displayschedule(const vector<Schedule>& schedules) {
-    if (schedules.empty()) {
-        cout << "No schedules available to display.\n";
-        return;
-    }
-
-    cout << "\n====================================================================================================\n";
-    cout << "                                         ALL GYM SCHEDULES                                          \n";
-    cout << "====================================================================================================\n";
-    cout << left << setw(6) << "ID"
-        << setw(13) << "Date"
-        << setw(16) << "Class Name"
-        << setw(8) << "Start"
-        << setw(8) << "End"
-        << setw(16) << "Trainer"
-        << setw(10) << "Capacity"
-        << right << setw(10) << "Fee (RM)"
-        << "   " << left << setw(8) << "Status\n";
-    cout << "----------------------------------------------------------------------------------------------------\n";
-
-    bool activeFound = false;
-
-    cout << fixed << setprecision(2);
-
-    for (const Schedule& s : schedules) {
-        string status = s.isCanceled ? "Cancelled" : "Active";
-
-        cout << left << setw(6) << s.scheduleID
-            << setw(13) << s.date
-            << setw(16) << s.className
-            << setw(8) << s.startTime
-            << setw(8) << s.endTime
-            << setw(16) << (s.trainerName.empty() ? "None" : s.trainerName)
-            << setw(10) << s.classCapacity
-            << right << setw(10) << s.price
-            << "   " << left << setw(8) << status << "\n";
-
-        activeFound = true;
-    }
-
-    if (!activeFound) {
-        cout << "No schedules available to display.\n";
     }
 }
 
@@ -383,7 +393,7 @@ void searchschedule(const vector<Schedule>& schedules) {
                     << setw(16) << "Trainer"
                     << setw(10) << "Capacity"
                     << right << setw(10) << "Fee (RM)"
-                    << "   " << left << setw(8) << "Status\n";
+                    << "   " << setw(8) << "Status\n";
                 cout << "----------------------------------------------------------------------------------------------------\n";
             }
 
@@ -391,8 +401,8 @@ void searchschedule(const vector<Schedule>& schedules) {
             cout << left << setw(6) << s.scheduleID
                 << setw(13) << s.date
                 << setw(16) << s.className
-                << setw(8) << s.startTime
-                << setw(8) << s.endTime
+                << setw(8) << formatTime(s.startTime)
+                << setw(8) << formatTime(s.endTime)
                 << setw(16) << (s.trainerName.empty() ? "None" : s.trainerName)
                 << setw(10) << s.classCapacity
                 << right << setw(10) << s.price
@@ -412,7 +422,7 @@ void updateschedule(vector<Schedule>& schedules) {
         cout << "No schedules available to update.\n";
         return;
     }
-
+    displayschedule(schedules);
     int searchID;
     cout << "\n--- Update Schedule ---\n";
     searchID = getIntegerInput("Enter the Schedule ID you want to update: ", 1000, 9999);
@@ -431,11 +441,13 @@ void updateschedule(vector<Schedule>& schedules) {
                 cout << "Current Details:\n";
                 cout << "1. Class Name : " << s.className << "\n";
                 cout << "2. Date       : " << s.date << "\n";
-                cout << "3. Start Time : " << s.startTime << "\n";
-                cout << "4. End Time   : " << s.endTime << "\n";
+                cout << "3. Start Time : " << formatTime(s.startTime) << "\n";
+                cout << "4. End Time   : " << formatTime(s.endTime) << "\n";
                 cout << "5. Trainer    : " << (s.trainerName.empty() ? "None" : s.trainerName) << "\n";
                 cout << "6. Fee (RM)   : RM " << s.price << "\n";
                 cout << "7. Capacity   : " << s.classCapacity << "\n";
+                cout << "8. Status     : " << (s.isCanceled ? "Cancelled" : "Active")
+                    << (s.isCanceled ? " (select 8 to reactivate)" : " (select 8 to cancel)") << "\n";
                 cout << "0. Finish & Save Changes\n";
                 cout << "--------------------------------\n";
                 cout << "Enter choice: ";
@@ -523,6 +535,27 @@ void updateschedule(vector<Schedule>& schedules) {
                     cout << "Capacity updated successfully!\n";
                     break;
 
+                case '8':
+                    if (s.isCanceled) {
+                        // Reactivating: make sure nothing else has taken this slot
+                        // while the class was cancelled.
+                        if (hasConflict(schedules, s.date, s.startTime, s.endTime, searchID)) {
+                            cout << "Error: Cannot reactivate. This time slot now conflicts "
+                                << "with another active class. Update failed.\n";
+                        }
+                        else {
+                            s.isCanceled = false;
+                            isModified = true;
+                            cout << "Schedule reactivated successfully!\n";
+                        }
+                    }
+                    else {
+                        s.isCanceled = true;
+                        isModified = true;
+                        cout << "Schedule cancelled successfully!\n";
+                    }
+                    break;
+
 
                 case '0':
 
@@ -563,7 +596,7 @@ void cancelschedule(vector<Schedule>& schedules) {
 
     int searchID;
     cout << "\n--- Cancel Schedule ---\n";
-    searchID = getIntegerInput("Enter the Schedule ID you want to cancel (or 0 return to menu): ", 0, 1999);
+    searchID = getIntegerInput("Enter the Schedule ID you want to cancel (or 0 return to menu): ", 0, 9999);
 
     bool found = false;
 
@@ -578,6 +611,7 @@ void cancelschedule(vector<Schedule>& schedules) {
 
             if (s.isCanceled) {
                 cout << "Schedule ID " << searchID << " is already marked as canceled.\n";
+                pauseScreen();
             }
             else {
                 s.isCanceled = true;
@@ -585,6 +619,7 @@ void cancelschedule(vector<Schedule>& schedules) {
 
                 // --- NEW: Save changes ---
                 saveSchedulesToFile(schedules);
+                pauseScreen();
             }
             break;
         }
@@ -592,6 +627,7 @@ void cancelschedule(vector<Schedule>& schedules) {
 
     if (!found) {
         cout << "Error: Schedule ID " << searchID << " not found.\n";
+        pauseScreen();
     }
 }
 
@@ -604,7 +640,7 @@ void deleteSchedule(vector<Schedule>& schedules) {
 
     displayschedule(schedules);
 
-    int targetID = getIntegerInput("\nEnter Schedule ID to delete (or 0 to cancel): ", 0, 1999);
+    int targetID = getIntegerInput("\nEnter Schedule ID to delete (or 0 to cancel): ", 0, 9999);
     if (targetID == 0) {
         cout << "Deletion cancelled.\n";
         pauseScreen();

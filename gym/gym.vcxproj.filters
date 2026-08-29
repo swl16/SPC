@@ -68,5 +68,7 @@
     <Text Include="user.txt" />
     <Text Include="UserMembership.txt" />
     <Text Include="membershipPlan.txt" />
+    <Text Include="Schedules.txt" />
+    <Text Include="AttendanceHistory.txt" />
   </ItemGroup>
 </Project>

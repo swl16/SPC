@@ -1,5 +1,4 @@
 #pragma once
-
 #include <iostream>
 #include <iomanip>
 #include <string>
@@ -9,12 +8,9 @@
 #include <cctype>
 #include <ctime>
 #include <algorithm>
-
 #include "User.hpp"
 using namespace std;
-
 struct MembershipPlanRecord;
-
 struct Schedule {
     int scheduleID;
     string date;         // Format: YYYY-MM-DD
@@ -25,24 +21,22 @@ struct Schedule {
     double price;
     int classCapacity;
     bool isCanceled;
-    
-};
 
+};
 struct ClassBooking {
     int bookingID;
     string username;
     int scheduleID;
     string bookingDate;
 };
-
 int getIntegerInput(const string& message, int min, int max);
 double getDoubleInput(const string& message, double min, double max);
 string getNonEmptyString(const string& message);
 double getPositiveDouble(const string& message);
+string formatTime(int t);
 bool isValidDate(const string& date, bool allowPast);
 string getValidDate(const string& message, bool allowPast = false);
 void pauseScreen();
-
 void addschedule(vector<Schedule>& schedules);
 void displayschedule(const vector<Schedule>& schedules);
 void checkClassCapacity(const vector<Schedule>& schedules);
@@ -53,6 +47,5 @@ void deleteSchedule(vector<Schedule>& schedules);
 bool hasConflict(const vector<Schedule>& schedules, string date, int startTime, int endTime, int excludeID = -1);
 void loadSchedulesFromFile(vector<Schedule>& schedules);
 void saveSchedulesToFile(const vector<Schedule>& schedules);
-
 int generatePlanID(const string& filename);
 void saveMembershipPlans(const string& filename, const vector<MembershipPlanRecord>& plans);

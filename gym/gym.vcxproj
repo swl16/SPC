@@ -142,10 +142,14 @@
     <ClInclude Include="User.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <Text Include="AttendanceHistory.txt" />
     <Text Include="classBookings.txt" />
+    <Text Include="fitness_data.txt" />
     <Text Include="membershipPlan.txt" />
+    <Text Include="Schedules.txt" />
     <Text Include="user.txt" />
     <Text Include="UserMembership.txt" />
+    <Text Include="UserPayment.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

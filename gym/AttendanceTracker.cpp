@@ -5,8 +5,10 @@
 #include <string>
 #include <ctime>
 #include <iomanip>
+#include <algorithm>
+#include <cctype>
 
-#include "User.hpp";
+#include "User.hpp"
 
 extern bool hasActiveMembership(const string& username);
 extern string getCurrentDate();
@@ -62,10 +64,14 @@ void checkInMember(Member member) {
     string checkInTime = getCurrentTimeHHMM();
 
     //SAVE CHECK-IN TO FILE IMMEDIATELY ---
-    ofstream outFile("AttendanceHistory.txt");
+    ofstream outFile("AttendanceHistory.txt", ios::app);
     if (outFile.is_open()) {
         outFile << todayDate << "," << username << "," << checkInTime << ",-1\n";
         outFile.close();
+    }
+    else {
+        cout << "[ERROR] Could not open AttendanceHistory.txt to save check-in.\n";
+        return;
     }
 
     cout << "Success! Member " << member.name << " checked in at " << checkInTime << " today.\n";
@@ -169,7 +175,8 @@ void viewMyAttendance(Member member) {
 
 void attendanceMenu(Member member) {
 
-    int choice;
+    int choice = -1; // initialized so the while-condition below never reads
+    // uninitialized memory if `continue` fires before choice is set
 
     do {
         cout << "\n==================================================\n";
@@ -182,11 +189,31 @@ void attendanceMenu(Member member) {
         cout << "--------------------------------------------------\n";
         cout << "Enter your choice: ";
 
-        if (!(cin >> choice)) {
+        string input;
+        if (!getline(cin >> ws, input)) {
             cin.clear();
-            cin.ignore(1000, '\n');
             continue;
         }
+
+        // Trim leading/trailing whitespace
+        size_t start = input.find_first_not_of(" \t");
+        size_t end = input.find_last_not_of(" \t");
+        if (start == string::npos) {
+            cout << "Invalid choice. Try again.\n";
+            continue;
+        }
+        input = input.substr(start, end - start + 1);
+
+        // Must be all digits (rejects "3abc", "1.5", "-1", empty, etc.)
+        bool isValid = !input.empty() &&
+            all_of(input.begin(), input.end(), [](unsigned char c) { return isdigit(c); });
+
+        if (!isValid || input.size() > 3) { // also guards against int overflow
+            cout << "Invalid choice. Please enter a number only.\n";
+            continue;
+        }
+
+        choice = stoi(input);
 
         switch (choice) {
         case 1:
@@ -210,7 +237,6 @@ void attendanceMenu(Member member) {
 
         if (choice != 0) {
             cout << "\nPress Enter to continue...";
-            cin.ignore(1000, '\n');
             cin.get();
         }
 

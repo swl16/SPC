@@ -296,7 +296,7 @@ void viewMembershipPlans() {
 		return;
 	}
 
-	cout << left << setw(5) << "No."
+	cout << left << setw(5) << "ID "
 		<< left << setw(15) << "Plan Name"
 		<< left << setw(15) << "Duration"
 		<< left << setw(15) << "Price" << endl;
@@ -337,6 +337,7 @@ void updateMembershipPlan() {
 
 	if (plans.empty()) {
 		cout << "No membership plans found in database." << endl;
+		pauseScreen();
 		return;
 	}
 
@@ -360,54 +361,100 @@ void updateMembershipPlan() {
 	int targetID = getIntegerInput("\nEnter Plan ID to update (or 0 to cancel): ", 0, 999999);
 	if (targetID == 0) {
 		cout << "Update cancelled." << endl;
+		pauseScreen();
 		return;
 	}
 
-	bool updated = false;
+	bool planFound = false;
 
 	for (auto& p : plans) {
 		if (p.id == targetID) {
-			cout << "\n--- ENTER NEW PLAN DETAILS ---" << endl;
-			cout << "Enter New Plan Name (e.g. Gold Pass): ";
-			getline(cin >> ws, p.planName);
+			planFound = true;
+			char editChoice;
+			bool isModified = false;
 
 			do {
-				cout << "Enter New Duration (in months): ";
-				if (cin >> p.duration && p.duration > 0) break;
+				cout << "\n================================================" << endl;
+				cout << "       EDITING PLAN ID: " << p.id << endl;
+				cout << "================================================" << endl;
+				cout << "1. Plan Name : " << p.planName << endl;
+				cout << "2. Duration  : " << p.duration << (p.duration == 1 ? " Month" : " Months") << endl;
+				cout << "3. Price     : RM " << fixed << setprecision(2) << p.price << endl;
+				cout << "4. Benefits  : " << p.benefits << endl;
+				cout << "0. Save & Exit" << endl;
+				cout << "------------------------------------------------" << endl;
+				cout << "Select field to edit (or '0' to save & exit): ";
+				cin >> editChoice;
 
-				cin.clear();
-				cin.ignore(numeric_limits<streamsize>::max(), '\n');
-				cout << "Invalid input. Please enter a positive number." << endl;
-			} while (true);
+				switch (editChoice) {
+				case '1':
+					cout << "Enter New Plan Name (e.g. Gold Pass): ";
+					getline(cin >> ws, p.planName);
+					isModified = true;
+					cout << "Plan Name updated successfully!" << endl;
+					break;
 
-			do {
-				cout << "Enter New Price (RM): ";
-				if (cin >> p.price && p.price >= 0) break;
+				case '2':
+					do {
+						cout << "Enter New Duration (in months): ";
+						if (cin >> p.duration && p.duration > 0) break;
 
-				cin.clear();
-				cin.ignore(numeric_limits<streamsize>::max(), '\n');
-				cout << "Invalid input. Please enter a valid price." << endl;
-			} while (true);
+						cin.clear();
+						cin.ignore(numeric_limits<streamsize>::max(), '\n');
+						cout << "Invalid duration. Please enter a positive number." << endl;
+					} while (true);
+					isModified = true;
+					cout << "Duration updated successfully!" << endl;
+					break;
 
-			cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Clear buffer before getline
-			cout << "Enter New Benefits (separated by ';'): ";
-			getline(cin, p.benefits);
+				case '3':
+					do {
+						cout << "Enter New Price (RM): ";
+						if (cin >> p.price && p.price >= 0) break;
 
-			if (p.benefits.empty()) {
-				p.benefits = "Standard gym access";
-			}
-			updated = true;
-			break;
+						cin.clear();
+						cin.ignore(numeric_limits<streamsize>::max(), '\n');
+						cout << "Invalid price. Please enter a valid amount." << endl;
+					} while (true);
+					isModified = true;
+					cout << "Price updated successfully!" << endl;
+					break;
+
+				case '4':
+					cout << "Enter New Benefits (separated by ';'): ";
+					getline(cin >> ws, p.benefits);
+
+					if (p.benefits.empty()) {
+						p.benefits = "Standard gym access";
+					}
+					isModified = true;
+					cout << "Benefits updated successfully!" << endl;
+					break;
+
+				case '0':
+					if (isModified) {
+						saveMembershipPlans(filename, plans);
+						cout << "\n================================================" << endl;
+						cout << "     MEMBERSHIP PLAN UPDATED SUCCESSFULLY!      " << endl;
+						cout << "================================================" << endl;
+					}
+					else {
+						cout << "\nNo changes were made." << endl;
+					}
+					break;
+
+				default:
+					cout << "Invalid choice! Please select an option from 0 to 4." << endl;
+					break;
+				}
+
+			} while (editChoice != '0');
+
+			break; // Finished updating target plan
 		}
 	}
-
-	if (updated) {
-		saveMembershipPlans(filename, plans);
-		cout << "\n==============================================" << endl;
-		cout << "     MEMBERSHIP PLAN UPDATED SUCCESSFULLY!      " << endl;
-		cout << "================================================" << endl;
-	}
-	else {
+	
+	if (!planFound) {
 		cout << "\n[ERROR] Plan ID " << targetID << " not found!" << endl;
 	}
 

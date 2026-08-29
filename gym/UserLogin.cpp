@@ -124,15 +124,18 @@ void registerUser(Member* members) {   // user registration
 	cout << "\n--- Personal Information ---\n";
 	cin.ignore(); // Clear the input buffer before getline
 
-	cout << "Enter Full Name: ";
-	getline(cin >> ws, newMember.name);
-	if (newMember.name.empty()) {
-		cout << "Name cannot be empty.\n";
-		return;
-	}
-	if (members[i].name.find_first_of("0123456789")) {
-		cout << "Invalid input! Name cannot contain numbers.\n";
-		return;
+	while (true) {
+		cout << "Enter Full Name: ";
+		getline(cin >> ws, newMember.name);
+		if (newMember.name.empty()) {
+			cout << "Name cannot be empty.\n";
+			return;
+		}
+		if (newMember.name.find_first_of("0123456789") != string::npos) {
+			cout << "Invalid input! Name cannot contain numbers.\n";
+			return;
+		}
+		break;
 	}
 
 	while (true) {
@@ -188,7 +191,7 @@ void registerUser(Member* members) {   // user registration
 
 	saveUser(members);
 
-	cout << "Registration successful!\n";
+	cout << "\nRegistration successful!\n";
 
 }
 
@@ -321,6 +324,7 @@ void userLogin() {
 
 		case '1':
 			registerUser(members);
+			pauseScreen();
 			break;
 
 		case '2':
