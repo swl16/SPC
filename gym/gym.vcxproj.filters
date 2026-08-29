@@ -68,11 +68,7 @@
     <Text Include="user.txt" />
     <Text Include="UserMembership.txt" />
     <Text Include="membershipPlan.txt" />
-    <Text Include="AttendanceHistory.txt">
-      <Filter>Source Files</Filter>
-    </Text>
-    <Text Include="Schedules.txt">
-      <Filter>Source Files</Filter>
-    </Text>
+    <Text Include="Schedules.txt" />
+    <Text Include="AttendanceHistory.txt" />
   </ItemGroup>
 </Project>
