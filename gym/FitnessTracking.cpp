@@ -299,7 +299,7 @@ void logWorkoutSession(Member& members) {
 
 void resetFitnessMetrics(Member& member) {
     char confirm;
-    cout << "\nAre you sure you want to reset workout duration and calories burned to 0? (Y/N): ";
+    cout << "\nAre you sure you want to reset workout duration and total calories burned to 0? (Y/N): ";
     cin >> confirm;
 
     while (confirm != 'Y' && confirm != 'y' && confirm != 'N' && confirm != 'n') {
@@ -386,7 +386,7 @@ void generateFitnessReport(const Member& members) {
         cout << left << setw(22) << " Goal Status" << ": N/A\n";
     }
 
-    cout << left << setw(22) << " Total Calories" << ": " << members.fitness.caloriesBurned << " kcal\n";
+    cout << left << setw(22) << " Total Calories Burned" << ": " << members.fitness.caloriesBurned << " kcal\n";
     cout << "=============================================\n";
 }
 
