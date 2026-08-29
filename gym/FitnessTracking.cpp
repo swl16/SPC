@@ -340,34 +340,39 @@ void generateFitnessReport(const Member& members) {
     cout << "          FITNESS PROGRESS REPORT\n";
     cout << "=============================================\n";
 
-    cout << left << setw(22) << "Name" << ": " << members.name << "\n";
+    cout << left << setw(22) << " Name" << ": " << members.name << "\n";
     cout << "---------------------------------------------\n";
 
     cout << fixed << setprecision(2);
-    if (members.fitness.weight > 0 && members.fitness.weight < 300) {
-        cout << left << setw(22) << "Weight : " << members.fitness.weight << " kg\n";
-    }
-    else {
-        cout << left << setw(22) << "Weight : 0.0kg ";
-    }
-    if (members.fitness.height > 0 && members.fitness.weight < 2.8) {
-        cout << left << setw(22) << "Height : " << members.fitness.height << " m\n";
-    }
-    else {
-        cout << left << setw(22) << "Weight : 0.0m";
-    }
-    if (members.fitness.bmi > 0) {
-        cout << left << setw(22) << "BMI : " << members.fitness.bmi << " (" << bmiCategory << ")";
-    }
-            cout << "\n";
-            cout << "---------------------------------------------\n";
 
-    cout << left << setw(22) << "Logged Workout Time : " << members.fitness.workoutDuration << " mins\n";
+    if (members.fitness.weight > 0 && members.fitness.weight < 300) {
+        cout << left << setw(22) << " Weight" << ": " << members.fitness.weight << " kg\n";
+    }
+    else {
+        cout << left << setw(22) << " Weight" << ": 0.00 kg\n";
+    }
+
+    if (members.fitness.height > 0 && members.fitness.height < 2.8) {
+        cout << left << setw(22) << " Height" << ": " << members.fitness.height << " m\n";
+    }
+    else {
+        cout << left << setw(22) << " Height" << ": 0.00 m\n";
+    }
+
+    if (members.fitness.bmi > 0) {
+        cout << left << setw(22) << " BMI" << ": " << members.fitness.bmi << " (" << bmiCategory << ")\n";
+    }
+    else {
+        cout << left << setw(22) << " BMI" << ": 0.00\n";
+    }
+    cout << "---------------------------------------------\n";
+
+    cout << left << setw(22) << " Logged Workout Time" << ": " << members.fitness.workoutDuration << " mins\n";
 
     if (members.fitness.targetWorkoutMins > 0) {
-        cout << left << setw(22) << "Weekly Workout Goal : " << members.fitness.targetWorkoutMins << " mins/week\n";
+        cout << left << setw(22) << " Weekly Workout Goal" << ": " << members.fitness.targetWorkoutMins << " mins/week\n";
 
-        cout << left << setw(22) << "Goal Status : ";
+        cout << left << setw(22) << " Goal Status" << ": ";
         if (members.fitness.workoutDuration >= members.fitness.targetWorkoutMins) {
             cout << "[ACHIEVED] Goal reached!\n";
         }
@@ -377,11 +382,11 @@ void generateFitnessReport(const Member& members) {
         }
     }
     else {
-        cout << left << setw(22) << "Weekly Workout Goal : Not Set\n";
-        cout << left << setw(22) << "Goal Status : N/A\n";
+        cout << left << setw(22) << " Weekly Workout Goal" << ": Not Set\n";
+        cout << left << setw(22) << " Goal Status" << ": N/A\n";
     }
 
-    cout << left << setw(22) << "Total Calories : " << members.fitness.caloriesBurned << " kcal\n";
+    cout << left << setw(22) << " Total Calories" << ": " << members.fitness.caloriesBurned << " kcal\n";
     cout << "=============================================\n";
 }
 
@@ -403,7 +408,7 @@ void fitnessMenu(Member& currentUser) {
         cout << "5. Generate Fitness Progress Report\n";
         cout << "0. Back to Fitness Member Portal\n";
         cout << "===========================================\n";
-        cout << "Enter your choice (1-5) or '0' to return: ";
+        cout << "Enter your choice : ";
         cin >> choice;
 
         while (cin.fail() || choice < 0 || choice > 5) {
