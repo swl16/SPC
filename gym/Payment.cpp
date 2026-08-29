@@ -105,7 +105,7 @@ string generatePaymentID() {
 
 void saveMembership(string username, int planID, string startDate, string endDate) {
 
-    ofstream file("UserMembership.txt");
+    ofstream file("UserMembership.txt", ios::app);
 
     if (!file.is_open()) {
         cout << "Error: Cannot open file!\n";
@@ -122,7 +122,7 @@ void saveMembership(string username, int planID, string startDate, string endDat
 
 void savePayment(string paymentID, string username, string planName, double amount, string paymentDate, string paymentMethod) {
     
-    ofstream file("UserPayment.txt"); 
+    ofstream file("UserPayment.txt", ios::app);
 
         if (!file) {
             cout << "Error opening file!\n";
