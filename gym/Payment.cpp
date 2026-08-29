@@ -110,6 +110,8 @@ void saveMembership(string username, int planID, string startDate, string endDat
     bool userFound = false;
     string line;
 
+    string newRecord = username + "," + to_string(planID) + "," + startDate + "," + endDate;
+
     // 1. Read existing records into a vector
     if (inFile.is_open()) {
         while (getline(inFile, line)) {
@@ -121,8 +123,7 @@ void saveMembership(string username, int planID, string startDate, string endDat
 
             // If this is the user's existing record, update the line
             if (fileUser == username) {
-                string updatedLine = username + "," + to_string(planID) + "," + startDate + "," + endDate;
-                lines.push_back(updatedLine);
+                lines.push_back(newRecord);
                 userFound = true;
             }
             else {
@@ -135,22 +136,23 @@ void saveMembership(string username, int planID, string startDate, string endDat
 
     // 2. If the user didn't exist yet (new registration), append them to the list
     if (!userFound) {
-        string newLine = username + "," + to_string(planID) + "," + startDate + "," + endDate;
-        lines.push_back(newLine);
+        lines.push_back(newRecord);
     }
 
     // 3. Overwrite the file with the updated list
-    ofstream file("UserMembership.txt", ios::trunc);
+    ofstream outFile("UserMembership.txt");
 
-    if (!file.is_open()) {
-        for (const string& l : lines) {
-            file << l << "\n";
-        }
-        file.close();
+    if (!outFile) {
+        cout << "Error: Could not open UserMembership.txt for writing.\n";
+        return;
     }
-    else {
-        cout << "Error: Cannot open UserMembership.txt for writing!\n";
+
+    // Loop through the updated string list and save it back to the text file
+    for (size_t i = 0; i < lines.size(); i++) {
+        outFile << lines[i] << "\n";
     }
+
+    outFile.close();
 }
 
 void savePayment(string paymentID, string username, string planName, double amount, string paymentDate, string paymentMethod) {
