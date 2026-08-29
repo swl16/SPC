@@ -290,7 +290,7 @@ void registerMembershipPlan(Member member) {
 				cout << "Subscription cancelled." << endl;
 			}
 
-			cout << "\nPress Enter to return to the User Menu...";
+			cout << "\nPress Enter to return";
 			cin.ignore(1000, '\n');
 			cin.get();
 			return;
