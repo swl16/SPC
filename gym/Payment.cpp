@@ -288,7 +288,7 @@ void membershipPaymentProcess(Member members, MembershipPlanRecord selectedPlan,
             while (true) {
                 cout << "Enter Phone Number (10-11 digits without '-'): ";
                 cin >> phoneNo;
-                if (regex_match(phoneNo, regex("^[0-9]{10,11}$"))) {
+                if (regex_match(phoneNo, regex("^01[0-9]{8,9}$"))) {
                     break;
                 }
                 cout << "Invalid phone number. Must be 10 or 11 digits.\n";
@@ -407,7 +407,7 @@ void classPaymentProcess(Member member, Schedule selectedClass, int newBookingID
             while (true) {
                 cout << "Enter Phone Number (10-11 digits without '-'): ";
                 cin >> phoneNo;
-                if (regex_match(phoneNo, regex("^[0-9]{10,11}$"))) {
+                if (regex_match(phoneNo, regex("^01[0-9]{8,9}$"))) {
                     break;
                 }
                 cout << "Invalid phone number. Must be 10 or 11 digits.\n";

@@ -164,7 +164,7 @@ void registerUser(Member* members) {   // user registration
 		cin >> newMember.phNo;
 
 		// Check whether every character is a digit
-		if (regex_match(newMember.phNo, regex("[0-9]{10,11}"))) {
+		if (regex_match(newMember.phNo, regex("^01[0-9]{8,9}$"))) {
 			break;
 		}
 

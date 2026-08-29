@@ -238,7 +238,7 @@ void editProfile(Member* members) {
 				cin >> members[i].phNo;
 
 				// Check whether every character is a digit
-				if (regex_match(members[i].phNo, regex("[0-9]{10,11}"))) {
+				if (regex_match(members[i].phNo, regex("^01[0-9]{8,9}$"))) {
 					break;
 				}
 
