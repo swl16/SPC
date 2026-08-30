@@ -255,9 +255,9 @@ void logWorkoutSession(Member& members) {
         }
 
         cout << "Select Workout Intensity Level:\n";
-        cout << "1. Light\n";
-        cout << "2. Moderate\n";
-        cout << "3. High Intensity\n";
+        cout << "1. Low-Intensity\n";
+        cout << "2. Moderate-Intensity\n";
+        cout << "3. High-Intensity\n";
 
         cout << "Choice (1-3): ";
         while (!(cin >> intensity) || intensity < 1 || intensity > 3) {
@@ -291,7 +291,7 @@ void logWorkoutSession(Member& members) {
 
     } while (choice == 'Y' || choice == 'y');
 
-    cout << "\n[SUCCESS] Session logged! Total workout time: " << members.fitness.workoutDuration << " minutes.\n";
+    cout << "\n[SUCCESS] Session logged! Total workout duration: " << members.fitness.workoutDuration << " minutes.\n";
     if (members.fitness.targetWorkoutMins > 0 && members.fitness.workoutDuration >= members.fitness.targetWorkoutMins) {
         cout << "Great job! You reached your weekly workout target!\n";
     }
