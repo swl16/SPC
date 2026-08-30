@@ -252,7 +252,6 @@ void membershipPaymentProcess(Member members, MembershipPlanRecord selectedPlan,
         case '1':
             paymentMethod = "Credit / Debit Card";
             cout << "\n--- " << paymentMethod << " Details ---\n";
-            cin.ignore();
 
             while (true) {
                 cout << "Enter Cardholder Name: ";
@@ -412,7 +411,6 @@ void classPaymentProcess(Member member, Schedule selectedClass, int newBookingID
         case '1':
             paymentMethod = "Credit / Debit Card";
             cout << "\n--- " << paymentMethod << " Details ---\n";
-            cin.ignore();
 
             while (true) {
                 cout << "Enter Cardholder Name: ";
