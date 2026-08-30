@@ -144,7 +144,7 @@
   <ItemGroup>
     <Text Include="AttendanceHistory.txt" />
     <Text Include="classBookings.txt" />
-    <Text Include="fitness_data.txt" />
+    <Text Include="FitnessData.txt" />
     <Text Include="membershipPlan.txt" />
     <Text Include="Schedules.txt" />
     <Text Include="user.txt" />
