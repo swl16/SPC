@@ -70,5 +70,7 @@
     <Text Include="membershipPlan.txt" />
     <Text Include="Schedules.txt" />
     <Text Include="AttendanceHistory.txt" />
+    <Text Include="FitnessData.txt" />
+    <Text Include="UserPayment.txt" />
   </ItemGroup>
 </Project>

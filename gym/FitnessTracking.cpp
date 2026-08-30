@@ -9,7 +9,7 @@
 
 using namespace std;
 
-const string DATA_FILE = "fitness_data.txt";
+const string DATA_FILE = "FitnessData.txt";
 
 void ensureFileExists(const string& filename) {
     ifstream checkFile(filename);
