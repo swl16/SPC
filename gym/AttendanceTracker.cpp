@@ -9,6 +9,7 @@
 #include <cctype>
 
 #include "User.hpp"
+#include "ScheduleMenu.hpp" // reuse isValidDate() / getValidDate() instead of redefining them here
 
 extern bool hasActiveMembership(const string& username);
 extern string getCurrentDate();
@@ -24,6 +25,26 @@ string getCurrentTimeHHMM() {
     stringstream ss;
     ss << setfill('0') << setw(2) << ltm.tm_hour << setw(2) << ltm.tm_min;
     return ss.str();
+}
+
+// Accepts either the literal word "today" or a real calendar date
+// (YYYY/MM/DD, past dates allowed since admins pull historical reports).
+string getAttendanceDateInput(const string& message) {
+    string input;
+    while (true) {
+        cout << message;
+        getline(cin >> ws, input);
+
+        if (input == "today" || input == "Today") {
+            return getCurrentDate();
+        }
+
+        if (isValidDate(input, true)) { // allowPast = true
+            return input;
+        }
+
+        cout << "Invalid input. Please enter a valid date in YYYY/MM/DD format, or type 'today'.\n";
+    }
 }
 
 void checkInMember(Member member) {
@@ -247,17 +268,11 @@ void attendanceMenu(Member member) {
 //ADMIN FEATURES
 
 void calculateDailyAttendance() {
-    string targetDate;
     cout << "\n==================================================\n";
     cout << "             DAILY ATTENDANCE REPORT              \n";
     cout << "==================================================\n";
-    cout << "Enter date (YYYY/MM/DD) or type 'today': ";
-    cin >> targetDate;
 
-    // Make it easy for the admin by allowing the word 'today'
-    if (targetDate == "today" || targetDate == "Today") {
-        targetDate = getCurrentDate();
-    }
+    string targetDate = getAttendanceDateInput("Enter date (YYYY/MM/DD) or type 'today': ");
 
     int dailyCount = 0;
     cout << "\n==================================================\n";

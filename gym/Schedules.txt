@@ -4,3 +4,4 @@
 1003,2026/09/14,Back Session,900,1100,Mr. Ronnie,100,10,0
 1004,2026/09/25,Pilates,1200,1400,Winnie,30,30,0
 1005,2026/08/30,Upper session,900,1000,Mr. Ronnie,40,12,0
+1006,2026/09/30,Lower Session,1000,1200,Mr. Lee,100,20,0
