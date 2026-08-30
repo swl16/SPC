@@ -255,9 +255,9 @@ void logWorkoutSession(Member& members) {
         }
 
         cout << "Select Workout Intensity Level:\n";
-        cout << "1. Light\n";
-        cout << "2. Moderate\n";
-        cout << "3. High Intensity\n";
+        cout << "1. Low-Intensity\n";
+        cout << "2. Moderate-Intensity\n";
+        cout << "3. High-Intensity\n";
 
         cout << "Choice (1-3): ";
         while (!(cin >> intensity) || intensity < 1 || intensity > 3) {
