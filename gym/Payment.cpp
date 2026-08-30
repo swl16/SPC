@@ -220,7 +220,7 @@ void membershipPaymentProcess(Member members, MembershipPlanRecord selectedPlan,
     cout << "Amount : RM " << fixed << setprecision(2) << selectedPlan.price << endl;
 
     string methodInput;
-    char methodChoice;
+    char methodChoice = ' ';
     string paymentMethod;
 
     bool paymentCompleted = false;
@@ -379,7 +379,7 @@ void classPaymentProcess(Member member, Schedule selectedClass, int newBookingID
     cout << "Amount: RM " << fixed << setprecision(2) << selectedClass.price << endl;
 
     string methodInput;
-    char methodChoice;
+    char methodChoice = ' ';
     string paymentMethod;
 
     bool paymentCompleted = false;
