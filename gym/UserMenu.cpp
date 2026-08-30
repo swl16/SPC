@@ -178,6 +178,7 @@ void editProfile(Member* members) {
 		cin.ignore(); // Clear the input buffer
 
 		string ageInput;
+		string genderInput;
 
 		switch (choice){
 		case '1':
@@ -202,7 +203,7 @@ void editProfile(Member* members) {
 
 		case'2':
 			while (true) {
-				cout << "Enter Age : ";
+				cout << "Enter new age : ";
 				cin >> ageInput;
 
 				// Check if the input consists purely of numeric digits (no decimals or text)
@@ -211,6 +212,9 @@ void editProfile(Member* members) {
 						members[i].age = stoi(ageInput);
 
 						if (members[i].age > 0 && members[i].age < 120) {
+
+							saveUser(members); // Save the updated profile to the file
+							cout << "Age updated successfully.\n";
 							break; // Valid age found, break the loop
 						}
 					}
@@ -228,19 +232,25 @@ void editProfile(Member* members) {
 		case '3':
 
 			while (true) {
-				char g;
 				cout << "Enter new gender (M/F): ";
-				cin >> g;
-				g = toupper(g);
-				if (g == 'M' || g == 'F') {
-					members[i].gender = g;
-					break;
+				cin >> genderInput;
+
+				// Ensure the user typed exactly ONE character (e.g. "M", not "Male")
+				if (genderInput.length() == 1) {
+					char g = toupper(genderInput[0]);
+
+					if (g == 'M' || g == 'F') {
+						members[i].gender = g;
+
+						saveUser(members); // Save the updated profile to the file
+						cout << "Gender updated successfully.\n";
+						break; // Valid input, break the loop
+					}
 				}
-				cout << "Invalid gender. Please enter M or F.\n";
+
+				cout << "Invalid gender. Please enter strictly M or F.\n";
 			}
 
-			saveUser(members); // Save the updated profile to the file
-			cout << "Gender updated successfully.\n";
 			break;
 
 		case '4':

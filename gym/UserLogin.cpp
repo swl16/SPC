@@ -161,16 +161,23 @@ void registerUser(Member* members) {   // user registration
 		clearInputBuffer();
 	}
 
+	string genderInput;
 	while (true) {
-		char g;
 		cout << "Enter Gender (M/F): ";
-		cin >> g;
-		g = toupper(g);
-		if (g == 'M' || g == 'F') {
-			newMember.gender = g;
-			break;
+		cin >> genderInput;
+
+		// Ensure the user typed exactly ONE character (e.g. "M", not "Male")
+		if (genderInput.length() == 1) {
+			char g = toupper(genderInput[0]);
+
+			if (g == 'M' || g == 'F') {
+				newMember.gender = g;
+				break; // Valid input, break the loop
+			}
 		}
-		cout << "Invalid gender. Please enter M or F.\n";
+
+		cout << "Invalid gender. Please enter strictly M or F.\n";
+		clearInputBuffer(); // Flush any extra leftover text 
 	}
 
 	while (true) {
