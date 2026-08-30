@@ -53,6 +53,7 @@ void saveMembershipPlans(const string& filename, const vector<MembershipPlanReco
 	file.close();
 }
 
+// imput validation
 double getPositiveDouble(const string& message) {
 	double value;
 
@@ -89,7 +90,7 @@ void adminLogin() {
 
 		pauseScreen();
 
-		Member* members = new Member[MAX_USERS];
+		Member* members = new Member[MAX_USERS]; 
 		loadUser(members);
 
 		adminMenu(members, userCount);
@@ -532,7 +533,7 @@ void deleteMembershipPlan() {
 
 void viewPaymentRecords() {
 
-	ifstream file("UserPayment.txt");
+	ifstream file("UserPayment.txt"); //read file
 
 	cout << "\n==========================================================================================\n";
 	cout << "                                  ALL PAYMENT RECORDS                                     \n";
@@ -607,19 +608,19 @@ void membershipReport() {
 	cout << "            MEMBERSHIP SUMMARY REPORT             \n";
 	cout << "==================================================\n";
 
-	ifstream file("UserMembership.txt");
+	ifstream file("UserMembership.txt"); // read file
 	if (!file.is_open()) {
 		cout << "[Error] Could not open UserMembership.txt\n";
 		return;
 	}
 
 	vector<MembershipPlanRecord> plans = loadMembershipPlans("membershipPlan.txt");
-	map<int, string> planNameMap;
+	map<int, string> planNameMap; // key: int value: string exp: key:1 value: Premium for membership
 	for (const auto& p : plans) {
 		planNameMap[p.id] = p.planName;
 	}
 
-	map<string, int> planCounts;
+	map<string, int> planCounts; // key: string, value: int 
 	int totalActive = 0;
 	string line;
 	time_t now = time(nullptr);

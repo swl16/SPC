@@ -11,6 +11,7 @@ int main() {
 	
 
 	do {
+		// choosing user or admin menu
 		clearScreen();
 		cout << "   -------           --------\n";
 		cout << "   |     |---------- |      |\n";
@@ -32,6 +33,7 @@ int main() {
 		cout << "Enter your choice: ";
 		cin >> choiceInput;
 
+		// input validation
 		cin.clear();
 		cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
@@ -41,7 +43,7 @@ int main() {
 			pauseScreen(); // Pause so they can read the error before the screen clears
 			continue; // Restart the main menu loop
 		}
-
+		// take the first index of the input
 		choice = choiceInput[0];
 
 		switch (choice) {

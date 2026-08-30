@@ -116,11 +116,3 @@ void membershipReport();
 void classPopularReport();
 void monthlyReport();
 void adminMenu(Member* members, int userCount);
-
-
-
-
-
-
-
-
