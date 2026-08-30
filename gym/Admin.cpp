@@ -805,7 +805,8 @@ void monthlyReport() {
 
 void adminMenu(Member* members, int userCount) {
 
-	char choice, choose;
+	string choiceInput, chooseInput;
+	char choice = ' ', choose = ' ';
 	vector<Schedule> schedules;
 	loadSchedulesFromFile(schedules);
 
@@ -813,7 +814,19 @@ void adminMenu(Member* members, int userCount) {
 		clearScreen();
 		displayadminMenu();
 		cout << "Enter your choice: ";
-		cin >> choice;
+		cin >> choiceInput;
+
+		cin.clear();
+		cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+		if (choiceInput.length() != 1) {
+			cout << "Invalid input! Please enter a single digit.\n";
+			choice = ' '; // Reset to safe default
+			pauseScreen(); // Pause so they can read the error before the screen clears
+			continue; // Restart the main menu loop
+		}
+
+		choice = choiceInput[0];
 
 		switch (choice) {
 		case '1': // View All Members
@@ -826,7 +839,19 @@ void adminMenu(Member* members, int userCount) {
 				clearScreen();
 				displayMembershipPlanMenu();
 				cout << "Enter your choice: ";
-				cin >> choose;
+				cin >> chooseInput;
+
+				cin.clear();
+				cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+				if (chooseInput.length() != 1) {
+					cout << "Invalid input! Please enter a single digit.\n";
+					choose = ' ';
+					pauseScreen();
+					continue;
+				}
+
+				choose = chooseInput[0];
 
 				switch (choose) {
 				case '1': // Call function to add membership plan
@@ -867,7 +892,19 @@ void adminMenu(Member* members, int userCount) {
 				clearScreen();
 				displayClassMenu();
 				cout << "Enter your choice: ";
-				cin >> choose;
+				cin >> chooseInput;
+
+				cin.clear();
+				cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+				if (chooseInput.length() != 1) {
+					cout << "Invalid input! Please enter a single digit.\n";
+					choose = ' ';
+					pauseScreen();
+					continue;
+				}
+
+				choose = chooseInput[0];
 
 				switch (choose) {
 				case '1': // add class
@@ -927,7 +964,19 @@ void adminMenu(Member* members, int userCount) {
 				clearScreen();
 				displayAttendanceMenu();
 				cout << "Enter your choice: ";
-				cin >> choose;
+				cin >> chooseInput;
+
+				cin.clear();
+				cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+				if (chooseInput.length() != 1) {
+					cout << "Invalid input! Please enter a single digit.\n";
+					choose = ' ';
+					pauseScreen();
+					continue;
+				}
+
+				choose = chooseInput[0];
 
 				switch (choose) {
 				case '1':
@@ -960,7 +1009,19 @@ void adminMenu(Member* members, int userCount) {
 				clearScreen();
 				displayReportsMenu();
 				cout << "Enter your choice: ";
-				cin >> choose;
+				cin >> chooseInput;
+
+				cin.clear();
+				cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+				if (chooseInput.length() != 1) {
+					cout << "Invalid input! Please enter a single digit.\n";
+					choose = ' ';
+					pauseScreen();
+					continue;
+				}
+
+				choose = chooseInput[0];
 
 				switch (choose) {
 				case '1':
