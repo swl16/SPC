@@ -129,11 +129,11 @@ void registerUser(Member* members) {   // user registration
 		getline(cin >> ws, newMember.name);
 		if (newMember.name.empty()) {
 			cout << "Name cannot be empty.\n";
-			return;
+			continue;
 		}
 		if (newMember.name.find_first_of("0123456789") != string::npos) {
 			cout << "Invalid input! Name cannot contain numbers.\n";
-			return;
+			continue;
 		}
 		break;
 	}
