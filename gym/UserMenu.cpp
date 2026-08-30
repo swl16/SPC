@@ -177,6 +177,8 @@ void editProfile(Member* members) {
 
 		cin.ignore(); // Clear the input buffer
 
+		string ageInput;
+
 		switch (choice){
 		case '1':
 
@@ -200,12 +202,21 @@ void editProfile(Member* members) {
 
 		case'2':
 			while (true) {
-				cout << "Enter New Age : ";
+				cout << "Enter Age : ";
+				cin >> ageInput;
 
-				if (cin >> members[i].age && members[i].age > 0 && members[i].age < 120) {
-					saveUser(members); // Save the updated profile to the file
-					cout << "Age updated successfully.\n";
-					break;
+				// Check if the input consists purely of numeric digits (no decimals or text)
+				if (all_of(ageInput.begin(), ageInput.end(), ::isdigit)) {
+					try {
+						members[i].age = stoi(ageInput);
+
+						if (members[i].age > 0 && members[i].age < 120) {
+							break; // Valid age found, break the loop
+						}
+					}
+					catch (...) {
+						// Silently catch if they enter a massive number that crashes stoi
+					}
 				}
 
 				cout << "Invalid age. Please enter a whole number between 1 and 119.\n";

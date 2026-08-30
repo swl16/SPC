@@ -138,11 +138,25 @@ void registerUser(Member* members) {   // user registration
 		break;
 	}
 
+	string ageInput;
 	while (true) {
 		cout << "Enter Age : ";
-		if (cin >> newMember.age && newMember.age > 0 && newMember.age < 120) {
-			break;
+		cin >> ageInput;
+
+		// Check if the input consists purely of numeric digits (no decimals or text)
+		if (all_of(ageInput.begin(), ageInput.end(), ::isdigit)) {
+			try {
+				newMember.age = stoi(ageInput);
+
+				if (newMember.age > 0 && newMember.age < 120) {
+					break; // Valid age found, break the loop
+				}
+			}
+			catch (...) {
+				// Silently catch if they enter a massive number that crashes stoi
+			}
 		}
+
 		cout << "Invalid age. Please enter a whole number between 1 and 119.\n";
 		clearInputBuffer();
 	}
