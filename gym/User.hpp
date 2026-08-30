@@ -78,14 +78,17 @@ void registerMembershipPlan(Member member);
 void renewMembership(Member member);
 void membershipPlan(Member member);
 
+
 // booking file
 int generateBookingID(const string& filename);
+int getBookedCount(int scheduleID);
+string formatTime12H(int timeInt);
+void viewClassSchedule();
 void bookClass(Member member);
 void viewBooking(Member member);
 void cancelBooking(Member member);
 void bookingClass(Member member);
 void viewingBooking(Member member);
-void viewClassSchedule();
 
 
 // payment file
@@ -94,8 +97,7 @@ string addMonths(int months, const string& baseDateStr = "");
 string generatePaymentID();
 void saveMembership(string username, int planID, string startDate, string endDate);
 void savePayment(string paymentID, string username, string planName, double amount, string paymentDate, string paymentMethod);
-void generateMemberReceipt(string paymentID, string username, MembershipPlanRecord plan, string paymentDate, string paymentMethod,
-	string startDate, string endDate);
+void generateMemberReceipt(string paymentID, string username, MembershipPlanRecord plan, string paymentDate, string paymentMethod, string startDate, string endDate);
 void membershipPaymentProcess(Member members, MembershipPlanRecord selectedPlan, string startDate = "", string EndDate = "");
 void classPaymentProcess(Member member, Schedule selectedClass, int newBookingID);
 

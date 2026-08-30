@@ -10,6 +10,7 @@
 
 using namespace std;
 
+//Function to get all membership plan
 vector<MembershipPlanRecord> loadMembershipPlans(const string& filename) {
 	vector<MembershipPlanRecord> plans;
 	ifstream file(filename);
@@ -58,7 +59,7 @@ string getCurrentDate() {
 	return string(buffer);
 }
 
-
+// check if the user has a active membership
 bool hasActiveMembership(const string& username) {
 	ifstream memberFile("UserMembership.txt");
 	if (!memberFile.is_open()) return false;
@@ -112,12 +113,19 @@ bool hasActiveMembership(const string& username) {
 	return false;
 }
 
+//display available membership plan and the status of membership of the user 
 void viewMembershipPlan(Member member) {
 	vector<MembershipPlanRecord>membership = loadMembershipPlans("membershipPlan.txt");
 	ifstream memberFile("UserMembership.txt");
 
 	if (!memberFile.is_open()) {
-		cerr << "Error opening file!" << endl;
+		cerr << "Error opening UserMembership.txt file!" << endl;
+		return;
+	}
+
+	if (membership.empty()) {
+		cout << "No membership plans found in the database.";
+		pauseScreen();
 		return;
 	}
 
@@ -224,6 +232,7 @@ void viewMembershipPlan(Member member) {
 	}
 }
 
+//Let user to register a new membership plan (with no active membership plan)
 void registerMembershipPlan(Member member) {
 
 	if (hasActiveMembership(member.loginInfo.usernames)) {
@@ -303,6 +312,7 @@ void registerMembershipPlan(Member member) {
 	} while (true);
 }
 
+//Let users with active plan to extend their membership plan 
 void renewMembership(Member member) {
 	vector<MembershipPlanRecord>membership = loadMembershipPlans("membershipPlan.txt");
 	ifstream memberFile("UserMembership.txt");
@@ -413,6 +423,7 @@ void renewMembership(Member member) {
 	pauseScreen();	
 }
 
+//Menu for membership plan module
 void membershipPlan(Member member) {
 	clearScreen();
 
