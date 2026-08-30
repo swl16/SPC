@@ -219,6 +219,7 @@ void membershipPaymentProcess(Member members, MembershipPlanRecord selectedPlan,
     cout << "Plan   : " << selectedPlan.planName << endl;
     cout << "Amount : RM " << fixed << setprecision(2) << selectedPlan.price << endl;
 
+    string methodInput;
     char methodChoice;
     string paymentMethod;
 
@@ -233,7 +234,18 @@ void membershipPaymentProcess(Member members, MembershipPlanRecord selectedPlan,
         cout << "2. E-Wallet" << endl;
         cout << "0. Cancel" << endl;
         cout << "Enter payment method: ";
-        cin >> methodChoice;
+        cin >> methodInput;
+
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+        // Strictly check if the user typed exactly one valid digit
+        if (methodInput.length() != 1) {
+            cout << "Invalid input! Please type only 1, 2, or 0.\n";
+            continue; // This instantly skips the rest of the code and restarts the menu loop
+        }
+
+        methodChoice = methodInput[0];
 
         switch (methodChoice) {
 
@@ -367,6 +379,7 @@ void classPaymentProcess(Member member, Schedule selectedClass, int newBookingID
 
     cout << "Amount: RM " << fixed << setprecision(2) << selectedClass.price << endl;
 
+    string methodInput;
     char methodChoice;
     string paymentMethod;
 
@@ -381,7 +394,18 @@ void classPaymentProcess(Member member, Schedule selectedClass, int newBookingID
         cout << "2. E-Wallet" << endl;
         cout << "0. Cancel" << endl;
         cout << "Enter payment method: ";
-        cin >> methodChoice;
+        cin >> methodInput;
+
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+        // Strictly check if the user typed exactly one valid digit
+        if (methodInput.length() != 1) {
+            cout << "Invalid input! Please type only 1, 2, or 0.\n";
+            continue; // This instantly skips the rest of the code and restarts the menu loop
+        }
+
+        methodChoice = methodInput[0];
 
         switch (methodChoice) {
 
