@@ -505,6 +505,7 @@ void deleteMembershipPlan() {
 
 	if (confirm != 'Y' && confirm != 'y') {
 		cout << "Deletion cancelled." << endl;
+		pauseScreen();
 		return;
 	}
 
