@@ -6,3 +6,4 @@ Too,Seng,Lim,12,M,0111111111,toosenglim@gmail.com
 DARWIN,123456,Darwin A/L Thiruvarasu,19,F,0123456789,darwin@gmail.com
 kithoong,123456,Lin Kit Hoong,19,M,0123456789,kithoong@gmail.com
 wei,1234,sim,19,F,0123456789,sim@gmail.com
+daryl,12345,Daryl,22,M,0122672534,daryl22@gmail.com

@@ -129,34 +129,55 @@ void registerUser(Member* members) {   // user registration
 		getline(cin >> ws, newMember.name);
 		if (newMember.name.empty()) {
 			cout << "Name cannot be empty.\n";
-			return;
+			continue;
 		}
 		if (newMember.name.find_first_of("0123456789") != string::npos) {
 			cout << "Invalid input! Name cannot contain numbers.\n";
-			return;
+			continue;
 		}
 		break;
 	}
 
+	string ageInput;
 	while (true) {
 		cout << "Enter Age : ";
-		if (cin >> newMember.age && newMember.age > 0 && newMember.age < 120) {
-			break;
+		cin >> ageInput;
+
+		// Check if the input consists purely of numeric digits (no decimals or text)
+		if (all_of(ageInput.begin(), ageInput.end(), ::isdigit)) {
+			try {
+				newMember.age = stoi(ageInput);
+
+				if (newMember.age > 0 && newMember.age < 120) {
+					break; // Valid age found, break the loop
+				}
+			}
+			catch (...) {
+				// Silently catch if they enter a massive number that crashes stoi
+			}
 		}
+
 		cout << "Invalid age. Please enter a whole number between 1 and 119.\n";
 		clearInputBuffer();
 	}
 
+	string genderInput;
 	while (true) {
-		char g;
 		cout << "Enter Gender (M/F): ";
-		cin >> g;
-		g = toupper(g);
-		if (g == 'M' || g == 'F') {
-			newMember.gender = g;
-			break;
+		cin >> genderInput;
+
+		// Ensure the user typed exactly ONE character (e.g. "M", not "Male")
+		if (genderInput.length() == 1) {
+			char g = toupper(genderInput[0]);
+
+			if (g == 'M' || g == 'F') {
+				newMember.gender = g;
+				break; // Valid input, break the loop
+			}
 		}
-		cout << "Invalid gender. Please enter M or F.\n";
+
+		cout << "Invalid gender. Please enter strictly M or F.\n";
+		clearInputBuffer(); // Flush any extra leftover text 
 	}
 
 	while (true) {
