@@ -229,10 +229,10 @@ void bookClass(Member member) {
     int dateChoice;
     cout << "=========================================================" << endl;
     cout << "                      CLASS BOOKING                      " << endl;
-    cout << "=========================================================" << endl << endl;
+    cout << "=========================================================" << endl;
 
     do {
-        cout << "STEP 1 :" << endl;
+        cout << endl << "STEP 1 :" << endl;
         cout << "Select Date (Book up to 2 days ahead, including today.)" << endl;
         cout << "---------------------------------------------------------------------------------" << endl;
         for (size_t i = 0; i < validDates.size(); ++i) {
@@ -367,7 +367,7 @@ void bookClass(Member member) {
 
         if (alreadyBooked) {
             cout << "\n[ERROR] You have already booked " << selectedClass.className
-                << " on " << selectedClass.date << " at " << selectedClass.startTime << "!" << endl;
+                << " on " << selectedClass.date << " at " << formatTime12H(selectedClass.startTime) << "!" << endl;
             continue;
         }
 
@@ -558,6 +558,7 @@ void viewBooking(Member member) {
         }
     }
 
+    cout << "---------------------------------------------------------------------------------------------------------------------------------" << endl << endl;
     // Past Bookings
     cout << "\n--------------------------------------------------------- PAST CLASSES ----------------------------------------------------------" << endl;
     cout << left << setw(12) << "Booking ID"

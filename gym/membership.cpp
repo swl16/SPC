@@ -58,6 +58,7 @@ string getCurrentDate() {
 	return string(buffer);
 }
 
+
 bool hasActiveMembership(const string& username) {
 	ifstream memberFile("UserMembership.txt");
 	if (!memberFile.is_open()) return false;
