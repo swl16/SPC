@@ -1,7 +1,8 @@
 sixuan,12345,Tang Si Xuan,19,F,0234567890,tang123@gmail.com
-weili,12345,Sim Wei Li,19,F,0123456789,weilisim@gmail.com
+weili,12345,Sim Wei Li,18,F,0123456789,weilisim@gmail.com
 wenxuan,123456,Hiew Wen Xuan,19,F,0123456789,wx07@gmail.com
 Uhan,123456,Low You Han,19,M,0126573282,uhan@gmail.com
 Too,Seng,Lim,12,M,0111111111,toosenglim@gmail.com
 DARWIN,123456,Darwin A/L Thiruvarasu,19,F,0123456789,darwin@gmail.com
 kithoong,123456,Lin Kit Hoong,19,M,0123456789,kithoong@gmail.com
+wei,1234,sim,19,F,0123456789,sim@gmail.com
