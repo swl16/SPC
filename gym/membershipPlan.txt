@@ -1,2 +1,2 @@
-1,Premium,5,200.00,free locker access;Unlimited gym entrance
+1,Premium,5,220.00,free locker access;Unlimited gym entrance
 2,Standard,3,100.00,unlimited gym entrance
