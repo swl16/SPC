@@ -487,7 +487,7 @@ void viewBooking(Member member) {
             }
 
             if (scheduleFound) {
-                string timeRange = formatTime12H(matchedSchedule.startTime) + "-" + formatTime12H(matchedSchedule.endTime);
+                string timeRange = formatTime12H(matchedSchedule.startTime) + " - " + formatTime12H(matchedSchedule.endTime);
                 string statusStr = matchedSchedule.isCanceled ? "CANCELLED BY ADMIN" : "ACTIVE";
 
                 BookingDisplay bd = {
@@ -718,6 +718,21 @@ void cancelBooking(Member member) {
             cout << "\nBooking ID " << targetBookingID << " cancelled successfully!\n";
             cout << "The fee for booking will be return to your account.";
         }
+    }
+
+    string refundID = generatePaymentID();
+    string refundDate = getCurrentDateTime();
+    double refundAmount = -targetSchedule.price; // Negative value
+
+    ofstream payFile("UserPayment.txt", ios::app);
+    if (payFile.is_open()) {
+        payFile << refundID << ","
+            << member.loginInfo.usernames << ","
+            << "Refund: " << targetSchedule.className << " (Booking " << targetBookingID << "),"
+            << fixed << setprecision(2) << refundAmount << ","
+            << refundDate << ","
+            << "Refund to Account\n";
+        payFile.close();
     }
 }
 

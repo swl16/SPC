@@ -541,7 +541,9 @@ void userMenu(Member* members) {
 			break;
 
 		case '9':
+			clearScreen();
 			deleteAccount(members);
+			userLogin();
 			break;
 
 		case '0':
