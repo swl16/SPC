@@ -487,7 +487,7 @@ void viewBooking(Member member) {
             }
 
             if (scheduleFound) {
-                string timeRange = to_string(matchedSchedule.startTime) + "-" + to_string(matchedSchedule.endTime);
+                string timeRange = formatTime12H(matchedSchedule.startTime) + "-" + formatTime12H(matchedSchedule.endTime);
                 string statusStr = matchedSchedule.isCanceled ? "CANCELLED BY ADMIN" : "ACTIVE";
 
                 BookingDisplay bd = {
@@ -526,21 +526,21 @@ void viewBooking(Member member) {
     }
     classFile.close();
 
-    cout << "==============================================================================================================" << endl;
-    cout << "                                               FITNESS CLASS BOOKINGS                               " << endl;
-    cout << "==============================================================================================================" << endl;
+    cout << "=================================================================================================================================" << endl;
+    cout << "                                                      FITNESS CLASS BOOKINGS                                                     " << endl;
+    cout << "=================================================================================================================================" << endl;
 
     // Upcoming Bookings
-    cout << "\n--------------------------------------------- UPCOMING CLASSES -----------------------------------------------" << endl;
+    cout << "\n------------------------------------------------------- UPCOMING CLASSES --------------------------------------------------------" << endl;
     cout << left << setw(12) << "Booking ID"
         << left << setw(12) << "Schedule ID"
         << left << setw(18) << "Class Name"
         << left << setw(15) << "Trainer"
         << left << setw(12) << "Date"
-        << left << setw(12) << "Time Slot"
+        << left << setw(24) << "Time Slot"
         << left << setw(18) << "Status"
         << left << setw(10) << "Date Booked" << endl;
-    cout << "--------------------------------------------------------------------------------------------------------------" << endl;
+    cout << "---------------------------------------------------------------------------------------------------------------------------------" << endl;
 
     if (upcomingBookings.empty()) {
         cout << "No upcoming class reservations found." << endl;
@@ -552,23 +552,23 @@ void viewBooking(Member member) {
                 << left << setw(18) << b.className
                 << left << setw(15) << b.trainerName
                 << left << setw(12) << b.date
-                << left << setw(12) << b.timeStr
+                << left << setw(24) << b.timeStr
                 << left << setw(18) << b.status
                 << left << setw(12) << b.dateBooked << endl;
         }
     }
 
     // Past Bookings
-    cout << "\n----------------------------------------------- PAST CLASSES -------------------------------------------------" << endl;
+    cout << "\n--------------------------------------------------------- PAST CLASSES ----------------------------------------------------------" << endl;
     cout << left << setw(12) << "Booking ID"
         << left << setw(12) << "Schedule ID"
         << left << setw(18) << "Class Name"
         << left << setw(15) << "Trainer"
         << left << setw(12) << "Date"
-        << left << setw(12) << "Time Slot"
+        << left << setw(24) << "Time Slot"
         << left << setw(18) << "Status"
         << left << setw(12) << "Date Booked" << endl;
-    cout << "--------------------------------------------------------------------------------------------------------------" << endl;
+    cout << "---------------------------------------------------------------------------------------------------------------------------------" << endl;
 
     if (pastBookings.empty()) {
         cout << "No past class reservations found." << endl;
@@ -580,12 +580,12 @@ void viewBooking(Member member) {
                 << left << setw(18) << b.className
                 << left << setw(15) << b.trainerName
                 << left << setw(12) << b.date
-                << left << setw(12) << b.timeStr
+                << left << setw(24) << b.timeStr
                 << left << setw(18) << b.status
                 << left << setw(12) << b.dateBooked << endl;
         }
     }
-    cout << "==============================================================================================================" << endl;
+    cout << "=================================================================================================================================" << endl;
 
 }
 
