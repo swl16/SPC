@@ -9,8 +9,8 @@ using namespace std;
 struct Member;
 
 struct FitnessRecord {
-	double weight;
-	double height;
+	double weight = 0.0;
+	double height = 0.0;
 	double bmi = 0.0;
 	int workoutDuration = 0;
 	int targetWorkoutMins = 0;

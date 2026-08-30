@@ -244,7 +244,7 @@ void logWorkoutSession(Member& members) {
         cout << "Enter workout duration (minutes) (or '0' to return to menu): ";
 
         while (!(cin >> minutes) || minutes < 0) {
-            cout << "Invalid duration! Please enter a non-negative whole number: ";
+            cout << "Invalid duration! Please enter a positive whole number: ";
             cin.clear();
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
         }
@@ -284,6 +284,11 @@ void logWorkoutSession(Member& members) {
         cout << "\nDo you want to log another workout session for today? (Y/N): ";
         cin >> choice;
 
+        while (choice != 'Y' && choice != 'y' && choice != 'N' && choice != 'n') {
+            cout << "Invalid input. Please enter Y or N : ";
+            cin >> choice;
+        }
+
     } while (choice == 'Y' || choice == 'y');
 
     cout << "\n[SUCCESS] Session logged! Total workout time: " << members.fitness.workoutDuration << " minutes.\n";
@@ -294,8 +299,13 @@ void logWorkoutSession(Member& members) {
 
 void resetFitnessMetrics(Member& member) {
     char confirm;
-    cout << "\nAre you sure you want to reset workout duration and calories burned to 0? (Y/N): ";
+    cout << "\nAre you sure you want to reset workout duration and total calories burned to 0? (Y/N): ";
     cin >> confirm;
+
+    while (confirm != 'Y' && confirm != 'y' && confirm != 'N' && confirm != 'n') {
+        cout << "Invalid input. Please enter Y or N : ";
+        cin >> confirm;
+    }
 
     if (confirm == 'Y' || confirm == 'y') {
         member.fitness.workoutDuration = 0;
@@ -308,22 +318,61 @@ void resetFitnessMetrics(Member& member) {
 }
 
 void generateFitnessReport(const Member& members) {
-    cout << "\n===================================\n";
-    cout << "      FITNESS PROGRESS REPORT\n";
-    cout << "===================================\n";
-    cout << left << setw(20) << "Name" << ": " << members.name << "\n";
-    cout << "-----------------------------------\n";
+
+    string bmiCategory;
+    if (members.fitness.bmi <= 0) {
+        bmiCategory = "N/A";
+    }
+    else if (members.fitness.bmi < 18.5) {
+        bmiCategory = "Underweight";
+    }
+    else if (members.fitness.bmi < 25.0) {
+        bmiCategory = "Normal";
+    }
+    else if (members.fitness.bmi < 30.0) {
+        bmiCategory = "Overweight";
+    }
+    else {
+        bmiCategory = "Obese";
+    }
+
+    cout << "\n=============================================\n";
+    cout << "          FITNESS PROGRESS REPORT\n";
+    cout << "=============================================\n";
+
+    cout << left << setw(22) << " Name" << ": " << members.name << "\n";
+    cout << "---------------------------------------------\n";
 
     cout << fixed << setprecision(2);
-    cout << left << setw(20) << "Weight" << ": " << members.fitness.weight << " kg\n";
-    cout << left << setw(20) << "Height" << ": " << members.fitness.height << " m\n";
-    cout << left << setw(20) << "BMI" << ": " << members.fitness.bmi << "\n";
-    cout << "-----------------------------------\n";
-    cout << left << setw(20) << "Logged Workout Time" << ": " << members.fitness.workoutDuration << " mins\n";
+
+    if (members.fitness.weight > 0 && members.fitness.weight < 300) {
+        cout << left << setw(22) << " Weight" << ": " << members.fitness.weight << " kg\n";
+    }
+    else {
+        cout << left << setw(22) << " Weight" << ": 0.00 kg\n";
+    }
+
+    if (members.fitness.height > 0 && members.fitness.height < 2.8) {
+        cout << left << setw(22) << " Height" << ": " << members.fitness.height << " m\n";
+    }
+    else {
+        cout << left << setw(22) << " Height" << ": 0.00 m\n";
+    }
+
+    if (members.fitness.bmi > 0) {
+        cout << left << setw(22) << " BMI" << ": " << members.fitness.bmi << " (" << bmiCategory << ")\n";
+    }
+    else {
+        cout << left << setw(22) << " BMI" << ": 0.00\n";
+    }
+    cout << "---------------------------------------------\n";
+
+    cout << left << setw(22) << " Logged Workout Time" << ": " << members.fitness.workoutDuration << " mins\n";
 
     if (members.fitness.targetWorkoutMins > 0) {
-        cout << left << setw(20) << "Weekly Workout Goal" << ": " << members.fitness.targetWorkoutMins << " mins/week\n";
-        cout << left << setw(20) << "Goal Status" << ": ";
+        cout << left << setw(22) << " Weekly Workout Goal" << ": " << members.fitness.targetWorkoutMins << " mins/week\n";
+
+        cout << left << setw(22) << " Goal Status" << ": ";
         if (members.fitness.workoutDuration >= members.fitness.targetWorkoutMins) {
             cout << "[ACHIEVED] Goal reached!\n";
         }
@@ -333,12 +382,12 @@ void generateFitnessReport(const Member& members) {
         }
     }
     else {
-        cout << left << setw(20) << "Weekly Workout Goal" << ": Not Set\n";
-        cout << left << setw(20) << "Goal Status" << ": N/A\n";
+        cout << left << setw(22) << " Weekly Workout Goal" << ": Not Set\n";
+        cout << left << setw(22) << " Goal Status" << ": N/A\n";
     }
 
-    cout << left << setw(20) << "Total Calories" << ": " << members.fitness.caloriesBurned << " kcal\n";
-    cout << "-----------------------------------\n";
+    cout << left << setw(22) << " Total Calories Burned" << ": " << members.fitness.caloriesBurned << " kcal\n";
+    cout << "=============================================\n";
 }
 
 void fitnessMenu(Member& currentUser) {
@@ -357,15 +406,16 @@ void fitnessMenu(Member& currentUser) {
         cout << "3. Log Workout Session\n";
         cout << "4. Reset Fitness Metrics\n";
         cout << "5. Generate Fitness Progress Report\n";
-        cout << "0. Back to User Menu\n";
+        cout << "0. Back to Fitness Member Portal\n";
         cout << "===========================================\n";
-        cout << "Enter your choice (1-5) or '0' to return: ";
+        cout << "Enter your choice : ";
+        cin >> choice;
 
-        if (!(cin >> choice)) {
-            cout << "Invalid input. Please enter a valid choice.\n";
+        while (cin.fail() || choice < 0 || choice > 5) {
             cin.clear();
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
-            continue;
+            cout << "Invalid choice. Please select 1-5 or '0' to return : ";
+            cin >> choice;
         }
 
         switch (choice) {
@@ -398,10 +448,8 @@ void fitnessMenu(Member& currentUser) {
             pauseScreen();
             break;
         case 0:
-            cout << "\nExiting Fitness Module.\n";
+            cout << "\nExiting Fitness Tracker.\n";
             break;
-        default:
-            cout << "Invalid choice. Please select 0-5.\n";
         }
 
     } while (choice != 0);

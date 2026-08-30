@@ -63,7 +63,7 @@ string addMonths(int months, const string& baseDateStr) {
 
 string generatePaymentID() {
 
-    ifstream file("PaymentHistory.txt");
+    ifstream file("UserPayment.txt");
 
     int lastID = 0;
     string line;
@@ -105,24 +105,59 @@ string generatePaymentID() {
 
 void saveMembership(string username, int planID, string startDate, string endDate) {
 
-    ofstream file("UserMembership.txt");
+    ifstream inFile("UserMembership.txt");
+    vector<string> lines;
+    bool userFound = false;
+    string line;
 
-    if (!file.is_open()) {
-        cout << "Error: Cannot open file!\n";
+    string newRecord = username + "," + to_string(planID) + "," + startDate + "," + endDate;
+
+    // 1. Read existing records into a vector
+    if (inFile.is_open()) {
+        while (getline(inFile, line)) {
+            if (line.empty()) continue;
+
+            stringstream ss(line);
+            string fileUser;
+            getline(ss, fileUser, ',');
+
+            // If this is the user's existing record, update the line
+            if (fileUser == username) {
+                lines.push_back(newRecord);
+                userFound = true;
+            }
+            else {
+                // Otherwise, keep the original line intact
+                lines.push_back(line);
+            }
+        }
+        inFile.close();
+    }
+
+    // 2. If the user didn't exist yet (new registration), append them to the list
+    if (!userFound) {
+        lines.push_back(newRecord);
+    }
+
+    // 3. Overwrite the file with the updated list
+    ofstream outFile("UserMembership.txt");
+
+    if (!outFile) {
+        cout << "Error: Could not open UserMembership.txt for writing.\n";
         return;
     }
 
-    file << username << ","
-        << planID << ","
-        << startDate << ","
-        << endDate << endl;
+    // Loop through the updated string list and save it back to the text file
+    for (size_t i = 0; i < lines.size(); i++) {
+        outFile << lines[i] << "\n";
+    }
 
-    file.close();
+    outFile.close();
 }
 
 void savePayment(string paymentID, string username, string planName, double amount, string paymentDate, string paymentMethod) {
     
-    ofstream file("UserPayment.txt"); 
+    ofstream file("UserPayment.txt", ios::app);
 
         if (!file) {
             cout << "Error opening file!\n";
@@ -146,17 +181,17 @@ void generateMemberReceipt(string paymentID, string username, MembershipPlanReco
     cout << "================================================" << endl;
     cout << "               FITNESS GYM RECEIPT              " << endl;
     cout << "================================================" << endl;
-    cout << "Payment ID    :" << paymentID << endl;
+    cout << "Payment ID    : " << paymentID << endl;
     cout << "Date and Time : " << paymentDate << endl;
     cout << "Username      : " << username << endl;
     cout << "------------------------------------------------" << endl;
 
     cout << "\nMembership Information" << endl;
     cout << "------------------------------------------------" << endl;
-    cout << "Plan Name: " << plan.planName << endl;
-    cout << "Duration : " << plan.duration << (plan.duration == 1 ? " month" : " months") << endl;
-    cout << "Start Date :" << startDate << endl;
-    cout << "End Date : " << endDate << endl;
+    cout << "Plan Name  : " << plan.planName << endl;
+    cout << "Duration   : " << plan.duration << (plan.duration == 1 ? " month" : " months") << endl;
+    cout << "Start Date : " << startDate << endl;
+    cout << "End Date   : " << endDate << endl;
     cout << "------------------------------------------------" << endl;
 
     cout << "\nPayment Summary" << endl;
@@ -167,7 +202,7 @@ void generateMemberReceipt(string paymentID, string username, MembershipPlanReco
     cout << "TOTAL : RM " << fixed << setprecision(2) << plan.price << endl;
 
     cout << "\n================================================" << endl;
-    cout << "         Thank you for choosing Fitness Gym!    " << endl;
+    cout << "       Thank you for choosing Fitness Gym!    " << endl;
     cout << "================================================" << endl;
 
 
@@ -193,7 +228,7 @@ void membershipPaymentProcess(Member members, MembershipPlanRecord selectedPlan,
 
     do {
 
-        cout << "Payment Method" << endl;
+        cout << "\nPayment Method" << endl;
         cout << "1. Credit / Debit Card" << endl;
         cout << "2. E-Wallet" << endl;
         cout << "0. Cancel" << endl;
@@ -253,7 +288,7 @@ void membershipPaymentProcess(Member members, MembershipPlanRecord selectedPlan,
             while (true) {
                 cout << "Enter Phone Number (10-11 digits without '-'): ";
                 cin >> phoneNo;
-                if (regex_match(phoneNo, regex("^[0-9]{10,11}$"))) {
+                if (regex_match(phoneNo, regex("^01[0-9]{8,9}$"))) {
                     break;
                 }
                 cout << "Invalid phone number. Must be 10 or 11 digits.\n";
@@ -272,7 +307,7 @@ void membershipPaymentProcess(Member members, MembershipPlanRecord selectedPlan,
             
             break;
         case '0':
-            cout << "Payment Cancelled. Returning to previous menu...\n";
+            cout << "Payment Cancelled.\n";
             return;
 
         default:
@@ -312,7 +347,7 @@ void classPaymentProcess(Member member, Schedule selectedClass, int newBookingID
 
     do {
 
-        cout << "Payment Method" << endl;
+        cout << "\nPayment Method" << endl;
         cout << "1. Credit / Debit Card" << endl;
         cout << "2. E-Wallet" << endl;
         cout << "0. Cancel" << endl;
@@ -372,7 +407,7 @@ void classPaymentProcess(Member member, Schedule selectedClass, int newBookingID
             while (true) {
                 cout << "Enter Phone Number (10-11 digits without '-'): ";
                 cin >> phoneNo;
-                if (regex_match(phoneNo, regex("^[0-9]{10,11}$"))) {
+                if (regex_match(phoneNo, regex("^01[0-9]{8,9}$"))) {
                     break;
                 }
                 cout << "Invalid phone number. Must be 10 or 11 digits.\n";
@@ -391,7 +426,7 @@ void classPaymentProcess(Member member, Schedule selectedClass, int newBookingID
 
             break;
         case '0':
-            cout << "Payment Cancelled. Returning to previous menu...\n";
+            cout << "Payment Cancelled.\n";
             return;
 
         default:

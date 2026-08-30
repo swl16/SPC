@@ -180,19 +180,22 @@ void editProfile(Member* members) {
 		switch (choice){
 		case '1':
 
-			cout << "Enter Full Name: ";
-			getline(cin, members[i].name);
-			if (members[i].name.empty()) {
-				cout << "Name cannot be empty.\n";
-				return;
-			}
-			if (members[i].name.find_first_of("0123456789")) {
-				cout << "Invalid input! Name cannot contain numbers.\n";
-				return;
-			}
+			while (true) {
+				cout << "Enter Full Name: ";
+				getline(cin, members[i].name);
+				if (members[i].name.empty()) {
+					cout << "Name cannot be empty.\n";
+					continue;
+				}
+				if (any_of(members[i].name.begin(), members[i].name.end(), ::isdigit)) {
+					cout << "Invalid input! Name cannot contain numbers. Please try again.\n";
+					continue; // Use continue to let them retry
+				}
 
-			saveUser(members); // Save the updated profile to the file
-			cout << "Name updated successfully.\n";
+				saveUser(members); // Save the updated profile to the file
+				cout << "Name updated successfully.\n";
+				break;
+			}
 			break;
 
 		case'2':
@@ -206,7 +209,8 @@ void editProfile(Member* members) {
 				}
 
 				cout << "Invalid age. Please enter a whole number between 1 and 119.\n";
-				return;
+				cin.clear();
+				cin.ignore(numeric_limits<streamsize>::max(), '\n');
 			}
 			break;
 
@@ -234,7 +238,7 @@ void editProfile(Member* members) {
 				cin >> members[i].phNo;
 
 				// Check whether every character is a digit
-				if (regex_match(members[i].phNo, regex("[0-9]{10,11}"))) {
+				if (regex_match(members[i].phNo, regex("^01[0-9]{8,9}$"))) {
 					break;
 				}
 
