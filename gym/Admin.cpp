@@ -118,6 +118,7 @@ void displayadminMenu() {
 
 }
 
+//Menu of Membership Plan for action selection in the Admin Portal
 void displayMembershipPlanMenu() {
 	cout << "==================================================" << endl;
 	cout << "                 MEMBERSHIP PLANS			       " << endl;
@@ -212,6 +213,7 @@ void viewAllMembers() {
 
 }
 
+//Let Admin to add a new membership plan to the database
 void addMembershipPlan() {
 	const string filename = "membershipPlan.txt";
 	vector<MembershipPlanRecord> plans = loadMembershipPlans(filename);
@@ -283,6 +285,7 @@ void addMembershipPlan() {
 	pauseScreen();
 }
 
+//Display add the membership plan for admin
 void viewMembershipPlans() {
 	vector<MembershipPlanRecord> plans = loadMembershipPlans("membershipPlan.txt");
 
@@ -326,6 +329,7 @@ void viewMembershipPlans() {
 	pauseScreen();
 }
 
+//Admin can select specific membership tiers and iteratively modify individual attributes
 void updateMembershipPlan() {
 	const string filename = "membershipPlan.txt";
 	vector<MembershipPlanRecord> plans = loadMembershipPlans(filename);
@@ -461,6 +465,7 @@ void updateMembershipPlan() {
 	pauseScreen();
 }
 
+//Delete the membership plan from the "membershipPlan.txt"
 void deleteMembershipPlan() {
 	const string filename = "membershipPlan.txt";
 	vector<MembershipPlanRecord> plans = loadMembershipPlans(filename);

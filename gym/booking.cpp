@@ -61,6 +61,7 @@ int getBookedCount(int scheduleID) {
     return count;
 }
 
+//Formatting the date string from 1400 to 2:00 PM
 string formatTime12H(int timeInt) {
     int hour = timeInt / 100;
     int minute = timeInt % 100;
@@ -75,6 +76,7 @@ string formatTime12H(int timeInt) {
     return oss.str();
 }
 
+//View all upcoming date class schedule
 void viewClassSchedule() {
     vector<Schedule> allSchedules;
     loadSchedulesFromFile(allSchedules);
@@ -164,6 +166,7 @@ void viewClassSchedule() {
     pauseScreen();
 }
 
+//Let user to book a class (only can book for the next 3 days)
 void bookClass(Member member) {
     vector<Schedule> allSchedules;
     loadSchedulesFromFile(allSchedules);
@@ -424,6 +427,7 @@ struct BookingDisplay {
     string dateBooked;
 };
 
+//Users can view all the class schedule they booked before and separate to upcoming schedule and past schedule
 void viewBooking(Member member) {
     vector<Schedule> allSchedules;
     loadSchedulesFromFile(allSchedules);
@@ -590,7 +594,7 @@ void viewBooking(Member member) {
 
 }
 
-
+//Allows users to cancel their upcoming class bookings. Past classes cannot be canceled, even if the user did not attend.
 void cancelBooking(Member member) {
     ifstream classFile("classBookings.txt");
     if (!classFile.is_open()) {
@@ -737,7 +741,7 @@ void cancelBooking(Member member) {
     }
 }
 
-
+//Class Booking Menu
 void bookingClass(Member member) {
 
     int choice;
@@ -782,7 +786,7 @@ void bookingClass(Member member) {
 
 }
 
-
+//View/Cancel Booking Menu
 void viewingBooking(Member member) {
 
     int choice;
