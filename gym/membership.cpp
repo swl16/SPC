@@ -117,7 +117,13 @@ void viewMembershipPlan(Member member) {
 	ifstream memberFile("UserMembership.txt");
 
 	if (!memberFile.is_open()) {
-		cerr << "Error opening file!" << endl;
+		cerr << "Error opening UserMembership.txt file!" << endl;
+		return;
+	}
+
+	if (membership.empty()) {
+		cout << "No membership plans found in the database.";
+		pauseScreen();
 		return;
 	}
 

@@ -15,9 +15,9 @@ using namespace std;
 
 int generateBookingID(const string& filename) {
     ifstream file(filename);
-    if (!file.is_open()) return 1001; // Default start ID
+    if (!file.is_open()) return 2001; // Default start ID
 
-    int lastID = 1000;
+    int lastID = 2000;
     string line;
     while (getline(file, line)) {
         if (line.empty()) continue;
@@ -405,7 +405,7 @@ void bookClass(Member member) {
             cout << "Booking cancelled." << endl;
         }
 
-        cout << "\nPress Enter to return to the User Menu...";
+        cout << "\nPress Enter to return to the Menu...";
         cin.ignore(1000, '\n');
         cin.get();
         return;
