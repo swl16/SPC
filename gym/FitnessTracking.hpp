@@ -17,7 +17,11 @@ struct FitnessRecord {
 	double caloriesBurned = 0.0;
 };
 
-
+void ensureFileExists(const string& filename = "FitnessData.txt");
+void loadFitnessData(vector <Member>& members, const string& filename = "FitnessData.txt");
+void saveFitnessData(const Member& member, const string& filename = "FitnessData.txt");
+void saveMember(const Member& currentUser, const string& filename = "FitnessData.txt");
+void loadUserData(Member& currentUser, const string& filename = "FitnessData.txt");
 double calculateBMI(double weight, double height);
 void setFitnessGoal(Member& members);
 void updateFitnessMetrics(Member& members);
@@ -25,8 +29,4 @@ void logWorkoutSession(Member& members);
 void resetFitnessMetrics(Member& members);
 void generateFitnessReport(const Member& members);
 void fitnessMenu(Member& currentUser);
-void ensureFileExists(const string& filename = "fitness_data.txt");
-void loadFitnessData(vector <Member>& members, const string& filename = "fitness_data.txt");
-void saveFitnessData(const Member& member, const string& filename = "fitness_data.txt");
-void saveMember(const Member& currentUser, const string& filename = "fitness_data.txt");
-void loadUserData(Member& currentUser, const string& filename = "fitness_data.txt");
+
