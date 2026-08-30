@@ -263,10 +263,39 @@ void membershipPaymentProcess(Member members, MembershipPlanRecord selectedPlan,
             while (true) {
                 cout << "Enter Expiry Date (MM/YY): ";
                 cin >> expDate;
+
+                // 1. First, check if the formatting is strictly MM/YY
                 if (regex_match(expDate, regex("^(0[1-9]|1[0-2])/[0-9]{2}$"))) {
-                    break;
+
+                    // 2. Extract the month and year as integers
+                    int inputMonth = stoi(expDate.substr(0, 2));
+                    int inputYear = stoi(expDate.substr(3, 2));
+
+                    // 3. Get the current system time
+                    time_t now = time(nullptr);
+                    tm ltm;
+
+#ifdef _WIN32
+                    localtime_s(&ltm, &now);
+#else
+                    ltm = *localtime(&now);
+#endif
+
+                    // Get the last two digits of the current year (e.g., 2026 becomes 26)
+                    int currentYear = (ltm.tm_year + 1900) % 100;
+                    int currentMonth = ltm.tm_mon + 1; // tm_mon is 0-11, so we add 1
+
+                    // 4. Validate that the date is in the future or current month
+                    if (inputYear > currentYear || (inputYear == currentYear && inputMonth >= currentMonth)) {
+                        break; // The card is valid and not expired!
+                    }
+                    else {
+                        cout << "Invalid input. The card has already expired.\n";
+                    }
                 }
-                cout << "Invalid format. Please enter in MM/YY format (e.g., 04/27).\n";
+                else {
+                    cout << "Invalid format. Please enter in MM/YY format (e.g., 04/27).\n";
+                }
             }
 
             while (true) {
@@ -382,10 +411,39 @@ void classPaymentProcess(Member member, Schedule selectedClass, int newBookingID
             while (true) {
                 cout << "Enter Expiry Date (MM/YY): ";
                 cin >> expDate;
+
+                // check if the formatting is strictly MM/YY
                 if (regex_match(expDate, regex("^(0[1-9]|1[0-2])/[0-9]{2}$"))) {
-                    break;
+
+                    //Extract the month and year as integers
+                    int inputMonth = stoi(expDate.substr(0, 2));
+                    int inputYear = stoi(expDate.substr(3, 2));
+
+                    // Get the current system time
+                    time_t now = time(nullptr);
+                    tm ltm;
+
+#ifdef _WIN32
+                    localtime_s(&ltm, &now);
+#else
+                    ltm = *localtime(&now);
+#endif
+
+                    // Get the last two digits of the current year (e.g., 2026 becomes 26)
+                    int currentYear = (ltm.tm_year + 1900) % 100;
+                    int currentMonth = ltm.tm_mon + 1; // tm_mon is 0-11, so we add 1
+
+                    // Validate that the date is in the future or current month
+                    if (inputYear > currentYear || (inputYear == currentYear && inputMonth >= currentMonth)) {
+                        break; // The card is valid and not expired!
+                    }
+                    else {
+                        cout << "Invalid input. The card has already expired.\n";
+                    }
                 }
-                cout << "Invalid format. Please enter in MM/YY format (e.g., 04/27).\n";
+                else {
+                    cout << "Invalid format. Please enter in MM/YY format (e.g., 04/27).\n";
+                }
             }
 
             while (true) {
