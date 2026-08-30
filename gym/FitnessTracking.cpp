@@ -291,7 +291,7 @@ void logWorkoutSession(Member& members) {
 
     } while (choice == 'Y' || choice == 'y');
 
-    cout << "\n[SUCCESS] Session logged! Total workout time: " << members.fitness.workoutDuration << " minutes.\n";
+    cout << "\n[SUCCESS] Session logged! Total workout duration: " << members.fitness.workoutDuration << " minutes.\n";
     if (members.fitness.targetWorkoutMins > 0 && members.fitness.workoutDuration >= members.fitness.targetWorkoutMins) {
         cout << "Great job! You reached your weekly workout target!\n";
     }
