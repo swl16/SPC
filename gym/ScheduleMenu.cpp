@@ -51,6 +51,30 @@ string formatTime(int t) {
     return oss.str();
 }
 
+// Validates that an HHMM integer represents a real 24-hour time
+// (hour 00-23, minute 00-59). Range-checking the raw int alone (e.g. 0-2359)
+// would still let nonsense like 1099 ("10:99") slip through.
+bool isValidTimeFormat(int t) {
+    if (t < 0 || t > 2359) return false;
+    int minute = t % 100;
+    return minute < 60;
+}
+
+// Prompts for a time in HHMM format (e.g. 1400), enforcing that it is a real
+// 24-hour clock time rather than just a number in range. This is the single
+// place time input happens, so add/update can no longer drift out of sync
+// with each other on what bounds they accept.
+int getValidTimeInput(const string& message) {
+    while (true) {
+        int value = getIntegerInput(message, 0, 2359);
+        if (isValidTimeFormat(value)) {
+            return value;
+        }
+        cout << "Invalid time. Please enter a real 24-hour time in HHMM format "
+            << "(e.g. 900 for 9:00, 1430 for 14:30).\n";
+    }
+}
+
 bool isValidDate(const string& date, bool allowPast) {
     // 1. Check length and slash positions
     if (date.length() != 10) return false;
@@ -206,7 +230,8 @@ void displayschedule(const vector<Schedule>& schedules) {
     cout << "\n====================================================================================================\n";
     cout << "                                         ALL GYM SCHEDULES                                          \n";
     cout << "====================================================================================================\n";
-    cout << left << setw(6) << "ID"
+    cout << left << setw(5) << "No."
+        << setw(6) << "ID"
         << setw(13) << "Date"
         << setw(16) << "Class Name"
         << setw(8) << "Start"
@@ -214,17 +239,19 @@ void displayschedule(const vector<Schedule>& schedules) {
         << setw(16) << "Trainer"
         << setw(10) << "Capacity"
         << right << setw(10) << "Fee (RM)"
-        << "   " << setw(8) << "Status\n";
+        << "   " << left << setw(8) << "Status\n";
     cout << "----------------------------------------------------------------------------------------------------\n";
 
     bool activeFound = false;
 
     cout << fixed << setprecision(2);
 
+    int rowNo = 1;
     for (const Schedule& s : schedules) {
         string status = s.isCanceled ? "Cancelled" : "Active";
 
-        cout << left << setw(6) << s.scheduleID
+        cout << left << setw(5) << rowNo
+            << setw(6) << s.scheduleID
             << setw(13) << s.date
             << setw(16) << s.className
             << setw(8) << formatTime(s.startTime)
@@ -234,6 +261,7 @@ void displayschedule(const vector<Schedule>& schedules) {
             << right << setw(10) << s.price
             << "   " << left << setw(8) << status << "\n";
 
+        rowNo++;
         activeFound = true;
     }
 
@@ -256,9 +284,9 @@ void addschedule(vector<Schedule>& schedules) {
 
     newClass.date = getValidDate("Enter schedule date (YYYY/MM/DD): ");
 
-    newClass.startTime = getIntegerInput("Enter start time (eg. 1400): ", 0000, 2359);
+    newClass.startTime = getValidTimeInput("Enter start time (eg. 1400): ");
+    newClass.endTime = getValidTimeInput("Enter end time (eg. 1600): ");
 
-    newClass.endTime = getIntegerInput("Enter end time (eg. 1600): ", 1000, 2000);
     newClass.trainerName = getNonEmptyString("Enter trainer name: ");
     newClass.price = getDoubleInput("Enter class fee (RM, e.g., 30.00): ", 0.0, 500.0);
     newClass.classCapacity = getIntegerInput("Enter the Class Capacity: ", 5, 30);
@@ -308,7 +336,8 @@ void checkClassCapacity(const vector<Schedule>& schedules) {
     cout << "\n====================================================================================================\n";
     cout << "                                     CLASS CAPACITY REPORT                                          \n";
     cout << "====================================================================================================\n";
-    cout << left << setw(6) << "ID"
+    cout << left << setw(5) << "No."
+        << setw(6) << "ID"
         << setw(13) << "Date"
         << setw(16) << "Class Name"
         << setw(10) << "Booked"
@@ -318,6 +347,7 @@ void checkClassCapacity(const vector<Schedule>& schedules) {
     cout << "----------------------------------------------------------------------------------------------------\n";
 
     bool anyActive = false;
+    int rowNo = 1;
 
     for (const Schedule& s : schedules) {
         if (s.isCanceled) {
@@ -346,13 +376,16 @@ void checkClassCapacity(const vector<Schedule>& schedules) {
             status = "OPEN";
         }
 
-        cout << left << setw(6) << s.scheduleID
+        cout << left << setw(5) << rowNo
+            << setw(6) << s.scheduleID
             << setw(13) << s.date
             << setw(16) << s.className
             << setw(10) << bookedCount
             << setw(10) << s.classCapacity
             << setw(10) << openSeats
             << left << setw(14) << status << "\n";
+
+        rowNo++;
     }
 
     if (!anyActive) {
@@ -374,6 +407,7 @@ void searchschedule(const vector<Schedule>& schedules) {
     searchDate = getValidDate("Enter the date you want to search (YYYY/MM/DD): ", true);
 
     bool found = false;
+    int rowNo = 1;
 
     for (const Schedule& s : schedules) {
         if (s.isCanceled) {
@@ -385,7 +419,8 @@ void searchschedule(const vector<Schedule>& schedules) {
                 cout << "\n====================================================================================================\n";
                 cout << "                                     RESULTS FOR " << searchDate << "                                      \n";
                 cout << "====================================================================================================\n";
-                cout << left << setw(6) << "ID"
+                cout << left << setw(5) << "No."
+                    << setw(6) << "ID"
                     << setw(13) << "Date"
                     << setw(16) << "Class Name"
                     << setw(8) << "Start"
@@ -393,12 +428,13 @@ void searchschedule(const vector<Schedule>& schedules) {
                     << setw(16) << "Trainer"
                     << setw(10) << "Capacity"
                     << right << setw(10) << "Fee (RM)"
-                    << "   " << setw(8) << "Status\n";
+                    << "   " << left << setw(8) << "Status\n";
                 cout << "----------------------------------------------------------------------------------------------------\n";
             }
 
             cout << fixed << setprecision(2);
-            cout << left << setw(6) << s.scheduleID
+            cout << left << setw(5) << rowNo
+                << setw(6) << s.scheduleID
                 << setw(13) << s.date
                 << setw(16) << s.className
                 << setw(8) << formatTime(s.startTime)
@@ -409,6 +445,7 @@ void searchschedule(const vector<Schedule>& schedules) {
                 << "   " << left << setw(8) << "Active\n";
 
             found = true;
+            rowNo++;
         }
     }
 
@@ -482,7 +519,7 @@ void updateschedule(vector<Schedule>& schedules) {
 
                 case '3':
 
-                    tempStart = getIntegerInput("Enter new start time (eg. 1400): ", 0, 2400);
+                    tempStart = getValidTimeInput("Enter new start time (eg. 1400): ");
 
                     if (tempStart >= s.endTime) {
                         cout << "Error: Start time must be before the current end time (" << s.endTime << "). Update failed.\n";
@@ -499,7 +536,7 @@ void updateschedule(vector<Schedule>& schedules) {
                     break;
                 case '4':
 
-                    tempEnd = getIntegerInput("Enter new end time (eg. 1600): ", 0, 2400);
+                    tempEnd = getValidTimeInput("Enter new end time (eg. 1600): ");
 
                     if (s.startTime >= tempEnd) {
                         cout << "Error: End time must be after the current start time (" << s.startTime << "). Update failed.\n";

@@ -34,6 +34,8 @@ double getDoubleInput(const string& message, double min, double max);
 string getNonEmptyString(const string& message);
 double getPositiveDouble(const string& message);
 string formatTime(int t);
+bool isValidTimeFormat(int t);
+int getValidTimeInput(const string& message);
 bool isValidDate(const string& date, bool allowPast);
 string getValidDate(const string& message, bool allowPast = false);
 void pauseScreen();
