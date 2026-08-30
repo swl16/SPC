@@ -112,7 +112,7 @@ void saveMembership(string username, int planID, string startDate, string endDat
 
     string newRecord = username + "," + to_string(planID) + "," + startDate + "," + endDate;
 
-    // 1. Read existing records into a vector
+    // Read existing records into a vector
     if (inFile.is_open()) {
         while (getline(inFile, line)) {
             if (line.empty()) continue;
@@ -134,12 +134,12 @@ void saveMembership(string username, int planID, string startDate, string endDat
         inFile.close();
     }
 
-    // 2. If the user didn't exist yet (new registration), append them to the list
+    // If the user didn't exist yet (new registration), append them to the list
     if (!userFound) {
         lines.push_back(newRecord);
     }
 
-    // 3. Overwrite the file with the updated list
+    // Overwrite the file with the updated list
     ofstream outFile("UserMembership.txt");
 
     if (!outFile) {
@@ -275,14 +275,14 @@ void membershipPaymentProcess(Member members, MembershipPlanRecord selectedPlan,
                 cout << "Enter Expiry Date (MM/YY): ";
                 cin >> expDate;
 
-                // 1. First, check if the formatting is strictly MM/YY
+                // check if the formatting is strictly MM/YY
                 if (regex_match(expDate, regex("^(0[1-9]|1[0-2])/[0-9]{2}$"))) {
 
-                    // 2. Extract the month and year as integers
+                    // Extract the month and year as integers
                     int inputMonth = stoi(expDate.substr(0, 2));
                     int inputYear = stoi(expDate.substr(3, 2));
 
-                    // 3. Get the current system time
+                    // Get the current system time
                     time_t now = time(nullptr);
                     tm ltm;
 
@@ -296,7 +296,7 @@ void membershipPaymentProcess(Member members, MembershipPlanRecord selectedPlan,
                     int currentYear = (ltm.tm_year + 1900) % 100;
                     int currentMonth = ltm.tm_mon + 1; // tm_mon is 0-11, so we add 1
 
-                    // 4. Validate that the date is in the future or current month
+                    // Validate that the date is in the future or current month
                     if (inputYear > currentYear || (inputYear == currentYear && inputMonth >= currentMonth)) {
                         break; // The card is valid and not expired!
                     }
@@ -528,7 +528,7 @@ void classPaymentProcess(Member member, Schedule selectedClass, int newBookingID
     strftime(buffer, sizeof(buffer), "%Y/%m/%d", &ltm);
     string dateBooked = string(buffer);
 
-    // 1. Save Booking Data to classBookings.txt
+    // Save Booking Data to classBookings.txt
     ofstream outFile("classBookings.txt", ios::app);
     if (outFile.is_open()) {
         outFile << newBookingID << ","
