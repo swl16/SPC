@@ -486,13 +486,26 @@ bool deleteAccount(Member* members) {
 
 void userMenu(Member* members) {
 
+	string choiceInput;
 	char choice;
 
 	do{
 
 		displayUserMenu();
 		cout << "Enter your choice : ";
-		cin >> choice;
+		cin >> choiceInput;
+
+		cin.clear();
+		cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+		if (choiceInput.length() != 1) {
+			cout << "Invalid input! Please enter a single digit.\n";
+			choice = ' '; // Reset to safe default
+			pauseScreen(); // Pause so they can read the error before the screen clears
+			continue; // Restart the main menu loop
+		}
+
+		choice = choiceInput[0];
 
 		int memberIndex = loggedInMember(members);
 		Member currentMember;

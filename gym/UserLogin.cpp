@@ -328,6 +328,7 @@ void clearScreen() {
 
 void userLogin() {
 
+	string choiceInput;
 	char loginChoice;
 	Member members[MAX_USERS];
 	loadUser(members);
@@ -337,7 +338,19 @@ void userLogin() {
 		clearScreen();
 		displaymenu();
 		cout << "Enter choice : ";
-		cin >> loginChoice;
+		cin >> choiceInput;
+
+		cin.clear();
+		cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+		if (choiceInput.length() != 1) {
+			cout << "Invalid input! Please enter a single digit.\n";
+			loginChoice = ' '; // Reset to safe default
+			pauseScreen(); // Pause so they can read the error before the screen clears
+			continue; // Restart the main menu loop
+		}
+
+		loginChoice = choiceInput[0];
 
 		Member currentMember;
 
