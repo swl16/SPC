@@ -220,7 +220,7 @@ void membershipPaymentProcess(Member members, MembershipPlanRecord selectedPlan,
     cout << "Amount : RM " << fixed << setprecision(2) << selectedPlan.price << endl;
 
     string methodInput;
-    char methodChoice;
+    char methodChoice = ' ';
     string paymentMethod;
 
     bool paymentCompleted = false;
@@ -252,7 +252,6 @@ void membershipPaymentProcess(Member members, MembershipPlanRecord selectedPlan,
         case '1':
             paymentMethod = "Credit / Debit Card";
             cout << "\n--- " << paymentMethod << " Details ---\n";
-            cin.ignore();
 
             while (true) {
                 cout << "Enter Cardholder Name: ";
@@ -380,7 +379,7 @@ void classPaymentProcess(Member member, Schedule selectedClass, int newBookingID
     cout << "Amount: RM " << fixed << setprecision(2) << selectedClass.price << endl;
 
     string methodInput;
-    char methodChoice;
+    char methodChoice = ' ';
     string paymentMethod;
 
     bool paymentCompleted = false;
@@ -412,7 +411,6 @@ void classPaymentProcess(Member member, Schedule selectedClass, int newBookingID
         case '1':
             paymentMethod = "Credit / Debit Card";
             cout << "\n--- " << paymentMethod << " Details ---\n";
-            cin.ignore();
 
             while (true) {
                 cout << "Enter Cardholder Name: ";
