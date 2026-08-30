@@ -6,6 +6,7 @@ using namespace std;
 
 int main() {
 
+	string choiceInput;
 	char choice;
 	
 
@@ -29,7 +30,19 @@ int main() {
 
 
 		cout << "Enter your choice: ";
-		cin >> choice;
+		cin >> choiceInput;
+
+		cin.clear();
+		cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+		if (choiceInput.length() != 1) {
+			cout << "Invalid input! Please enter a single digit.\n";
+			choice = ' '; // Reset to safe default
+			pauseScreen(); // Pause so they can read the error before the screen clears
+			continue; // Restart the main menu loop
+		}
+
+		choice = choiceInput[0];
 
 		switch (choice) {
 
