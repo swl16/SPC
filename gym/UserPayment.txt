@@ -6,7 +6,7 @@ P0005,kithoong,Standard,100.00,2026/08/30 12:08:04,E-Wallet
 P0006,DARWIN,Premium,200.00,2026/08/30 12:08:55,E-Wallet
 P0007,Uhan,Standard,100.00,2026/08/30 12:10:57,E-Wallet
 P0008,weili,Pilates,20.00,2026/08/30 16:22:40,Credit / Debit Card
-P0009,weili,Pilates,20.00,2026/08/30 16:25:56,Credit / Debit Card
+P0009,weili,Refund: Pilates Class Booking (ID 1005),-20.00,2026/08/30 17:15:00,Refund to Account
 P0010,jennie,Premium,200.00,2026/08/30 17:42:28,Credit / Debit Card
 P0011,jennie,Pilates,20.00,2026/08/30 17:51:16,E-Wallet
 P0012,jennie,Premium,200.00,2026/08/30 17:54:22,E-Wallet
