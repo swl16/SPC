@@ -598,7 +598,7 @@ void cancelBooking(Member member) {
     }
 
     vector<ClassBooking> allBookings;
-    vector<int> userBookingIDs;
+    vector<ClassBooking> userBookings;
     string line;
 
     while (getline(classFile, line)) {
@@ -612,20 +612,32 @@ void cancelBooking(Member member) {
         getline(ss, cID, ',');
         getline(ss, book.bookingDate, ',');
 
-        book.bookingID = stoi(bID);
-        book.scheduleID = stoi(cID);
+        if (!book.bookingDate.empty() && book.bookingDate.back() == '\r') {
+            book.bookingDate.pop_back();
+        }
+
+        try {
+            book.bookingID = stoi(bID);
+            book.scheduleID = stoi(cID);
+        }
+        catch (...) {
+            continue;
+        }
 
         allBookings.push_back(book);
         if (book.username == member.loginInfo.usernames) {
-            userBookingIDs.push_back(book.bookingID);
+            userBookings.push_back(book);
         }
     }
     classFile.close();
 
-    if (userBookingIDs.empty()) {
+    if (userBookings.empty()) {
         cout << "\nYou have no bookings to cancel.\n";
         return;
     }
+
+    vector<Schedule> allSchedules;
+    loadSchedulesFromFile(allSchedules);
 
     viewBooking(member);
 
@@ -633,10 +645,12 @@ void cancelBooking(Member member) {
     if (targetBookingID == 0) return;
 
     // Verify booking belongs to this member
+    ClassBooking selectedBooking;
     bool isOwned = false;
-    for (int id : userBookingIDs) {
-        if (id == targetBookingID) {
+    for (const auto& b : userBookings) {
+        if (b.bookingID == targetBookingID) {
             isOwned = true;
+            selectedBooking = b;
             break;
         }
     }
@@ -644,6 +658,39 @@ void cancelBooking(Member member) {
     if (!isOwned) {
         cout << "\n[ERROR] Booking ID " << targetBookingID << " does not belong to your account.\n";
         return;
+    }
+
+    Schedule targetSchedule;
+    bool scheduleFound = false;
+    for (const auto& s : allSchedules) {
+        if (s.scheduleID == selectedBooking.scheduleID) {
+            targetSchedule = s;
+            scheduleFound = true;
+            break;
+        }
+    }
+
+    if (scheduleFound) {
+        // Get current date (YYYY/MM/DD) and current time (HHMM)
+        time_t now = time(nullptr);
+        tm nowTm;
+#ifdef _WIN32
+        localtime_s(&nowTm, &now);
+#else
+        nowTm = *localtime(&now);
+#endif
+        char dateBuf[20];
+        strftime(dateBuf, sizeof(dateBuf), "%Y/%m/%d", &nowTm);
+        string todayStr(dateBuf);
+        int currentTimeInt = (nowTm.tm_hour * 100) + nowTm.tm_min;
+
+        // Check if class date is before today, OR if today, start time has already passed
+        if (targetSchedule.date < todayStr ||
+            (targetSchedule.date == todayStr && targetSchedule.startTime <= currentTimeInt)) {
+            cout << "\n[ERROR] Cannot cancel Booking ID " << targetBookingID
+                << " because this class has already passed!\n";
+            return;
+        }
     }
 
     char confirm;
@@ -657,7 +704,7 @@ void cancelBooking(Member member) {
 
     auto it = remove_if(allBookings.begin(), allBookings.end(), [&](const ClassBooking& b) {
         return b.bookingID == targetBookingID;
-        });
+    });
 
     if (it != allBookings.end()) {
         allBookings.erase(it, allBookings.end());
